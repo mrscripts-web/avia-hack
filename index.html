@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APEX | Quantum Flight Infrastructure</title>
+    <title>AFRICA HACKS | Regional Flight Predictor</title>
     <style>
         :root {
             --glow-red: #ff0033;
             --bg-dark: #050505;
             --panel-bg: #0f0f0f;
             --text-dim: #888;
+            --whatsapp: #25d366;
+            --telegram: #0088cc;
         }
 
-        /* --- Global Styles --- */
         body { 
             margin: 0; 
             padding: 0; 
@@ -24,7 +25,7 @@
 
         a { text-decoration: none; transition: 0.3s; }
 
-        /* --- Header / Navigation --- */
+        /* --- Header --- */
         .glow-header {
             height: 70px;
             background: var(--panel-bg);
@@ -39,24 +40,22 @@
             z-index: 1000;
         }
 
-        .logo { font-weight: 900; letter-spacing: 2px; font-size: 1.2rem; }
+        .logo { font-weight: 900; letter-spacing: 1px; font-size: 1.1rem; }
         .logo span { color: var(--glow-red); text-shadow: 0 0 10px var(--glow-red); }
 
-        .status-container { display: flex; align-items: center; gap: 8px; }
         .status-dot {
             height: 8px; width: 8px; background: var(--glow-red);
             border-radius: 50%; box-shadow: 0 0 10px var(--glow-red);
             animation: blink 1.5s infinite;
         }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .status-text { font-size: 9px; font-weight: 800; letter-spacing: 1px; color: var(--glow-red); }
 
-        /* --- Hero / Multiplier Section --- */
+        /* --- Terminal Hero --- */
         .viewport {
             background: var(--panel-bg);
             border: 1px solid #222;
             border-radius: 12px;
-            height: 350px;
+            height: 300px;
             margin: 20px 15px;
             position: relative;
             overflow: hidden;
@@ -68,162 +67,160 @@
 
         .multiplier-text { z-index: 10; text-align: center; }
         .multiplier-text h1 {
-            font-size: 80px; margin: 0; font-weight: 200;
+            font-size: 70px; margin: 0; font-weight: 200;
             text-shadow: 0 0 30px var(--glow-red);
         }
-        .target-label { color: var(--glow-red); font-family: monospace; font-size: 10px; letter-spacing: 2px; }
 
-        .graph-svg { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; opacity: 0.4; }
-        .vector-path {
-            fill: none; stroke: var(--glow-red); stroke-width: 4;
-            filter: drop-shadow(0 0 8px var(--glow-red));
-            stroke-dasharray: 1000; stroke-dashoffset: 1000;
-            animation: draw 4s infinite linear;
+        /* --- Platform Section --- */
+        .platform-ticker {
+            background: rgba(255, 0, 51, 0.05);
+            padding: 15px;
+            border-top: 1px solid #222;
+            border-bottom: 1px solid #222;
+            text-align: center;
         }
-        @keyframes draw { 0% { stroke-dashoffset: 1000; } 100% { stroke-dashoffset: 0; } }
+        .platform-list {
+            font-size: 11px;
+            color: var(--glow-red);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
-        /* --- Stats & Logs --- */
-        .mobile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; }
-        .stat-box { background: var(--panel-bg); border: 1px solid #222; padding: 15px; border-radius: 8px; text-align: center; }
-        .stat-box .val { display: block; font-size: 18px; font-weight: bold; color: var(--glow-red); margin-top: 5px; }
-        .stat-box .label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+        /* --- Buttons Section --- */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0 15px;
+            margin-top: 15px;
+        }
 
+        .btn {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 13px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .btn-preview { background: #222; border: 1px solid #444; grid-column: span 2; }
+        .btn-whatsapp { background: var(--whatsapp); box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2); }
+        .btn-telegram { background: var(--telegram); box-shadow: 0 5px 15px rgba(0, 136, 204, 0.2); }
+
+        /* --- Pricing Table --- */
+        .pricing-section { padding: 30px 15px; }
+        .price-row {
+            background: var(--panel-bg);
+            border: 1px solid #222;
+            margin-bottom: 8px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price-row.featured { border-color: var(--glow-red); box-shadow: 0 0 15px rgba(255, 0, 51, 0.1); }
+        .duration { font-weight: 700; font-size: 14px; }
+        .amount { color: var(--glow-red); font-weight: 900; font-size: 18px; }
+
+        /* --- Terminal Log --- */
         .terminal {
-            background: #000; height: 120px; border: 1px solid #222;
+            background: #000; height: 100px; border: 1px solid #222;
             margin: 15px; padding: 12px; font-family: monospace; font-size: 10px;
             color: #444; border-radius: 8px; overflow: hidden;
         }
-        .log-line { margin-bottom: 4px; }
 
-        /* --- Features Section --- */
-        .section-title { padding: 30px 15px 10px; font-size: 14px; color: var(--glow-red); letter-spacing: 2px; text-transform: uppercase; text-align: center; }
-        
-        .feature-card { background: var(--panel-bg); margin: 10px 15px; padding: 20px; border-left: 3px solid var(--glow-red); border-radius: 4px; }
-        .feature-card h3 { margin: 0 0 10px; font-size: 16px; }
-        .feature-card p { margin: 0; font-size: 12px; color: var(--text-dim); line-height: 1.5; }
-
-        /* --- Pricing & CTA --- */
-        .pricing-card {
-            background: linear-gradient(180deg, #1a0505 0%, #050505 100%);
-            border: 1px solid var(--glow-red);
-            margin: 30px 15px; padding: 40px 20px; border-radius: 12px; text-align: center;
-            box-shadow: 0 0 30px rgba(255, 0, 51, 0.15);
-        }
-        .price { font-size: 40px; font-weight: 900; margin: 10px 0; }
-        .price span { font-size: 14px; color: var(--text-dim); }
-
-        .cta-btn {
-            background: var(--glow-red); color: white; padding: 18px; border-radius: 8px;
-            display: block; font-weight: 800; font-size: 16px; letter-spacing: 1px;
-            margin-top: 20px; box-shadow: 0 10px 20px rgba(255, 0, 51, 0.3);
-        }
-
-        /* --- Footer --- */
-        footer { padding: 40px 20px; text-align: center; font-size: 10px; color: #444; line-height: 2; }
+        footer { padding: 40px 20px; text-align: center; font-size: 10px; color: #444; }
     </style>
 </head>
 <body>
 
     <header class="glow-header">
-        <div class="logo">APEX<span>_CORE</span></div>
-        <div class="status-container">
+        <div class="logo">AFRICA<span>_HACKS</span></div>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:9px; font-weight:bold; color:var(--glow-red)">SERVER_ONLINE</span>
             <div class="status-dot"></div>
-            <div class="status-text">LIVE_SYNC</div>
         </div>
     </header>
 
     <div class="viewport">
-        <svg class="graph-svg" viewBox="0 0 400 300">
-            <path class="vector-path" d="M0,300 Q100,280 200,150 T400,20" />
-        </svg>
         <div class="multiplier-text">
-            <div class="target-label" id="status-msg">INTERCEPTING SEED...</div>
+            <div style="color:var(--glow-red); font-size:10px; letter-spacing:2px; font-family:monospace;">PREDICTED_CRASH</div>
             <h1 id="count">1.00x</h1>
-            <div class="target-label" style="opacity:0.4">ENCRYPTED_FEED_V5</div>
+            <div id="status-msg" style="font-size:9px; color:var(--text-dim); margin-top:5px;">BYPASSING REGIONAL FIREWALL...</div>
         </div>
     </div>
 
-    <div class="mobile-grid">
-        <div class="stat-box">
-            <span class="label">Accuracy</span>
-            <span class="val">99.8%</span>
+    <div class="platform-ticker">
+        <div style="font-size:9px; color:var(--text-dim); margin-bottom:5px;">COMPATIBLE PLATFORMS:</div>
+        <div class="platform-list">
+            SPORTYBET • BETWAY • MSPORT • 1XBET • BET9JA • MOZART • 22BET
         </div>
-        <div class="stat-box">
-            <span class="label">Latency</span>
-            <span class="val">2.1ms</span>
-        </div>
+    </div>
+
+    <div class="action-grid">
+        <a href="preview.html" class="btn btn-preview">VIDEO PREVIEW (LIVE PROOF)</a>
+        <a href="https://wa.me/YOUR_NUMBER" class="btn btn-whatsapp">WHATSAPP</a>
+        <a href="https://t.me/YOUR_TELEGRAM" class="btn btn-telegram">TELEGRAM</a>
+    </div>
+
+    <div class="pricing-section">
+        <h3 style="font-size:12px; letter-spacing:2px; color:var(--text-dim); text-align:center; margin-bottom:20px;">LICENSE PROCUREMENT</h3>
+        
+        <div class="price-row"><span class="duration">24 HOURS</span> <span class="amount">$30</span></div>
+        <div class="price-row"><span class="duration">72 HOURS</span> <span class="amount">$65</span></div>
+        <div class="price-row"><span class="duration">1 WEEK</span> <span class="amount">$200</span></div>
+        <div class="price-row"><span class="duration">1 MONTH</span> <span class="amount">$600</span></div>
+        <div class="price-row featured"><span class="duration" style="color:var(--glow-red)">LIFETIME ACCESS</span> <span class="amount">$2,500</span></div>
     </div>
 
     <div class="terminal" id="log-box">
-        <div class="log-line">> [SYS] Handshake established.</div>
-        <div class="log-line">> [SYS] Listening for server entropy...</div>
-    </div>
-
-    <div class="section-title">Institutional Core</div>
-    
-    <div class="feature-card">
-        <h3>SHA-256 Decryption</h3>
-        <p>Advanced packet sniffing protocols allow for real-time seed identification before execution cycle begins.</p>
-    </div>
-
-    <div class="feature-card">
-        <h3>Low-Latency Bridge</h3>
-        <p>Direct fiber-optic relay ensures your terminal sees the result 4ms faster than the retail browser.</p>
-    </div>
-
-    <div class="pricing-card">
-        <div class="target-label">LIMITED LICENSE</div>
-        <div class="price">$2,500 <span>/ LIFETIME</span></div>
-        <p style="font-size:12px; color:var(--text-dim);">Full API Access + Instant Signal Bot</p>
-        <a href="https://t.me/your_telegram" class="cta-btn">PURCHASE ACCESS</a>
+        <div style="color:var(--glow-red)">> [SYS] Africa_Node_7 connected.</div>
+        <div>> [SYS] Intercepting SHA-256 hash...</div>
     </div>
 
     <footer>
-        &copy; 2026 APEX QUANTUM INFRASTRUCTURE<br>
-        STRICTLY FOR RESEARCH PURPOSES // NO REFUNDS<br>
-        ALL SYSTEMS ENCRYPTED VIA AES-256
+        &copy; 2026 AFRICA HACKS GROUP<br>
+        SUPPORTED REGIONS: NIGERIA, GHANA, KENYA, SOUTH AFRICA, UGANDA<br>
+        100% SECURE • AES-256 ENCRYPTION
     </footer>
 
     <script>
         let count = 1.00;
-        let target = (Math.random() * 5 + 1.5).toFixed(2);
+        let target = (Math.random() * 6 + 1.2).toFixed(2);
         const countDisplay = document.getElementById('count');
         const statusMsg = document.getElementById('status-msg');
         const logBox = document.getElementById('log-box');
 
-        // Multiplier Animation
+        // Multiplier Animation Loop
         setInterval(() => {
             if (count < target) {
-                count += 0.012;
+                count += 0.015;
                 countDisplay.innerText = count.toFixed(2) + 'x';
             } else {
-                statusMsg.innerText = "CRASH_IDENTIFIED: " + target + "x";
+                statusMsg.innerText = "RESULT FOUND: " + target + "x";
                 statusMsg.style.color = "white";
                 setTimeout(() => {
                     count = 1.00;
-                    target = (Math.random() * 5 + 1.5).toFixed(2);
-                    statusMsg.innerText = "INTERCEPTING SEED...";
-                    statusMsg.style.color = "#ff0033";
+                    target = (Math.random() * 6 + 1.2).toFixed(2);
+                    statusMsg.innerText = "BYPASSING REGIONAL FIREWALL...";
+                    statusMsg.style.color = "#888";
                 }, 2000);
             }
         }, 60);
 
-        // Terminal Log Animation
-        const logs = [
-            "> Packet_Intercept: 0xA4F",
-            "> Hash_Sequence: VALIDATED",
-            "> Server_Relay: ACTIVE",
-            "> Bypassing_Anti_Cheat..."
-        ];
-
+        // Fake Terminal Logs
+        const logs = ["> Port_Scan: 8080 SUCCESS", "> Extracting_Seed...", "> Relay_Latency: 2ms", "> Connection_Stealth: ON"];
         setInterval(() => {
             const div = document.createElement('div');
-            div.className = "log-line";
-            div.style.color = "var(--glow-red)";
             div.innerText = logs[Math.floor(Math.random() * logs.length)];
             logBox.prepend(div);
             if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
         }, 3000);
     </script>
+
 </body>
 </html>
