@@ -97,43 +97,57 @@
         }
 
         .btn {
-            padding: 15px;
+            padding: 16px;
             border-radius: 8px;
             text-align: center;
             font-weight: 800;
             font-size: 13px;
             color: white;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s ease;
         }
 
-        .btn-preview { background: #222; border: 1px solid #444; grid-column: span 2; }
-        .btn-whatsapp { background: var(--whatsapp); box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2); }
-        .btn-telegram { background: var(--telegram); box-shadow: 0 5px 15px rgba(0, 136, 204, 0.2); }
-
-        /* --- Pricing Table --- */
-        .pricing-section { padding: 30px 15px; }
-        .price-row {
-            background: var(--panel-bg);
-            border: 1px solid #222;
-            margin-bottom: 8px;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .price-row.featured { border-color: var(--glow-red); box-shadow: 0 0 15px rgba(255, 0, 51, 0.1); }
-        .duration { font-weight: 700; font-size: 14px; }
-        .amount { color: var(--glow-red); font-weight: 900; font-size: 18px; }
-
-        /* --- Terminal Log --- */
-        .terminal {
-            background: #000; height: 100px; border: 1px solid #222;
-            margin: 15px; padding: 12px; font-family: monospace; font-size: 10px;
-            color: #444; border-radius: 8px; overflow: hidden;
+        /* Top Row Full Width */
+        .btn-preview { 
+            background: #111; 
+            border: 1px solid #333; 
+            grid-column: span 2; 
+            color: #888;
         }
 
-        footer { padding: 40px 20px; text-align: center; font-size: 10px; color: #444; }
+        /* Middle Row Split */
+        .btn-whatsapp { 
+            background: var(--whatsapp); 
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); 
+        }
+        
+        .btn-telegram { 
+            background: var(--telegram); 
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); 
+        }
+
+        /* Bottom Row Full Width - THE PLAY BUTTON */
+        .btn-play {
+            grid-column: span 2;
+            background: var(--glow-red);
+            margin-top: 5px;
+            font-size: 16px;
+            letter-spacing: 3px;
+            border: none;
+            box-shadow: 0 0 25px rgba(255, 0, 51, 0.5);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body>
@@ -217,8 +231,9 @@
         <a href="preview.html" class="btn btn-preview">VIDEO PREVIEW (LIVE PROOF)</a>
         <a href="https://wa.me/YOUR_NUMBER" class="btn btn-whatsapp">WHATSAPP</a>
         <a href="https://t.me/YOUR_TELEGRAM" class="btn btn-telegram">TELEGRAM</a>
+        <a href="https://your-game-link.com" class="btn btn-play">PLAY NOW</a>
     </div>
-
+    
     <div class="pricing-section">
         <h3 style="font-size:12px; letter-spacing:2px; color:var(--text-dim); text-align:center; margin-bottom:20px;">LICENSE PROCUREMENT</h3>
         
