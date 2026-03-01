@@ -68,8 +68,14 @@
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; align-items: center;
         }
         .logo-wall img {
-            width: 100%; filter: grayscale(1) brightness(2); opacity: 0.5; transition: 0.4s;
-        }
+            width: 100%; 
+            max-width: 110px; /* This stops them from getting huge */
+            height: auto;
+            margin: 0 auto;   /* This keeps them perfectly centered */
+            display: block;
+            filter: grayscale(1) brightness(2); 
+            opacity: 0.5; 
+            transition: 0.4s;}
         .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
 
         /* --- Action Buttons --- */
