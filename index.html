@@ -65,17 +65,22 @@
         .platform-section { padding: 25px 15px; background: #000; border-top: 1px solid #1a1a1a; }
         .section-tag { font-size: 8px; color: var(--glow-red); letter-spacing: 3px; text-align: center; margin-bottom: 15px; font-weight: 900; }
         .logo-wall {
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; align-items: center;
-        }
-        .logo-wall img {
-            width: 100%; 
-            max-width: 110px; /* This stops them from getting huge */
-            height: auto;
-            margin: 0 auto;   /* This keeps them perfectly centered */
-            display: block;
-            filter: grayscale(1) brightness(2); 
-            opacity: 0.5; 
-            transition: 0.4s;}
+        display: grid; 
+        grid-template-columns: repeat(3, 1fr); /* Exactly 3 per row */
+        gap: 25px; /* Added more space between them */
+        align-items: center;
+        max-width: 500px; /* Limits the total width of the grid */
+        margin: 0 auto;   /* Centers the whole grid on the page */}
+
+    .logo-wall img {
+        width: 100%; 
+        max-width: 90px; /* Smaller size so they don't look bulky */
+        height: auto;
+        margin: 0 auto;
+        display: block;
+        filter: grayscale(1) brightness(2); 
+        opacity: 0.5; 
+        transition: 0.4s;}
         .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
 
         /* --- Action Buttons --- */
