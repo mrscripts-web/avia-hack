@@ -221,5 +221,25 @@
             if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
         }, 3000);
     </script>
+    <script>
+    const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
+    const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
+    
+    function showToast() {
+        const toast = document.createElement('div');
+        toast.style = "position:fixed;bottom:20px;left:20px;background:#111;color:white;padding:15px;border-left:4px solid #00ff00;border-radius:4px;font-family:monospace;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-size:12px;transition:0.5s;opacity:0;";
+        
+        const name = names[Math.floor(Math.random()*names.length)];
+        const amount = amounts[Math.floor(Math.random()*amounts.length)];
+        
+        toast.innerHTML = `<b style="color:#00ff00;">LIVE PAYOUT:</b><br>${name} just withdrew ₦${amount} via Neural Bypass`;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 500); }, 5000);
+    }
+    
+    setInterval(showToast, 15000); // Shows every 15 seconds
+</script>
 </body>
 </html>
