@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        :root {
+            --glow-red: #ff0033;
+            --bg: #050505;
+            --panel: #111111;
+        }
+
+        body { 
+            margin: 0; 
+            background: var(--bg); 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            color: white; 
+            overflow-x: hidden;
+        }
+
+        .mobile-container {
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            gap: 15px;
+        }
+
+        /* 1. Mobile Hero Viewport */
+        .viewport {
+            background: var(--panel);
+            border: 1px solid #222;
+            border-radius: 12px;
+            height: 320px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 50px rgba(255, 0, 51, 0.05);
+        }
+
+        .multiplier-text {
+            z-index: 10;
+            text-align: center;
+        }
+
+        .multiplier-text h1 {
+            font-size: 18vw; /* Responsive sizing */
+            margin: 0;
+            font-weight: 200;
+            color: #fff;
+            text-shadow: 0 0 25px var(--glow-red);
+        }
+
+        .status-tag {
+            color: var(--glow-red);
+            font-family: monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 2. Responsive Vector Graph */
+        .graph-svg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .vector-path {
+            fill: none;
+            stroke: var(--glow-red);
+            stroke-width: 4;
+            filter: drop-shadow(0 0 8px var(--glow-red));
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 4s infinite linear;
+        }
+
+        @keyframes draw {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        /* 3. Mobile Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-box {
+            background: var(--panel);
+            border: 1px solid #222;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .label { color: #666; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+        .val { font-size: 16px; margin-top: 4px; font-weight: bold; color: var(--glow-red); }
+
+        /* 4. Terminal Log (Mobile Compact) */
+        .terminal {
+            background: #000;
+            height: 100px;
+            border: 1px solid #222;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 10px;
+            color: #444;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .log-line { margin-bottom: 4px; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+
+        /* 5. Sticky Mobile CTA */
+        .cta-fixed {
+            position: sticky;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 15px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .cta-btn {
+            background: var(--glow-red);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            display: block;
+            font-size: 16px;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(255, 0, 51, 0.4);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <div class="viewport">
+            <svg class="graph-svg" viewBox="0 0 400 300">
+                <path class="vector-path" d="M0,300 Q100,280 200,150 T400,20" />
+            </svg>
+            
+            <div class="multiplier-text">
+                <div class="status-tag" id="status-msg">SYNCING SEED...</div>
+                <h1 id="count">1.00x</h1>
+                <div class="status-tag" style="opacity: 0.5;">LIVE_DATA_FEED</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="label">Accuracy</div>
+                <div class="val">99.4%</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Latency</div>
+                <div class="val">4.2ms</div>
+            </div>
+        </div>
+
+        <div class="terminal" id="log-container">
+            <div class="log-line">> [SYS] Protocol initialized...</div>
+            <div class="log-line">> [SYS] Awaiting next flight path...</div>
+        </div>
+
+        <div class="cta-fixed">
+            <a href="https://t.me/YOUR_CHANNEL" class="cta-btn">ACTIVATE PREDICTOR</a>
+        </div>
+        
+        <div style="height: 40px;"></div> </div>
+
+    <script>
+        let count = 1.00;
+        let target = (Math.random() * 4 + 1.5).toFixed(2);
+        const countDisplay = document.getElementById('count');
+        const statusMsg = document.getElementById('status-msg');
+        const logBox = document.getElementById('log-container');
+
+        // Multiplier Loop
+        setInterval(() => {
+            if (count < target) {
+                count += 0.015;
+                countDisplay.innerText = count.toFixed(2) + 'x';
+            } else {
+                statusMsg.innerText = "CRASH_DETECTED: " + target + "x";
+                statusMsg.style.color = "white";
+                setTimeout(() => {
+                    count = 1.00;
+                    target = (Math.random() * 4 + 1.5).toFixed(2);
+                    statusMsg.innerText = "SYNCING SEED...";
+                    statusMsg.style.color = "#ff0033";
+                }, 2000);
+            }
+        }, 60);
+
+        // Terminal Updates
+        const lines = [
+            "> Packet_Intercept: 0x7F2",
+            "> Hash_Sequence: VALID",
+            "> Server_Relay: ACTIVE",
+            "> Bypassing_Auth_Node..."
+        ];
+
+        setInterval(() => {
+            const div = document.createElement('div');
+            div.className = "log-line";
+            div.style.color = "var(--glow-red)";
+            div.innerText = lines[Math.floor(Math.random() * lines.length)];
+            logBox.prepend(div);
+            if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
+        }, 2500);
+    </script>
+</body>
+</html>
