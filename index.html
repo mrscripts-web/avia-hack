@@ -217,62 +217,69 @@
         <a href="preview.html" class="btn btn-preview">VIDEO PREVIEW (LIVE PROOF)</a>
         <a href="https://wa.me/YOUR_NUMBER" class="btn btn-whatsapp">WHATSAPP</a>
         <a href="https://t.me/YOUR_TELEGRAM" class="btn btn-telegram">TELEGRAM</a>
-    </div>
-
-    <div class="pricing-section">
-        <h3 style="font-size:12px; letter-spacing:2px; color:var(--text-dim); text-align:center; margin-bottom:20px;">LICENSE PROCUREMENT</h3>
         
-        <div class="price-row"><span class="duration">24 HOURS</span> <span class="amount">$30</span></div>
-        <div class="price-row"><span class="duration">72 HOURS</span> <span class="amount">$65</span></div>
-        <div class="price-row"><span class="duration">1 WEEK</span> <span class="amount">$200</span></div>
-        <div class="price-row"><span class="duration">1 MONTH</span> <span class="amount">$600</span></div>
-        <div class="price-row featured"><span class="duration" style="color:var(--glow-red)">LIFETIME ACCESS</span> <span class="amount">$2,500</span></div>
+        <a href="https://your-game-link.com" class="btn btn-play">PLAY NOW</a>
     </div>
 
-    <div class="terminal" id="log-box">
-        <div style="color:var(--glow-red)">> [SYS] Africa_Node_7 connected.</div>
-        <div>> [SYS] Intercepting SHA-256 hash...</div>
-    </div>
+    <style>
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0 15px;
+            margin-top: 15px;
+        }
 
-    <footer>
-        &copy; 2026 AFRICA HACKS GROUP<br>
-        SUPPORTED REGIONS: NIGERIA, GHANA, KENYA, SOUTH AFRICA, UGANDA<br>
-        100% SECURE • AES-256 ENCRYPTION
-    </footer>
+        .btn {
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 13px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s ease;
+        }
 
-    <script>
-        let count = 1.00;
-        let target = (Math.random() * 6 + 1.2).toFixed(2);
-        const countDisplay = document.getElementById('count');
-        const statusMsg = document.getElementById('status-msg');
-        const logBox = document.getElementById('log-box');
+        /* Top Row Full Width */
+        .btn-preview { 
+            background: #111; 
+            border: 1px solid #333; 
+            grid-column: span 2; 
+            color: #888;
+        }
 
-        // Multiplier Animation Loop
-        setInterval(() => {
-            if (count < target) {
-                count += 0.015;
-                countDisplay.innerText = count.toFixed(2) + 'x';
-            } else {
-                statusMsg.innerText = "RESULT FOUND: " + target + "x";
-                statusMsg.style.color = "white";
-                setTimeout(() => {
-                    count = 1.00;
-                    target = (Math.random() * 6 + 1.2).toFixed(2);
-                    statusMsg.innerText = "BYPASSING REGIONAL FIREWALL...";
-                    statusMsg.style.color = "#888";
-                }, 2000);
-            }
-        }, 60);
+        /* Middle Row Split */
+        .btn-whatsapp { 
+            background: var(--whatsapp); 
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); 
+        }
+        
+        .btn-telegram { 
+            background: var(--telegram); 
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); 
+        }
 
-        // Fake Terminal Logs
-        const logs = ["> Port_Scan: 8080 SUCCESS", "> Extracting_Seed...", "> Relay_Latency: 2ms", "> Connection_Stealth: ON"];
-        setInterval(() => {
-            const div = document.createElement('div');
-            div.innerText = logs[Math.floor(Math.random() * logs.length)];
-            logBox.prepend(div);
-            if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
-        }, 3000);
-    </script>
+        /* Bottom Row Full Width - THE PLAY BUTTON */
+        .btn-play {
+            grid-column: span 2;
+            background: var(--glow-red);
+            margin-top: 5px;
+            font-size: 16px;
+            letter-spacing: 3px;
+            border: none;
+            box-shadow: 0 0 25px rgba(255, 0, 51, 0.5);
+            animation: pulse-red 2s infinite;
+        }
 
-</body>
-</html>
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+    </style>
