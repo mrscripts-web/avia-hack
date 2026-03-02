@@ -158,18 +158,22 @@
         }
 
         /* --- Predictor Viewport --- */
-        .viewport {
-            background: var(--panel-bg);
+                .viewport {
+            background-color: var(--panel-bg);
+            /* ADD THESE THREE LINES: */
+            background-image: 
+                linear-gradient(rgba(255, 0, 51, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 51, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
+            
             border: 1px solid #222;
             border-radius: 12px;
             height: 300px;
             margin: 20px 15px;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8); /* Adds a nice dark shadow around the inside edges */
         }
 
         /* Plane Visuals */
@@ -435,6 +439,17 @@
             border-radius: 8px;
             overflow: hidden;
         }
+                @keyframes border-pulse {
+            0% { border-color: #222; }
+            50% { border-color: rgba(255, 0, 51, 0.5); }
+            100% { border-color: #222; }
+        }
+        
+        /* Apply the pulse to the rows */
+        .price-row {
+            animation: border-pulse 3s infinite;
+        }
+
 
         footer {
             padding: 40px 20px;
@@ -612,14 +627,35 @@
         syncGlobalGame();
 
 
-        const logs = ["> Port_Scan: SUCCESS", "> Extracting_Seed...", "> Bypassing_Auth...", "> Packet_Relay: ACTIVE"];
+                // --- DYNAMIC HACKER TERMINAL ---
+        const platformsList = ['1WIN', '1XBET', 'SPORTYBET', 'BET9JA', 'MSPORT', 'BETWAY'];
+        
         setInterval(() => {
             const logBox = document.getElementById('log-box');
+            const plat = platformsList[Math.floor(Math.random() * platformsList.length)];
+            const hex = Math.random().toString(16).substring(2, 8).toUpperCase();
+            const ping = Math.floor(Math.random() * 40) + 12; // Random ping between 12-52ms
+            
+            const logs = [
+                `> [SYS] Injecting payload into ${plat}_NODE...`,
+                `> [SEC] Hash Decrypted: 0x${hex}...`,
+                `> [NET] Bypassing SSL on ${plat} main server...`,
+                `> [SYNC] Connection Secured. Latency: ${ping}ms`,
+                `> [CRASH] Extracting seed from API...`
+            ];
+            
             const div = document.createElement('div');
-            div.innerText = logs[Math.floor(Math.random() * logs.length)];
+            // Give specific colors to keywords for realism
+            let logText = logs[Math.floor(Math.random() * logs.length)];
+            if(logText.includes('[SEC]')) div.style.color = "var(--glow-red)";
+            if(logText.includes('[SYNC]')) div.style.color = "var(--whatsapp)"; // Green
+            
+            div.innerText = logText;
             logBox.prepend(div);
-            if (logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
-        }, 3000);
+            
+            if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
+        }, 2500);
+
     </script>
 </body>
 
