@@ -109,7 +109,6 @@
             50% { transform: translateY(-15px) rotate(-2deg); }
         }
 
-        /* Explosion Visuals */
         .explosion {
             position: absolute;
             width: 120px;
@@ -126,7 +125,6 @@
             0% { transform: scale(0); opacity: 1; }
             100% { transform: scale(2.5); opacity: 0; }
         }
-
         .disclaimer-text {
             position: absolute;
             bottom: 12px;
@@ -140,6 +138,7 @@
             pointer-events: none;
         }
 
+
         .multiplier-text { z-index: 10; text-align: center; }
         .multiplier-text h1 { font-size: 70px; margin: 0; font-weight: 200; text-shadow: 0 0 30px var(--glow-red); }
         .target-label { color: var(--glow-red); font-family: monospace; font-size: 10px; letter-spacing: 2px; }
@@ -149,7 +148,9 @@
         .section-tag { font-size: 8px; color: var(--glow-red); letter-spacing: 3px; text-align: center; margin-bottom: 15px; font-weight: 900; }
         .logo-wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; align-items: center; max-width: 500px; margin: 0 auto; }
         .logo-wall img { width: 100%; max-width: 90px; height: auto; margin: 0 auto; display: block; filter: grayscale(1) brightness(2); opacity: 0.5; transition: 0.4s; }
-        .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
+        
+        /* New (and more) text style */
+        .and-more { text-align: center; font-size: 10px; color: var(--text-dim); margin-top: 15px; letter-spacing: 1px; font-weight: bold; }
 
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; margin-top: 15px; }
         .btn { padding: 16px; border-radius: 8px; text-align: center; font-weight: 800; font-size: 13px; color: white; text-transform: uppercase; }
@@ -164,18 +165,9 @@
         .duration { font-weight: 700; font-size: 14px; }
         .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
 
-        /* FIXED PAYMENT ICON SIZES */
         .payment-methods { padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.02); margin: 0 15px; border-radius: 8px; font-size: 10px; color: #666; font-weight: bold; }
         .pay-icons { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 12px; }
-        .pay-icons img { 
-            height: 20px !important; /* Force small size */
-            width: auto !important;
-            display: inline-block;
-            filter: grayscale(1) brightness(1.5);
-            opacity: 0.6;
-            transition: 0.4s;
-        }
-        .pay-icons img:hover { filter: none; opacity: 1; transform: scale(1.2); }
+        .pay-icons img { height: 20px !important; width: auto !important; filter: grayscale(1) brightness(1.5); opacity: 0.6; }
 
         .terminal { background: #000; height: 100px; border: 1px solid #222; margin: 20px 15px; padding: 12px; font-family: monospace; font-size: 10px; color: #444; border-radius: 8px; overflow: hidden; }
         footer { padding: 40px 20px; text-align: center; font-size: 9px; color: #333; line-height: 2; }
@@ -228,6 +220,7 @@
             <img src="logos/goobet.png" alt="goobet">
             <img src="logos/betika.png" alt="betika">
         </div>
+        <div class="and-more">(and more)</div>
     </div>
 
     <div class="action-grid">
@@ -253,7 +246,6 @@
             <img src="logos/usdt.png" alt="USDT">
             <img src="logos/tron-trx-logo.png" alt="TRX">
             <img src="logos/binance-coin-bnb-logo.png" alt="BNB">
-            <img src="https://www.vectorlogo.zone/logos/paypal/paypal-icon.svg" alt="PayPal">
         </div>
     </div>
 
@@ -268,52 +260,82 @@
     </footer>
 
     <script>
+        // Entrance Logic
         window.addEventListener('load', () => document.body.classList.add('loaded'));
-        window.addEventListener('pageshow', (event) => {
-            const loader = document.getElementById('transition-layer');
-            if (loader) loader.classList.remove('active');
-            document.body.classList.add('loaded');
-        });
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                const destination = this.href;
-                if (destination.includes(window.location.hostname) || destination.includes('.html')) {
-                    if (!destination.includes('wa.me') && !destination.includes('t.me')) {
-                        e.preventDefault();
-                        document.getElementById('transition-layer').classList.add('active');
-                        setTimeout(() => window.location.href = destination, 1200);
-                    }
-                }
-            });
-        });
 
-        let count = 1.00;
-        let target = (Math.random() * 5 + 1.5).toFixed(2);
+        // SYNCED MULTIPLIER LOGIC
+        // Every 12 seconds, the multiplier restarts for everyone globally
+        function getSyncData() {
+            const now = Date.now();
+            const cycleMs = 12000; // 12-second round cycle
+            const cycleIndex = Math.floor(now / cycleMs);
+            const timeInCycle = now % cycleMs;
+
+            // Deterministic Random Seed based on current 12s block
+            const seed = (cycleIndex * 1337) % 10000;
+            const target = (1.1 + (seed / 2000)).toFixed(2); // Generates same target for everyone
+
+            return { target, timeInCycle, cycleMs };
+        }
+
         const countDisplay = document.getElementById('count');
         const statusMsg = document.getElementById('status-msg');
         const plane = document.getElementById('plane-vis');
         const explosion = document.getElementById('explosion-vis');
 
         setInterval(() => {
-            if (count < target) {
-                count += 0.015;
-                countDisplay.innerText = count.toFixed(2) + 'x';
+            const { target, timeInCycle } = getSyncData();
+            const countUpDuration = 8000; // 8 seconds to reach target
+            
+            if (timeInCycle < countUpDuration) {
+                // Counting Phase
+                let progress = timeInCycle / countUpDuration;
+                let currentVal = (1.00 + (target - 1.00) * progress).toFixed(2);
+                
+                countDisplay.innerText = currentVal + 'x';
+                statusMsg.innerText = "REAL_TIME_ENCRYPTION_SYNC";
+                statusMsg.style.color = "#888";
                 plane.style.opacity = "1";
                 explosion.classList.remove('active');
             } else {
+                // Crash Phase (last 4 seconds of cycle)
+                countDisplay.innerText = target + 'x';
                 statusMsg.innerText = "CRASH_IDENTIFIED: " + target + "x";
                 statusMsg.style.color = "white";
                 plane.style.opacity = "0";
                 explosion.classList.add('active');
-                setTimeout(() => {
-                    count = 1.00;
-                    target = (Math.random() * 5 + 1.5).toFixed(2);
-                    statusMsg.innerText = "BYPASSING_AFRICA_NODES...";
-                    statusMsg.style.color = "#888";
-                }, 2000);
             }
-        }, 60);
+        }, 50);
 
+        // SYNCED PAYOUT TOASTS
+        const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
+        const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
+        
+        function showSyncedToast() {
+            const now = Math.floor(Date.now() / 15000); // New toast every 15s
+            const nameIdx = (now * 3) % names.length;
+            const amntIdx = (now * 7) % amounts.length;
+
+            const toast = document.createElement('div');
+            toast.style = "position:fixed;bottom:20px;left:20px;background:#111;color:white;padding:15px;border-left:4px solid #00ff00;border-radius:4px;font-family:monospace;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-size:12px;transition:0.5s;opacity:0;";
+            toast.innerHTML = `<b style="color:#00ff00;">LIVE PAYOUT:</b><br>${names[nameIdx]} just withdrew ₦${amounts[amntIdx]} via Neural Bypass`;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = "1"; }, 100);
+            setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 500); }, 6000);
+        }
+
+        // Check for toast trigger every second
+        let lastToastTime = 0;
+        setInterval(() => {
+            const currentPeriod = Math.floor(Date.now() / 15000);
+            if (currentPeriod !== lastToastTime) {
+                lastToastTime = currentPeriod;
+                showSyncedToast();
+            }
+        }, 1000);
+
+        // Terminal Logs
         const logs = ["> Port_Scan: SUCCESS", "> Extracting_Seed...", "> Bypassing_Auth...", "> Packet_Relay: ACTIVE"];
         setInterval(() => {
             const logBox = document.getElementById('log-box');
@@ -322,20 +344,6 @@
             logBox.prepend(div);
             if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
         }, 3000);
-
-        const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
-        const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
-        function showToast() {
-            const toast = document.createElement('div');
-            toast.style = "position:fixed;bottom:20px;left:20px;background:#111;color:white;padding:15px;border-left:4px solid #00ff00;border-radius:4px;font-family:monospace;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-size:12px;transition:0.5s;opacity:0;";
-            const name = names[Math.floor(Math.random()*names.length)];
-            const amount = amounts[Math.floor(Math.random()*amounts.length)];
-            toast.innerHTML = `<b style="color:#00ff00;">LIVE PAYOUT:</b><br>${name} just withdrew ₦${amount} via Neural Bypass`;
-            document.body.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = "1"; }, 100);
-            setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 500); }, 5000);
-        }
-        setInterval(showToast, 15000);
     </script>
 </body>
 </html>
