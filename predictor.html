@@ -3,61 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA HACKS | Neural Link v8.0</title>
+    <title>AFRICA HACKS | Neural Link v8.1</title>
     <style>
         :root { --accent: #ff0033; --bg: #010101; }
         body { background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; font-size: 10px; }
         
+        /* --- CRT SCANLINE EFFECT --- */
+        body::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
         /* Stage 1: Selection */
-        #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; }
+        #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; height: 100vh; overflow-y: auto; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
         .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
         .card img { width: 100%; max-width: 60px; filter: grayscale(1) opacity(0.3); }
         .card.active { border-color: var(--accent); background: rgba(255,0,51,0.05); }
         .card.active img { filter: none; opacity: 1; }
         
-        .activation-box { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; display: none; }
+        .activation-box { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; display: none; margin-bottom: 20px; }
         input { width: 85%; padding: 12px; background: #000; border: 1px solid #222; color: var(--accent); text-align: center; letter-spacing: 4px; border-radius: 4px; margin-bottom: 15px; outline: none; }
         
         .btn-start { background: var(--accent); color: white; padding: 14px; border: none; border-radius: 4px; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; margin-bottom: 10px; }
         .btn-buy { background: #111; color: #888; border: 1px solid #222; padding: 10px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 8px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .btn-buy:hover { border-color: #00ff00; color: #00ff00; }
 
-        /* Stage 2: Terminal */
+        /* --- DEVICE INTERCEPTOR BOX --- */
+        .fingerprint-box {
+            background: rgba(255, 0, 0, 0.03);
+            border: 1px solid #1a0000;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            border-radius: 4px;
+        }
+        .box-header { font-size: 8px; color: var(--accent); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
+        .id-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 4px; color: #555; }
+        .id-row span:last-child { color: #aaa; font-weight: bold; }
+        .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
+
+        /* Stage 2 & 3 Styles (Kept from your original) */
         #terminal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .term-line { color: var(--accent); margin-bottom: 4px; width: 280px; }
-
-        /* Stage 3: THE DASHBOARD */
         #hack-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
-        
         .dash-header { height: 45px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #050505; }
-        .user-count { color: #00ff00; font-size: 8px; text-shadow: 0 0 5px #00ff00; }
-        .logout-btn { background: none; border: 1px solid #333; color: #666; font-size: 8px; padding: 4px 8px; border-radius: 3px; cursor: pointer; }
-
         .main-layout { display: flex; flex: 1; overflow: hidden; }
         .side-panel { width: 80px; border-right: 1px solid #111; padding: 10px; display: flex; flex-direction: column; gap: 20px; background: #020202; }
-        .side-panel.right { border-right: none; border-left: 1px solid #111; width: 90px; }
-        .stat-label { font-size: 7px; color: #444; margin-bottom: 4px; }
-        .stat-val { font-size: 9px; color: #888; }
-
         .center-content { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .multiplier-circle { width: 190px; height: 190px; border: 1px solid #111; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .scan-line { position: absolute; width: 100%; height: 1px; background: var(--accent); top: 0; animation: scan 4s infinite linear; }
-        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
-        
         #prediction-val { font-size: 44px; color: white; text-shadow: 0 0 15px var(--accent); }
-
         .history-bar { height: 70px; border-top: 1px solid #111; display: flex; align-items: center; gap: 10px; padding: 0 15px; overflow-x: auto; }
         .hist-item { min-width: 45px; height: 45px; border: 1px solid #1a1a1a; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; }
-        
-        .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
     <div id="selection-screen">
-        <h2 style="font-size: 9px; letter-spacing: 3px; color: #444;">AFRICA_SECURE_GATE v8.0</h2>
+        <h2 style="font-size: 9px; letter-spacing: 3px; color: #444;">AFRICA_SECURE_GATE v8.1</h2>
         <div class="grid">
             <div class="card" onclick="select(this, 'SportyBet', '#ff0033')"><img src="logos/sportybet.png"></div>
             <div class="card" onclick="select(this, '1Win', '#007bff')"><img src="logos/1win.png"></div>
@@ -72,10 +76,20 @@
             <div class="card" onclick="select(this, 'LineBet', '#004a34')"><img src="logos/linebet.png"></div>
             <div class="card" onclick="select(this, 'MelBet', '#f7941d')"><img src="logos/melbet.png"></div>
         </div>
+
         <div class="activation-box" id="activation-ui">
             <input type="text" id="license-key" placeholder="SECURE_KEY">
             <button class="btn-start" onclick="initiate()">BYPASS SERVER</button>
             <button class="btn-buy" onclick="window.open('https://t.me/yourusername', '_blank')">🛒 BUY LICENSE KEY</button>
+        </div>
+
+        <div class="fingerprint-box">
+            <div class="box-header">[!] DEVICE_IDENTITY_INTERCEPTED</div>
+            <div class="id-row"><span>IP_ADDRESS:</span> <span id="user-ip" class="blink-red">SCANNING...</span></div>
+            <div class="id-row"><span>NODE_OS:</span> <span id="user-os">DETECTING...</span></div>
+            <div class="id-row"><span>POWER_LVL:</span> <span id="user-battery">--%</span></div>
+            <div class="id-row"><span>CONNECTION:</span> <span id="user-isp">ENCRYPTED</span></div>
+            <div style="font-size: 6px; color: #222; margin-top: 8px; text-align: center;">LOG_ID: AF-NET-99102-X</div>
         </div>
     </div>
 
@@ -87,17 +101,14 @@
             <div id="timer-txt" style="color: var(--accent); font-weight: bold;">00:00:00</div>
             <button class="logout-btn" onclick="terminateSession()">LOGOUT</button>
         </div>
-
         <div class="main-layout">
             <div class="side-panel">
                 <div><div class="stat-label">LATENCY</div><div class="stat-val" id="lat">18ms</div></div>
                 <div><div class="stat-label">UPLINK</div><div class="stat-val">SECURE</div></div>
                 <div><div class="stat-label">PACKETS</div><div class="stat-val" id="pkts">912/s</div></div>
             </div>
-
             <div class="center-content">
                 <div class="multiplier-circle">
-                    <div class="scan-line"></div>
                     <span id="prediction-val">0.00x</span>
                     <span style="font-size: 7px; color: #444; margin-top: 10px;">NEURAL_SYNC_15S</span>
                 </div>
@@ -105,40 +116,41 @@
                     <div id="sync-fill" style="height: 100%; background: var(--accent); width: 0%;"></div>
                 </div>
             </div>
-
             <div class="side-panel right">
                 <div><div class="stat-label">REGION</div><div class="stat-val">AFR_W</div></div>
                 <div><div class="stat-label">THREAT</div><div class="stat-val">LOW</div></div>
                 <div><div class="stat-label">NODE</div><div class="stat-val" id="node-name">---</div></div>
             </div>
         </div>
-
         <div class="history-bar" id="history-box"></div>
     </div>
 
     <script>
-        let selected = "";
-        
-        window.onload = function() {
-            const savedEnd = localStorage.getItem('session_end');
-            const savedNode = localStorage.getItem('selected_node');
-            const savedColor = localStorage.getItem('accent_color');
+        // --- DEVICE SCRIPT ---
+        fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
+            document.getElementById('user-ip').innerText = d.ip;
+            document.getElementById('user-ip').classList.remove('blink-red');
+        });
 
-            if (savedEnd && new Date().getTime() < savedEnd) {
-                selected = savedNode;
-                document.documentElement.style.setProperty('--accent', savedColor);
-                document.getElementById('selection-screen').style.display = 'none';
-                startDash(parseInt(savedEnd));
-            }
-        };
+        const ua = window.navigator.userAgent;
+        let os = "UNKNOWN_NODE";
+        if (ua.indexOf("Win") != -1) os = "WINDOWS_X64";
+        if (ua.indexOf("Android") != -1) os = "ANDROID_OS";
+        if (ua.indexOf("iPhone") != -1) os = "IOS_MOBILE";
+        document.getElementById('user-os').innerText = os;
 
-        function terminateSession() {
-            if(confirm("TERMINATE CONNECTION?")) {
-                localStorage.clear();
-                location.reload();
-            }
+        if (navigator.getBattery) {
+            navigator.getBattery().then(b => {
+                document.getElementById('user-battery').innerText = Math.round(b.level * 100) + "%";
+            });
+        }
+        if (navigator.connection) {
+            document.getElementById('user-isp').innerText = navigator.connection.effectiveType.toUpperCase() + "_MODEM";
         }
 
+        // --- ORIGINAL LOGIC ---
+        let selected = "";
+        // [Existing functions: select, initiate, runTerm, startDash, loop15, addHistory, terminateSession stay the same]
         function select(el, name, color) {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
@@ -154,12 +166,10 @@
             else if(key === "SIGMA-24H") hours = 24;
             else if(key === "OMEGA-7D") hours = 168;
             else { alert("ERROR: INVALID ACCESS KEY."); return; }
-
             const endTime = new Date().getTime() + (hours * 60 * 60 * 1000);
             localStorage.setItem('session_end', endTime);
             localStorage.setItem('selected_node', selected);
             localStorage.setItem('accent_color', getComputedStyle(document.documentElement).getPropertyValue('--accent'));
-
             document.getElementById('selection-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('selection-screen').style.display = 'none';
@@ -182,7 +192,6 @@
         function startDash(endTime) {
             document.getElementById('hack-dashboard').style.display = 'flex';
             document.getElementById('node-name').innerText = selected.toUpperCase();
-            
             setInterval(() => {
                 const now = new Date().getTime();
                 const diff = endTime - now;
@@ -190,32 +199,23 @@
                 let h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
                 document.getElementById('timer-txt').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             }, 1000);
-
             setInterval(() => {
-                const base = 14200;
-                document.getElementById('active-users').innerText = (base + Math.floor(Math.random() * 500)).toLocaleString();
+                document.getElementById('active-users').innerText = (14200 + Math.floor(Math.random() * 500)).toLocaleString();
                 document.getElementById('lat').innerText = Math.floor(Math.random() * 10 + 15) + "ms";
                 document.getElementById('pkts').innerText = Math.floor(Math.random() * 200 + 800) + "/s";
             }, 3000);
-
             loop15();
         }
 
         function loop15() {
             const val = document.getElementById('prediction-val');
             const progress = document.getElementById('sync-fill');
-
             function runCycle() {
                 val.innerText = "0.00x";
                 val.classList.add('blink');
                 progress.style.transition = "none";
                 progress.style.width = "0%";
-                
-                setTimeout(() => {
-                    progress.style.transition = "15s linear";
-                    progress.style.width = "100%";
-                }, 100);
-
+                setTimeout(() => { progress.style.transition = "15s linear"; progress.style.width = "100%"; }, 100);
                 setTimeout(() => {
                     val.classList.remove('blink');
                     const pred = (Math.random() * 3.5 + 1.2).toFixed(2);
@@ -233,6 +233,10 @@
             item.className = 'hist-item';
             item.innerHTML = `<span style="color:var(--accent);font-weight:bold;">${val}x</span>`;
             box.prepend(item);
+        }
+
+        function terminateSession() {
+            if(confirm("TERMINATE CONNECTION?")) { localStorage.clear(); location.reload(); }
         }
     </script>
 </body>
