@@ -14,15 +14,63 @@
             --telegram: #0088cc;
         }
 
-        /* --- Global Reset --- */
+        /* --- Global Reset & Page Entrance (ADDED) --- */
         body { 
             margin: 0; padding: 0; 
             background: var(--bg-dark); 
             font-family: 'Inter', -apple-system, sans-serif; 
             color: white; 
             overflow-x: hidden;
+            opacity: 0; /* Hidden initially for entrance effect */
+            transition: opacity 0.6s ease-in;
         }
+        body.loaded { opacity: 1; }
         a { text-decoration: none; transition: 0.3s ease; }
+
+        /* --- Africa Glitch Transition Overlay (ADDED) --- */
+        #transition-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        #transition-layer.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .glitch-map {
+            width: 250px;
+            filter: invert(1) brightness(2);
+            animation: map-glitch 0.15s infinite;
+        }
+
+        @keyframes map-glitch {
+            0% { transform: translate(0); clip-path: inset(10% 0 30% 0); }
+            25% { transform: translate(-10px, 5px); filter: hue-rotate(90deg); }
+            50% { transform: translate(-5px, -10px); clip-path: inset(40% 0 10% 0); }
+            75% { transform: translate(10px, 5px); filter: invert(0); }
+            100% { transform: translate(0); }
+        }
+
+        .loading-text {
+            margin-top: 25px;
+            font-family: monospace;
+            color: var(--glow-red);
+            letter-spacing: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
 
         /* --- Header --- */
         .glow-header {
@@ -153,7 +201,6 @@
             transition: 0.4s;
             cursor: pointer;
         }
-        /* Color Hover for Payment Icons */
         .pay-icons img:hover {
             filter: none;
             opacity: 1;
@@ -169,6 +216,12 @@
     </style>
 </head>
 <body>
+
+    <div id="transition-layer">
+        <img src="https://www.transparentpng.com/download/africa/africa-map-black-silhouette-background-2.png" 
+             class="glitch-map" alt="AFRICA_NODE">
+        <div class="loading-text">ESTABLISHING_SECURE_LINK...</div>
+    </div>
 
     <header class="glow-header">
         <div class="logo">AFRICA<span>_HACKS</span></div>
@@ -239,6 +292,33 @@
     </footer>
 
     <script>
+        // --- 1. PAGE ENTRANCE & TRANSITION LOGIC (ADDED) ---
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+
+        const transitionLayer = document.getElementById('transition-layer');
+        const links = document.querySelectorAll('a');
+
+        links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                const destination = this.href;
+
+                // Trigger glitch only for internal .html pages (don't break social links)
+                if (destination.includes(window.location.hostname) || destination.includes('.html')) {
+                    if (!destination.includes('wa.me') && !destination.includes('t.me')) {
+                        e.preventDefault();
+                        transitionLayer.classList.add('active');
+                        
+                        setTimeout(() => {
+                            window.location.href = destination;
+                        }, 1200);
+                    }
+                }
+            });
+        });
+
+        // --- 2. EXISTING CORE LOGIC (KEPT) ---
         let count = 1.00;
         let target = (Math.random() * 5 + 1.5).toFixed(2);
         const countDisplay = document.getElementById('count');
@@ -270,6 +350,7 @@
         }, 3000);
     </script>
     <script>
+    // --- 3. EXISTING TOAST LOGIC (KEPT) ---
     const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
     const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
     
