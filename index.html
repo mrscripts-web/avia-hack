@@ -473,7 +473,14 @@
             <img src="logos/Africa.png" alt="Logo" class="header-logo">
             AFRICA<span>_HACKS</span>
         </div>
-        <div class="status-dot"></div>
+                        <div class="live-users-container" style="display: flex; align-items: center; gap: 8px;">
+            <div style="font-size: 9px; color: #888; font-family: monospace; font-weight: bold;">
+                <span id="live-users">12500</span> ONLINE
+            </div>
+            <div class="status-dot"></div>
+        </div>
+        </div>
+
     </header>
 
     <div class="viewport">
@@ -491,7 +498,6 @@
             <div id="status-msg" style="font-size:9px; color:var(--text-dim); margin-top:5px;">REAL_TIME_ENCRYPTION_SYNC</div>
         </div>
     </div>
-
     <div class="platform-section">
         <div class="section-tag">COMPATIBLE CRASH PLATFORMS:</div>
         <div class="logo-wall">
@@ -655,6 +661,36 @@
             
             if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
         }, 2500);
+        // --- GLOBALLY SYNCHRONIZED LIVE USERS (8,000 to 17,000) ---
+        const usersDisplay = document.getElementById('live-users');
+
+        function syncGlobalUsers() {
+            const now = Date.now();
+            
+            // We use 3 different time-based sine waves to make the movement look organic
+            // Wave 1: Slow trend changes over 2 hours
+            const wave1 = Math.sin(now / 7200000); 
+            // Wave 2: Medium fluctuations every 5 minutes
+            const wave2 = Math.sin(now / 300000); 
+            // Wave 3: Fast micro-jitters every 10 seconds
+            const wave3 = Math.sin(now / 10000); 
+
+            // Combine the waves. The weights (0.6, 0.3, 0.1) ensure it stays within bounds
+            const combinedWave = (wave1 * 0.6) + (wave2 * 0.3) + (wave3 * 0.1);
+
+            // Calculate the final number:
+            // Midpoint is 12,500. Amplitude is 4,500 (which perfectly hits the 8k - 17k range)
+            const syncedUserCount = Math.floor(12500 + (combinedWave * 4500));
+
+            // Update the display
+            usersDisplay.innerText = syncedUserCount.toLocaleString(); // Adds a comma, e.g., "14,302"
+            
+            // Re-run this check every 2 seconds to keep it updated live
+            setTimeout(syncGlobalUsers, 2000);
+        }
+
+        // Start the globally synced user counter
+        syncGlobalUsers();
 
     </script>
 </body>
