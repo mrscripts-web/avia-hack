@@ -84,7 +84,7 @@
         .status-dot { height: 8px; width: 8px; background: var(--glow-red); border-radius: 50%; box-shadow: 0 0 10px var(--glow-red); animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* --- Predictor Viewport (UPDATED) --- */
+        /* --- Predictor Viewport --- */
         .viewport {
             background: var(--panel-bg);
             border: 1px solid #222;
@@ -127,7 +127,6 @@
             100% { transform: scale(2.5); opacity: 0; }
         }
 
-        /* Disclaimer Overlay */
         .disclaimer-text {
             position: absolute;
             bottom: 12px;
@@ -145,24 +144,39 @@
         .multiplier-text h1 { font-size: 70px; margin: 0; font-weight: 200; text-shadow: 0 0 30px var(--glow-red); }
         .target-label { color: var(--glow-red); font-family: monospace; font-size: 10px; letter-spacing: 2px; }
 
-        /* --- All Original Sections Maintained --- */
+        /* --- Sections --- */
         .platform-section { padding: 25px 15px; background: #000; border-top: 1px solid #1a1a1a; }
         .section-tag { font-size: 8px; color: var(--glow-red); letter-spacing: 3px; text-align: center; margin-bottom: 15px; font-weight: 900; }
         .logo-wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; align-items: center; max-width: 500px; margin: 0 auto; }
         .logo-wall img { width: 100%; max-width: 90px; height: auto; margin: 0 auto; display: block; filter: grayscale(1) brightness(2); opacity: 0.5; transition: 0.4s; }
         .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
+
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; margin-top: 15px; }
         .btn { padding: 16px; border-radius: 8px; text-align: center; font-weight: 800; font-size: 13px; color: white; text-transform: uppercase; }
         .btn-preview { background: #111; border: 1px solid #333; grid-column: span 2; color: #888; }
         .btn-whatsapp { background: var(--whatsapp); box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); }
         .btn-telegram { background: var(--telegram); box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); }
         .btn-play { grid-column: span 2; background: var(--glow-red); margin-top: 10px; font-size: 18px; letter-spacing: 4px; box-shadow: 0 0 25px rgba(255, 0, 51, 0.5); animation: pulse-red 2s infinite; border: none; }
-        @keyframes pulse-red { 0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); } 50% { transform: scale(1.02); opacity: 0.9; box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); } }
+        
         .pricing-section { padding: 30px 15px; }
         .price-row { background: var(--panel-bg); border: 1px solid #222; margin-bottom: 8px; padding: 18px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; cursor: pointer; }
         .price-row:hover { border-color: var(--glow-red); box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); background: rgba(255, 0, 51, 0.05); transform: translateY(-2px); }
         .duration { font-weight: 700; font-size: 14px; }
         .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
+
+        /* FIXED PAYMENT ICON SIZES */
+        .payment-methods { padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.02); margin: 0 15px; border-radius: 8px; font-size: 10px; color: #666; font-weight: bold; }
+        .pay-icons { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 12px; }
+        .pay-icons img { 
+            height: 20px !important; /* Force small size */
+            width: auto !important;
+            display: inline-block;
+            filter: grayscale(1) brightness(1.5);
+            opacity: 0.6;
+            transition: 0.4s;
+        }
+        .pay-icons img:hover { filter: none; opacity: 1; transform: scale(1.2); }
+
         .terminal { background: #000; height: 100px; border: 1px solid #222; margin: 20px 15px; padding: 12px; font-family: monospace; font-size: 10px; color: #444; border-radius: 8px; overflow: hidden; }
         footer { padding: 40px 20px; text-align: center; font-size: 9px; color: #333; line-height: 2; }
     </style>
@@ -189,7 +203,7 @@
             </svg>
         </div>
         <div class="explosion" id="explosion-vis"></div>
-        <div class="disclaimer-text">THIS ISN'T WORKING SO THEY DONT THINK ITS THE REAL PREDICTIONS FOR THE PLATFORMS</div>
+        <div class="disclaimer-text">THIS ISN'T THE REAL PREDICTIONS FOR THE PLATFORMS, to get right pridictions buy the licence key </div>
 
         <div class="multiplier-text">
             <div class="target-label">BYPASSING_AFRICA_NODES...</div>
@@ -272,14 +286,11 @@
                 }
             });
         });
-    </script>
 
-    <script>
         let count = 1.00;
         let target = (Math.random() * 5 + 1.5).toFixed(2);
         const countDisplay = document.getElementById('count');
         const statusMsg = document.getElementById('status-msg');
-        const logBox = document.getElementById('log-box');
         const plane = document.getElementById('plane-vis');
         const explosion = document.getElementById('explosion-vis');
 
@@ -287,18 +298,13 @@
             if (count < target) {
                 count += 0.015;
                 countDisplay.innerText = count.toFixed(2) + 'x';
-                // Reset visuals for new flight
                 plane.style.opacity = "1";
                 explosion.classList.remove('active');
             } else {
-                // CRASH TRIGGERED
                 statusMsg.innerText = "CRASH_IDENTIFIED: " + target + "x";
                 statusMsg.style.color = "white";
-                
-                // Plane Explodes
                 plane.style.opacity = "0";
                 explosion.classList.add('active');
-
                 setTimeout(() => {
                     count = 1.00;
                     target = (Math.random() * 5 + 1.5).toFixed(2);
@@ -310,14 +316,13 @@
 
         const logs = ["> Port_Scan: SUCCESS", "> Extracting_Seed...", "> Bypassing_Auth...", "> Packet_Relay: ACTIVE"];
         setInterval(() => {
+            const logBox = document.getElementById('log-box');
             const div = document.createElement('div');
             div.innerText = logs[Math.floor(Math.random() * logs.length)];
             logBox.prepend(div);
             if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
         }, 3000);
-    </script>
 
-    <script>
         const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
         const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
         function showToast() {
