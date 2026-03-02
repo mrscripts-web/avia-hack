@@ -14,7 +14,7 @@
             --telegram: #0088cc;
         }
 
-        /* --- Global Reset & Entrance Fade (ADDED) --- */
+        /* --- Global Reset & Entrance Fade --- */
         body { 
             margin: 0; padding: 0; 
             background: var(--bg-dark); 
@@ -27,7 +27,7 @@
         body.loaded { opacity: 1; }
         a { text-decoration: none; transition: 0.3s ease; }
 
-        /* --- Africa Glitch Transition Overlay (ADDED) --- */
+        /* --- Africa Glitch Transition Overlay --- */
         #transition-layer {
             position: fixed;
             top: 0; left: 0;
@@ -72,7 +72,7 @@
             font-weight: bold;
         }
 
-        /* --- Existing Styles (KEPT) --- */
+        /* --- Header Styles --- */
         .glow-header {
             height: 70px;
             background: var(--panel-bg);
@@ -82,8 +82,24 @@
             position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
         }
-        .logo { font-weight: 900; letter-spacing: 1px; font-size: 1.1rem; }
+        
+        /* Updated Logo Layout */
+        .logo { 
+            font-weight: 900; 
+            letter-spacing: 1px; 
+            font-size: 1.1rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; /* Space between image and text */
+        }
         .logo span { color: var(--glow-red); text-shadow: 0 0 10px var(--glow-red); }
+        
+        .header-logo {
+            height: 35px; /* Adjust size as needed */
+            width: auto;
+            filter: drop-shadow(0 0 5px var(--glow-red));
+        }
+
         .status-dot {
             height: 8px; width: 8px; background: var(--glow-red);
             border-radius: 50%; box-shadow: 0 0 10px var(--glow-red);
@@ -91,6 +107,7 @@
         }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
+        /* --- Rest of Existing Styles --- */
         .viewport {
             background: var(--panel-bg);
             border: 1px solid #222;
@@ -218,7 +235,10 @@
     </div>
 
     <header class="glow-header">
-        <div class="logo">AFRICA<span>_HACKS</span></div>
+        <div class="logo">
+            <img src="logos/Africa.png" alt="Logo" class="header-logo">
+            AFRICA<span>_HACKS</span>
+        </div>
         <div class="status-dot"></div>
     </header>
 
@@ -286,21 +306,17 @@
     </footer>
 
     <script>
-        // Entrance Fade
         window.addEventListener('load', () => document.body.classList.add('loaded'));
 
-        // BACK BUTTON FIX: Reset loader state whenever page is shown
         window.addEventListener('pageshow', (event) => {
             const loader = document.getElementById('transition-layer');
             if (loader) loader.classList.remove('active');
             document.body.classList.add('loaded');
         });
 
-        // Intercept link clicks
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
                 const destination = this.href;
-                // Only trigger for internal links, skipping WhatsApp/Telegram
                 if (destination.includes(window.location.hostname) || destination.includes('.html')) {
                     if (!destination.includes('wa.me') && !destination.includes('t.me')) {
                         e.preventDefault();
@@ -343,21 +359,22 @@
             if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
         }, 3000);
     </script>
+
     <script>
-    const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
-    const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
-    
-    function showToast() {
-        const toast = document.createElement('div');
-        toast.style = "position:fixed;bottom:20px;left:20px;background:#111;color:white;padding:15px;border-left:4px solid #00ff00;border-radius:4px;font-family:monospace;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-size:12px;transition:0.5s;opacity:0;";
-        const name = names[Math.floor(Math.random()*names.length)];
-        const amount = amounts[Math.floor(Math.random()*amounts.length)];
-        toast.innerHTML = `<b style="color:#00ff00;">LIVE PAYOUT:</b><br>${name} just withdrew ₦${amount} via Neural Bypass`;
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.style.opacity = "1"; }, 100);
-        setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 500); }, 5000);
-    }
-    setInterval(showToast, 15000);
-</script>
+        const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
+        const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
+        
+        function showToast() {
+            const toast = document.createElement('div');
+            toast.style = "position:fixed;bottom:20px;left:20px;background:#111;color:white;padding:15px;border-left:4px solid #00ff00;border-radius:4px;font-family:monospace;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-size:12px;transition:0.5s;opacity:0;";
+            const name = names[Math.floor(Math.random()*names.length)];
+            const amount = amounts[Math.floor(Math.random()*amounts.length)];
+            toast.innerHTML = `<b style="color:#00ff00;">LIVE PAYOUT:</b><br>${name} just withdrew ₦${amount} via Neural Bypass`;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = "1"; }, 100);
+            setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 500); }, 5000);
+        }
+        setInterval(showToast, 15000);
+    </script>
 </body>
 </html>
