@@ -32,9 +32,17 @@
             display: flex; flex-direction: column;
         }
 
+        /* Added Total Extracted Header */
+        .total-extracted-container {
+            padding: 15px; text-align: center; border-bottom: 1px solid #222; background: #0a0a0a; z-index: 10;
+        }
+        .total-extracted-label { font-size: 8px; color: #666; margin-bottom: 5px; letter-spacing: 2px; }
+        #total-extracted { font-size: 24px; color: var(--green); text-shadow: 0 0 10px var(--green); font-weight: bold; }
+
+        /* Updated Grid for 4 Columns */
         .term-header {
             background: #111; padding: 10px 15px; font-size: 8px; color: #555;
-            display: grid; grid-template-columns: 1.2fr 1fr 1fr; border-bottom: 1px solid #222;
+            display: grid; grid-template-columns: 0.8fr 1fr 0.8fr 1fr; border-bottom: 1px solid #222; z-index: 10;
         }
 
         #log-container {
@@ -42,22 +50,46 @@
             padding: 0 15px;
         }
 
+        /* Updated Grid for 4 Columns */
         .tx-row {
-            display: grid; grid-template-columns: 1.2fr 1fr 1fr; padding: 12px 0;
+            display: grid; grid-template-columns: 0.8fr 1fr 0.8fr 1fr; padding: 12px 0;
             border-bottom: 1px solid #111; font-size: 10px; animation: slideIn 0.4s ease-out;
         }
 
         .tx-country { color: #444; font-size: 8px; font-weight: bold; }
+        .tx-platform { color: #aaa; font-size: 9px; text-shadow: 0 0 2px #aaa; }
         .tx-user { color: #888; }
         .tx-amt { color: var(--green); font-weight: bold; text-align: right; text-shadow: 0 0 5px var(--green); }
 
         .system-ticker {
             height: 30px; background: #900; color: #fff; font-size: 8px;
-            display: flex; align-items: center; overflow: hidden; font-weight: bold;
+            display: flex; align-items: center; overflow: hidden; font-weight: bold; z-index: 30;
+        }
+
+        /* Floating CTA Button */
+        .floating-cta {
+            position: fixed;
+            bottom: 50px; /* Sits right above the ticker */
+            right: 20px;
+            background: var(--accent);
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(255, 0, 51, 0.6);
+            animation: pulse-red 2s infinite;
+            z-index: 100;
+            letter-spacing: 1px;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 51, 0.6); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 0, 51, 0.9); }
         }
 
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -68,14 +100,25 @@
     </a>
 
     <div class="terminal-window">
+        <!-- New Total Extracted Counter -->
+        <div class="total-extracted-container">
+            <div class="total-extracted-label">TOTAL EXTRACTED TODAY (USD)</div>
+            <div id="total-extracted">$1,452,890</div>
+        </div>
+
+        <!-- Updated 4-Column Header -->
         <div class="term-header">
             <span>LOCATION</span>
+            <span>TARGET</span>
             <span>NODE_ID</span>
-            <span style="text-align:right;">AMOUNT</span>
+            <span style="text-align:right;">PAYOUT</span>
         </div>
-        <div id="log-container">
-            </div>
+        
+        <div id="log-container"></div>
     </div>
+
+    <!-- Floating Buy Button -->
+    <a href="index.html" class="floating-cta">GET LICENSE KEY</a>
 
     <div class="system-ticker">
         <marquee scrollamount="10">ENCRYPTING DATA_PACKETS... BYPASSING SPORTY_GATEWAY... SERVER_STABLE... INJECTING_0x442... NEW_PAYOUT_DETECTED...</marquee>
@@ -83,27 +126,46 @@
 
     <script>
         const container = document.getElementById('log-container');
+        const totalDisplay = document.getElementById('total-extracted');
+        let totalExtracted = 1452890; // Starting baseline
+
         const countries = [
             {n: 'NIGERIA', c: '₦'}, {n: 'GHANA', c: '₵'}, {n: 'KENYA', c: 'Ksh'}, 
             {n: 'S.AFRICA', c: 'R'}, {n: 'UGANDA', c: 'USh'}, {n: 'CAMEROON', c: 'CFA'},
             {n: 'SENEGAL', c: 'CFA'}, {n: 'TANZANIA', c: 'TSh'}, {n: 'ZAMBIA', c: 'ZK'}
         ];
+        
+        // Added platforms list
+        const platforms = ['1WIN', '1XBET', 'SPORTYBET', 'BET9JA', 'MSPORT', 'BETWAY', 'MELBET', 'PREMIERBET'];
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         function generateRow() {
             const country = countries[Math.floor(Math.random() * countries.length)];
             const user = chars.charAt(Math.floor(Math.random() * chars.length)) + ".." + Math.floor(Math.random() * 99);
+            const plat = platforms[Math.floor(Math.random() * platforms.length)];
             
-            // Randomly pick a "realistic" amount based on currency
+            // Realistic Amount Generation
             let amount;
-            if(country.c === '₦') amount = (Math.floor(Math.random() * 80) + 5) * 1000;
-            else if(country.c === '₵') amount = (Math.floor(Math.random() * 500) + 50);
-            else amount = (Math.floor(Math.random() * 100) + 10) * 10;
+            if(country.c === '₦') {
+                amount = Math.floor(Math.random() * 85000) + 8000;
+                amount = Math.round(amount / 50) * 50; // Rounds to nearest 50 (e.g., 14,350)
+            } else if(country.c === '₵') {
+                amount = Math.floor(Math.random() * 800) + 150;
+            } else {
+                amount = Math.floor(Math.random() * 5000) + 500;
+            }
+
+            // Update Total Extracted Pool (Random USD equivalent $50 - $400)
+            const usdEquivalent = Math.floor(Math.random() * 350) + 50;
+            totalExtracted += usdEquivalent;
+            totalDisplay.innerText = "$" + totalExtracted.toLocaleString();
 
             const row = document.createElement('div');
             row.className = 'tx-row';
+            // Added the target platform column
             row.innerHTML = `
                 <span class="tx-country">[${country.n}]</span>
+                <span class="tx-platform">${plat}</span>
                 <span class="tx-user">${user}</span>
                 <span class="tx-amt">${country.c}${amount.toLocaleString()}</span>
             `;
@@ -116,10 +178,10 @@
             }
         }
 
-        // Start generating!
-        setInterval(generateRow, 2200); // New name every 2.2 seconds
+        // Start generating new rows every 2.2 seconds
+        setInterval(generateRow, 2200); 
         
-        // Initial batch so the screen isn't empty
+        // Populate the screen immediately on load
         for(let i=0; i<12; i++) { generateRow(); }
     </script>
 </body>
