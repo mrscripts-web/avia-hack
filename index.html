@@ -14,14 +14,14 @@
             --telegram: #0088cc;
         }
 
-        /* --- Global Reset & Page Entrance (ADDED) --- */
+        /* --- Global Reset & Entrance Fade (ADDED) --- */
         body { 
             margin: 0; padding: 0; 
             background: var(--bg-dark); 
             font-family: 'Inter', -apple-system, sans-serif; 
             color: white; 
             overflow-x: hidden;
-            opacity: 0; /* Hidden initially for entrance effect */
+            opacity: 0; 
             transition: opacity 0.6s ease-in;
         }
         body.loaded { opacity: 1; }
@@ -72,7 +72,7 @@
             font-weight: bold;
         }
 
-        /* --- Header --- */
+        /* --- Existing Styles (KEPT) --- */
         .glow-header {
             height: 70px;
             background: var(--panel-bg);
@@ -91,7 +91,6 @@
         }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* --- Terminal Viewport --- */
         .viewport {
             background: var(--panel-bg);
             border: 1px solid #222;
@@ -109,7 +108,6 @@
         }
         .target-label { color: var(--glow-red); font-family: monospace; font-size: 10px; letter-spacing: 2px; }
 
-        /* --- Logo Wall --- */
         .platform-section { padding: 25px 15px; background: #000; border-top: 1px solid #1a1a1a; }
         .section-tag { font-size: 8px; color: var(--glow-red); letter-spacing: 3px; text-align: center; margin-bottom: 15px; font-weight: 900; }
         .logo-wall {
@@ -132,7 +130,6 @@
         }
         .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
 
-        /* --- Action Buttons --- */
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; margin-top: 15px; }
         .btn {
             padding: 16px; border-radius: 8px; text-align: center;
@@ -151,9 +148,7 @@
             0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
             50% { transform: scale(1.02); opacity: 0.9; box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); }
         }
-        .btn:active { transform: scale(0.95); }
 
-        /* --- Pricing Grid with Glow --- */
         .pricing-section { padding: 30px 15px; }
         .price-row {
             background: var(--panel-bg); 
@@ -176,7 +171,6 @@
         .duration { font-weight: 700; font-size: 14px; }
         .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
 
-        /* --- Payment Methods --- */
         .payment-methods { 
             padding: 20px; 
             text-align: center; 
@@ -218,9 +212,9 @@
 <body>
 
     <div id="transition-layer">
-        <img src="https://www.transparentpng.com/download/africa/africa-map-black-silhouette-background-2.png" 
+        <img src="logos/Africa.png" 
              class="glitch-map" alt="AFRICA_NODE">
-        <div class="loading-text">ESTABLISHING_SECURE_LINK...</div>
+        <div class="loading-text">BYPASSING_SECURE_NODES...</div>
     </div>
 
     <header class="glow-header">
@@ -292,33 +286,33 @@
     </footer>
 
     <script>
-        // --- 1. PAGE ENTRANCE & TRANSITION LOGIC (ADDED) ---
-        window.addEventListener('load', () => {
+        // Entrance Fade
+        window.addEventListener('load', () => document.body.classList.add('loaded'));
+
+        // BACK BUTTON FIX: Reset loader state whenever page is shown
+        window.addEventListener('pageshow', (event) => {
+            const loader = document.getElementById('transition-layer');
+            if (loader) loader.classList.remove('active');
             document.body.classList.add('loaded');
         });
 
-        const transitionLayer = document.getElementById('transition-layer');
-        const links = document.querySelectorAll('a');
-
-        links.forEach(link => {
+        // Intercept link clicks
+        document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
                 const destination = this.href;
-
-                // Trigger glitch only for internal .html pages (don't break social links)
+                // Only trigger for internal links, skipping WhatsApp/Telegram
                 if (destination.includes(window.location.hostname) || destination.includes('.html')) {
                     if (!destination.includes('wa.me') && !destination.includes('t.me')) {
                         e.preventDefault();
-                        transitionLayer.classList.add('active');
-                        
-                        setTimeout(() => {
-                            window.location.href = destination;
-                        }, 1200);
+                        document.getElementById('transition-layer').classList.add('active');
+                        setTimeout(() => window.location.href = destination, 1200);
                     }
                 }
             });
         });
+    </script>
 
-        // --- 2. EXISTING CORE LOGIC (KEPT) ---
+    <script>
         let count = 1.00;
         let target = (Math.random() * 5 + 1.5).toFixed(2);
         const countDisplay = document.getElementById('count');
@@ -350,7 +344,6 @@
         }, 3000);
     </script>
     <script>
-    // --- 3. EXISTING TOAST LOGIC (KEPT) ---
     const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
     const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
     
