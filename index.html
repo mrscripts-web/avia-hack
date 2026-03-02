@@ -65,22 +65,23 @@
         .platform-section { padding: 25px 15px; background: #000; border-top: 1px solid #1a1a1a; }
         .section-tag { font-size: 8px; color: var(--glow-red); letter-spacing: 3px; text-align: center; margin-bottom: 15px; font-weight: 900; }
         .logo-wall {
-        display: grid; 
-        grid-template-columns: repeat(3, 1fr); /* Exactly 3 per row */
-        gap: 25px; /* Added more space between them */
-        align-items: center;
-        max-width: 500px; /* Limits the total width of the grid */
-        margin: 0 auto;   /* Centers the whole grid on the page */}
-
-    .logo-wall img {
-        width: 100%; 
-        max-width: 90px; /* Smaller size so they don't look bulky */
-        height: auto;
-        margin: 0 auto;
-        display: block;
-        filter: grayscale(1) brightness(2); 
-        opacity: 0.5; 
-        transition: 0.4s;}
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 25px; 
+            align-items: center;
+            max-width: 500px; 
+            margin: 0 auto;
+        }
+        .logo-wall img {
+            width: 100%; 
+            max-width: 90px; 
+            height: auto;
+            margin: 0 auto;
+            display: block;
+            filter: grayscale(1) brightness(2); 
+            opacity: 0.5; 
+            transition: 0.4s;
+        }
         .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
 
         /* --- Action Buttons --- */
@@ -93,7 +94,6 @@
         .btn-whatsapp { background: var(--whatsapp); box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); }
         .btn-telegram { background: var(--telegram); box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); }
         
-        /* THE PLAY BUTTON */
         .btn-play {
             grid-column: span 2; background: var(--glow-red); margin-top: 10px;
             font-size: 18px; letter-spacing: 4px; box-shadow: 0 0 25px rgba(255, 0, 51, 0.5);
@@ -105,19 +105,61 @@
         }
         .btn:active { transform: scale(0.95); }
 
-        /* --- Pricing Grid --- */
+        /* --- Pricing Grid with Glow --- */
         .pricing-section { padding: 30px 15px; }
         .price-row {
-            background: var(--panel-bg); border: 1px solid #222;
-            margin-bottom: 8px; padding: 18px; border-radius: 10px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: var(--panel-bg); 
+            border: 1px solid #222;
+            margin-bottom: 8px; 
+            padding: 18px; 
+            border-radius: 10px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .price-row.featured { border: 1px solid var(--glow-red); background: rgba(255, 0, 51, 0.05); }
+        .price-row:hover, .price-row:active {
+            border-color: var(--glow-red);
+            box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
+            background: rgba(255, 0, 51, 0.05);
+            transform: translateY(-2px);
+        }
         .duration { font-weight: 700; font-size: 14px; }
         .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
 
-        /* --- Payment & Logs --- */
-        .payment-methods { padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.02); margin: 0 15px; border-radius: 8px; font-size: 10px; color: #666; font-weight: bold; }
+        /* --- Payment Methods --- */
+        .payment-methods { 
+            padding: 20px; 
+            text-align: center; 
+            background: rgba(255, 255, 255, 0.02); 
+            margin: 0 15px; 
+            border-radius: 8px; 
+            font-size: 10px; 
+            color: #666; 
+            font-weight: bold; 
+        }
+        .pay-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 12px;
+        }
+        .pay-icons img { 
+            height: 18px; 
+            width: auto;
+            filter: grayscale(1) brightness(1.5);
+            opacity: 0.6;
+            transition: 0.4s;
+            cursor: pointer;
+        }
+        /* Color Hover for Payment Icons */
+        .pay-icons img:hover {
+            filter: none;
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
         .terminal {
             background: #000; height: 100px; border: 1px solid #222;
             margin: 20px 15px; padding: 12px; font-family: monospace; font-size: 10px;
@@ -163,7 +205,6 @@
         <a href="proofs.html" class="btn btn-preview">(LIVE PROOF)</a>
         <a href="https://wa.me/YOUR_NUMBER" class="btn btn-whatsapp">WHATSAPP</a>
         <a href="https://t.me/YOUR_TELEGRAM" class="btn btn-telegram">TELEGRAM</a>
-        
         <a href="predictor.html" class="btn btn-play">PLAY NOW</a>
     </div>
 
@@ -172,11 +213,19 @@
         <div class="price-row"><span class="duration">72 HOURS ACCESS</span> <span class="amount">$65</span></div>
         <div class="price-row"><span class="duration">1 WEEK ACCESS</span> <span class="amount">$200</span></div>
         <div class="price-row"><span class="duration">1 MONTH ACCESS</span> <span class="amount">$600</span></div>
-        <div class="price-row featured"><span class="duration">LIFETIME LICENSE</span> <span class="amount">$2,500</span></div>
+        <div class="price-row"><span class="duration">LIFETIME LICENSE</span> <span class="amount">$2,500</span></div>
+        <div class="price-row"><span class="duration">RESELLER LICENSE</span> <span class="amount">$6,000</span></div>
     </div>
 
     <div class="payment-methods">
-        ACCEPTED: CRYPTO (usdt,btc,trx...), PAYPAL, BINANCE
+        ACCEPTED PAYMENT METHODS
+        <div class="pay-icons">
+            <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC">
+            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT">
+            <img src="https://cryptologos.cc/logos/tron-trx-logo.png" alt="TRX">
+            <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" alt="BNB">
+            <img src="https://www.vectorlogo.zone/logos/paypal/paypal-icon.svg" alt="PayPal">
+        </div>
     </div>
 
     <div class="terminal" id="log-box">
@@ -227,18 +276,14 @@
     function showToast() {
         const toast = document.createElement('div');
         toast.style = "position:fixed;bottom:20px;left:20px;background:#111;color:white;padding:15px;border-left:4px solid #00ff00;border-radius:4px;font-family:monospace;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-size:12px;transition:0.5s;opacity:0;";
-        
         const name = names[Math.floor(Math.random()*names.length)];
         const amount = amounts[Math.floor(Math.random()*amounts.length)];
-        
         toast.innerHTML = `<b style="color:#00ff00;">LIVE PAYOUT:</b><br>${name} just withdrew ₦${amount} via Neural Bypass`;
         document.body.appendChild(toast);
-        
         setTimeout(() => { toast.style.opacity = "1"; }, 100);
         setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 500); }, 5000);
     }
-    
-    setInterval(showToast, 15000); // Shows every 15 seconds
+    setInterval(showToast, 15000);
 </script>
 </body>
 </html>
