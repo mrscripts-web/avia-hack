@@ -42,11 +42,7 @@
             pointer-events: none;
             transition: opacity 0.4s ease-in-out;
         }
-
-        #transition-layer.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        #transition-layer.active { opacity: 1; pointer-events: all; }
 
         .glitch-map {
             width: 250px;
@@ -82,167 +78,119 @@
             position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
         }
-        
-        /* Updated Logo Layout */
-        .logo { 
-            font-weight: 900; 
-            letter-spacing: 1px; 
-            font-size: 1.1rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; /* Space between image and text */
-        }
+        .logo { font-weight: 900; letter-spacing: 1px; font-size: 1.1rem; display: flex; align-items: center; gap: 12px; }
         .logo span { color: var(--glow-red); text-shadow: 0 0 10px var(--glow-red); }
-        
-        .header-logo {
-            height: 35px; /* Adjust size as needed */
-            width: auto;
-            filter: drop-shadow(0 0 5px var(--glow-red));
-        }
-
-        .status-dot {
-            height: 8px; width: 8px; background: var(--glow-red);
-            border-radius: 50%; box-shadow: 0 0 10px var(--glow-red);
-            animation: blink 1.5s infinite;
-        }
+        .header-logo { height: 35px; width: auto; filter: drop-shadow(0 0 5px var(--glow-red)); }
+        .status-dot { height: 8px; width: 8px; background: var(--glow-red); border-radius: 50%; box-shadow: 0 0 10px var(--glow-red); animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* --- Rest of Existing Styles --- */
+        /* --- Predictor Viewport (UPDATED) --- */
         .viewport {
             background: var(--panel-bg);
             border: 1px solid #222;
             border-radius: 12px;
-            height: 280px;
+            height: 300px;
             margin: 20px 15px;
             position: relative;
             overflow: hidden;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .multiplier-text { z-index: 10; text-align: center; }
-        .multiplier-text h1 {
-            font-size: 70px; margin: 0; font-weight: 200;
-            text-shadow: 0 0 30px var(--glow-red);
+
+        /* Plane Visuals */
+        .plane-box {
+            position: absolute;
+            width: 70px;
+            z-index: 5;
+            transition: opacity 0.2s;
+            animation: plane-hover 3s infinite ease-in-out;
         }
+        @keyframes plane-hover {
+            0%, 100% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(-2deg); }
+        }
+
+        /* Explosion Visuals */
+        .explosion {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #fff 0%, #ff0 30%, #f00 60%, transparent 80%);
+            border-radius: 50%;
+            z-index: 6;
+            opacity: 0;
+            transform: scale(0);
+            pointer-events: none;
+        }
+        .explosion.active { animation: explode 0.5s ease-out forwards; }
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* Disclaimer Overlay */
+        .disclaimer-text {
+            position: absolute;
+            bottom: 12px;
+            width: 80%;
+            text-align: center;
+            font-size: 7px;
+            color: rgba(255, 255, 255, 0.15);
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
+
+        .multiplier-text { z-index: 10; text-align: center; }
+        .multiplier-text h1 { font-size: 70px; margin: 0; font-weight: 200; text-shadow: 0 0 30px var(--glow-red); }
         .target-label { color: var(--glow-red); font-family: monospace; font-size: 10px; letter-spacing: 2px; }
 
+        /* --- All Original Sections Maintained --- */
         .platform-section { padding: 25px 15px; background: #000; border-top: 1px solid #1a1a1a; }
         .section-tag { font-size: 8px; color: var(--glow-red); letter-spacing: 3px; text-align: center; margin-bottom: 15px; font-weight: 900; }
-        .logo-wall {
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 25px; 
-            align-items: center;
-            max-width: 500px; 
-            margin: 0 auto;
-        }
-        .logo-wall img {
-            width: 100%; 
-            max-width: 90px; 
-            height: auto;
-            margin: 0 auto;
-            display: block;
-            filter: grayscale(1) brightness(2); 
-            opacity: 0.5; 
-            transition: 0.4s;
-        }
+        .logo-wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; align-items: center; max-width: 500px; margin: 0 auto; }
+        .logo-wall img { width: 100%; max-width: 90px; height: auto; margin: 0 auto; display: block; filter: grayscale(1) brightness(2); opacity: 0.5; transition: 0.4s; }
         .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
-
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; margin-top: 15px; }
-        .btn {
-            padding: 16px; border-radius: 8px; text-align: center;
-            font-weight: 800; font-size: 13px; color: white; text-transform: uppercase;
-        }
+        .btn { padding: 16px; border-radius: 8px; text-align: center; font-weight: 800; font-size: 13px; color: white; text-transform: uppercase; }
         .btn-preview { background: #111; border: 1px solid #333; grid-column: span 2; color: #888; }
         .btn-whatsapp { background: var(--whatsapp); box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); }
         .btn-telegram { background: var(--telegram); box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); }
-        
-        .btn-play {
-            grid-column: span 2; background: var(--glow-red); margin-top: 10px;
-            font-size: 18px; letter-spacing: 4px; box-shadow: 0 0 25px rgba(255, 0, 51, 0.5);
-            animation: pulse-red 2s infinite; border: none;
-        }
-        @keyframes pulse-red {
-            0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
-            50% { transform: scale(1.02); opacity: 0.9; box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); }
-        }
-
+        .btn-play { grid-column: span 2; background: var(--glow-red); margin-top: 10px; font-size: 18px; letter-spacing: 4px; box-shadow: 0 0 25px rgba(255, 0, 51, 0.5); animation: pulse-red 2s infinite; border: none; }
+        @keyframes pulse-red { 0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); } 50% { transform: scale(1.02); opacity: 0.9; box-shadow: 0 0 40px rgba(255, 0, 51, 0.7); } }
         .pricing-section { padding: 30px 15px; }
-        .price-row {
-            background: var(--panel-bg); 
-            border: 1px solid #222;
-            margin-bottom: 8px; 
-            padding: 18px; 
-            border-radius: 10px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .price-row:hover, .price-row:active {
-            border-color: var(--glow-red);
-            box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
-            background: rgba(255, 0, 51, 0.05);
-            transform: translateY(-2px);
-        }
+        .price-row { background: var(--panel-bg); border: 1px solid #222; margin-bottom: 8px; padding: 18px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; cursor: pointer; }
+        .price-row:hover { border-color: var(--glow-red); box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); background: rgba(255, 0, 51, 0.05); transform: translateY(-2px); }
         .duration { font-weight: 700; font-size: 14px; }
         .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
-
-        .payment-methods { 
-            padding: 20px; 
-            text-align: center; 
-            background: rgba(255, 255, 255, 0.02); 
-            margin: 0 15px; 
-            border-radius: 8px; 
-            font-size: 10px; 
-            color: #666; 
-            font-weight: bold; 
-        }
-        .pay-icons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 12px;
-        }
-        .pay-icons img { 
-            height: 18px; 
-            width: auto;
-            filter: grayscale(1) brightness(1.5);
-            opacity: 0.6;
-            transition: 0.4s;
-            cursor: pointer;
-        }
-        .pay-icons img:hover {
-            filter: none;
-            opacity: 1;
-            transform: scale(1.2);
-        }
-
-        .terminal {
-            background: #000; height: 100px; border: 1px solid #222;
-            margin: 20px 15px; padding: 12px; font-family: monospace; font-size: 10px;
-            color: #444; border-radius: 8px; overflow: hidden;
-        }
+        .terminal { background: #000; height: 100px; border: 1px solid #222; margin: 20px 15px; padding: 12px; font-family: monospace; font-size: 10px; color: #444; border-radius: 8px; overflow: hidden; }
         footer { padding: 40px 20px; text-align: center; font-size: 9px; color: #333; line-height: 2; }
     </style>
 </head>
 <body>
 
     <div id="transition-layer">
-        <img src="logos/Africa.png" 
-             class="glitch-map" alt="AFRICA_NODE">
+        <img src="logos/Africa.png" class="glitch-map" alt="AFRICA_NODE">
         <div class="loading-text">BYPASSING_SECURE_NODES...</div>
     </div>
 
     <header class="glow-header">
         <div class="logo">
             <img src="logos/Africa.png" alt="Logo" class="header-logo">
-            AFRICA_HACKS</span>
+            AFRICA<span>_HACKS</span>
         </div>
         <div class="status-dot"></div>
     </header>
 
     <div class="viewport">
+        <div class="plane-box" id="plane-vis">
+            <svg viewBox="0 0 24 24" fill="var(--glow-red)" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z"/>
+            </svg>
+        </div>
+        <div class="explosion" id="explosion-vis"></div>
+        <div class="disclaimer-text">THIS ISN'T WORKING SO THEY DONT THINK ITS THE REAL PREDICTIONS FOR THE PLATFORMS</div>
+
         <div class="multiplier-text">
             <div class="target-label">BYPASSING_AFRICA_NODES...</div>
             <h1 id="count">1.00x</h1>
@@ -307,13 +255,11 @@
 
     <script>
         window.addEventListener('load', () => document.body.classList.add('loaded'));
-
         window.addEventListener('pageshow', (event) => {
             const loader = document.getElementById('transition-layer');
             if (loader) loader.classList.remove('active');
             document.body.classList.add('loaded');
         });
-
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
                 const destination = this.href;
@@ -334,14 +280,25 @@
         const countDisplay = document.getElementById('count');
         const statusMsg = document.getElementById('status-msg');
         const logBox = document.getElementById('log-box');
+        const plane = document.getElementById('plane-vis');
+        const explosion = document.getElementById('explosion-vis');
 
         setInterval(() => {
             if (count < target) {
                 count += 0.015;
                 countDisplay.innerText = count.toFixed(2) + 'x';
+                // Reset visuals for new flight
+                plane.style.opacity = "1";
+                explosion.classList.remove('active');
             } else {
+                // CRASH TRIGGERED
                 statusMsg.innerText = "CRASH_IDENTIFIED: " + target + "x";
                 statusMsg.style.color = "white";
+                
+                // Plane Explodes
+                plane.style.opacity = "0";
+                explosion.classList.add('active');
+
                 setTimeout(() => {
                     count = 1.00;
                     target = (Math.random() * 5 + 1.5).toFixed(2);
@@ -363,7 +320,6 @@
     <script>
         const names = ["Kwami", "Chidi", "Olumide", "Mustapha", "Abiola", "Zane", "Luka"];
         const amounts = ["45,000", "12,200", "88,500", "5,000", "210,000"];
-        
         function showToast() {
             const toast = document.createElement('div');
             toast.style = "position:fixed;bottom:20px;left:20px;background:#111;color:white;padding:15px;border-left:4px solid #00ff00;border-radius:4px;font-family:monospace;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.5);font-size:12px;transition:0.5s;opacity:0;";
