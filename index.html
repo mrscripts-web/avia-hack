@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -15,23 +16,33 @@
         }
 
         /* --- Global Reset & Entrance Fade --- */
-        body { 
-            margin: 0; padding: 0; 
-            background: var(--bg-dark); 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            color: white; 
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-dark);
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: white;
             overflow-x: hidden;
-            opacity: 0; 
+            opacity: 0;
             transition: opacity 0.6s ease-in;
         }
-        body.loaded { opacity: 1; }
-        a { text-decoration: none; transition: 0.3s ease; }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        a {
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
 
         /* --- Africa Glitch Transition Overlay --- */
         #transition-layer {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: #000;
             display: flex;
             flex-direction: column;
@@ -42,7 +53,11 @@
             pointer-events: none;
             transition: opacity 0.4s ease-in-out;
         }
-        #transition-layer.active { opacity: 1; pointer-events: all; }
+
+        #transition-layer.active {
+            opacity: 1;
+            pointer-events: all;
+        }
 
         .glitch-map {
             width: 250px;
@@ -51,11 +66,29 @@
         }
 
         @keyframes map-glitch {
-            0% { transform: translate(0); clip-path: inset(10% 0 30% 0); }
-            25% { transform: translate(-10px, 5px); filter: hue-rotate(90deg); }
-            50% { transform: translate(-5px, -10px); clip-path: inset(40% 0 10% 0); }
-            75% { transform: translate(10px, 5px); filter: invert(0); }
-            100% { transform: translate(0); }
+            0% {
+                transform: translate(0);
+                clip-path: inset(10% 0 30% 0);
+            }
+
+            25% {
+                transform: translate(-10px, 5px);
+                filter: hue-rotate(90deg);
+            }
+
+            50% {
+                transform: translate(-5px, -10px);
+                clip-path: inset(40% 0 10% 0);
+            }
+
+            75% {
+                transform: translate(10px, 5px);
+                filter: invert(0);
+            }
+
+            100% {
+                transform: translate(0);
+            }
         }
 
         .loading-text {
@@ -73,16 +106,56 @@
             height: 70px;
             background: var(--panel-bg);
             border-bottom: 2px solid var(--glow-red);
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             padding: 0 20px;
-            position: sticky; top: 0; z-index: 1000;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
         }
-        .logo { font-weight: 900; letter-spacing: 1px; font-size: 1.1rem; display: flex; align-items: center; gap: 12px; }
-        .logo span { color: var(--glow-red); text-shadow: 0 0 10px var(--glow-red); }
-        .header-logo { height: 35px; width: auto; filter: drop-shadow(0 0 5px var(--glow-red)); }
-        .status-dot { height: 8px; width: 8px; background: var(--glow-red); border-radius: 50%; box-shadow: 0 0 10px var(--glow-red); animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .logo {
+            font-weight: 900;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo span {
+            color: var(--glow-red);
+            text-shadow: 0 0 10px var(--glow-red);
+        }
+
+        .header-logo {
+            height: 35px;
+            width: auto;
+            filter: drop-shadow(0 0 5px var(--glow-red));
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background: var(--glow-red);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--glow-red);
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
 
         /* --- Predictor Viewport --- */
         .viewport {
@@ -93,7 +166,10 @@
             margin: 20px 15px;
             position: relative;
             overflow: hidden;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Plane Visuals */
@@ -104,9 +180,17 @@
             transition: opacity 0.2s;
             animation: plane-hover 3s infinite ease-in-out;
         }
+
         @keyframes plane-hover {
-            0%, 100% { transform: translateY(0) rotate(5deg); }
-            50% { transform: translateY(-15px) rotate(-2deg); }
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(5deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(-2deg);
+            }
         }
 
         /* Explosion Visuals */
@@ -121,11 +205,23 @@
             transform: scale(0);
             pointer-events: none;
         }
-        .explosion.active { animation: explode 0.5s ease-out forwards; }
-        @keyframes explode {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; }
+
+        .explosion.active {
+            animation: explode 0.5s ease-out forwards;
         }
+
+        @keyframes explode {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
         .more-platforms-text {
             text-align: center;
             font-size: 9px;
@@ -149,47 +245,207 @@
             pointer-events: none;
         }
 
-        .multiplier-text { z-index: 10; text-align: center; }
-        .multiplier-text h1 { font-size: 70px; margin: 0; font-weight: 200; text-shadow: 0 0 30px var(--glow-red); }
-        .target-label { color: var(--glow-red); font-family: monospace; font-size: 10px; letter-spacing: 2px; }
+        .multiplier-text {
+            z-index: 10;
+            text-align: center;
+        }
+
+        .multiplier-text h1 {
+            font-size: 70px;
+            margin: 0;
+            font-weight: 200;
+            text-shadow: 0 0 30px var(--glow-red);
+        }
+
+        .target-label {
+            color: var(--glow-red);
+            font-family: monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+        }
 
         /* --- Sections --- */
-        .platform-section { padding: 25px 15px; background: #000; border-top: 1px solid #1a1a1a; }
-        .section-tag { font-size: 8px; color: var(--glow-red); letter-spacing: 3px; text-align: center; margin-bottom: 15px; font-weight: 900; }
-        .logo-wall { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; align-items: center; max-width: 500px; margin: 0 auto; }
-        .logo-wall img { width: 100%; max-width: 90px; height: auto; margin: 0 auto; display: block; filter: grayscale(1) brightness(2); opacity: 0.5; transition: 0.4s; }
-        .logo-wall img:hover { filter: none; opacity: 1; transform: scale(1.1); }
+        .platform-section {
+            padding: 25px 15px;
+            background: #000;
+            border-top: 1px solid #1a1a1a;
+        }
 
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 15px; margin-top: 15px; }
-        .btn { padding: 16px; border-radius: 8px; text-align: center; font-weight: 800; font-size: 13px; color: white; text-transform: uppercase; }
-        .btn-preview { background: #111; border: 1px solid #333; grid-column: span 2; color: #888; }
-        .btn-whatsapp { background: var(--whatsapp); box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); }
-        .btn-telegram { background: var(--telegram); box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); }
-        .btn-play { grid-column: span 2; background: var(--glow-red); margin-top: 10px; font-size: 18px; letter-spacing: 4px; box-shadow: 0 0 25px rgba(255, 0, 51, 0.5); animation: pulse-red 2s infinite; border: none; }
-        
-        .pricing-section { padding: 30px 15px; }
-        .price-row { background: var(--panel-bg); border: 1px solid #222; margin-bottom: 8px; padding: 18px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; cursor: pointer; }
-        .price-row:hover { border-color: var(--glow-red); box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); background: rgba(255, 0, 51, 0.05); transform: translateY(-2px); }
-        .duration { font-weight: 700; font-size: 14px; }
-        .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
+        .section-tag {
+            font-size: 8px;
+            color: var(--glow-red);
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 900;
+        }
+
+        .logo-wall {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .logo-wall img {
+            width: 100%;
+            max-width: 90px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+            filter: grayscale(1) brightness(2);
+            opacity: 0.5;
+            transition: 0.4s;
+        }
+
+        .logo-wall img:hover {
+            filter: none;
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0 15px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 13px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .btn-preview {
+            background: #111;
+            border: 1px solid #333;
+            grid-column: span 2;
+            color: #888;
+        }
+
+        .btn-whatsapp {
+            background: var(--whatsapp);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+        }
+
+        .btn-telegram {
+            background: var(--telegram);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2);
+        }
+
+        .btn-play {
+            grid-column: span 2;
+            background: var(--glow-red);
+            margin-top: 10px;
+            font-size: 18px;
+            letter-spacing: 4px;
+            box-shadow: 0 0 25px rgba(255, 0, 51, 0.5);
+            animation: pulse-red 2s infinite;
+            border: none;
+        }
+
+        .pricing-section {
+            padding: 30px 15px;
+        }
+
+        .price-row {
+            background: var(--panel-bg);
+            border: 1px solid #222;
+            margin-bottom: 8px;
+            padding: 18px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .price-row:hover {
+            border-color: var(--glow-red);
+            box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
+            background: rgba(255, 0, 51, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .duration {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .amount {
+            color: var(--glow-red);
+            font-weight: 900;
+            font-size: 20px;
+        }
 
         /* FIXED PAYMENT ICON SIZES */
-        .payment-methods { padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.02); margin: 0 15px; border-radius: 8px; font-size: 10px; color: #666; font-weight: bold; }
-        .pay-icons { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 12px; }
-        .pay-icons img { 
-            height: 20px !important; /* Force small size */
+        .payment-methods {
+            padding: 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            margin: 0 15px;
+            border-radius: 8px;
+            font-size: 10px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .pay-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 12px;
+        }
+
+        .pay-icons img {
+            height: 20px !important;
+            /* Force small size */
             width: auto !important;
             display: inline-block;
             filter: grayscale(1) brightness(1.5);
             opacity: 0.6;
             transition: 0.4s;
         }
-        .pay-icons img:hover { filter: none; opacity: 1; transform: scale(1.2); }
 
-        .terminal { background: #000; height: 100px; border: 1px solid #222; margin: 20px 15px; padding: 12px; font-family: monospace; font-size: 10px; color: #444; border-radius: 8px; overflow: hidden; }
-        footer { padding: 40px 20px; text-align: center; font-size: 9px; color: #333; line-height: 2; }
+        .pay-icons img:hover {
+            filter: none;
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .terminal {
+            background: #000;
+            height: 100px;
+            border: 1px solid #222;
+            margin: 20px 15px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 10px;
+            color: #444;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        footer {
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 9px;
+            color: #333;
+            line-height: 2;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="transition-layer">
@@ -208,7 +464,7 @@
     <div class="viewport">
         <div class="plane-box" id="plane-vis">
             <svg viewBox="0 0 24 24" fill="var(--glow-red)" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z"/>
+                <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" />
             </svg>
         </div>
         <div class="explosion" id="explosion-vis"></div>
@@ -221,7 +477,7 @@
         </div>
     </div>
 
-       <div class="platform-section">
+    <div class="platform-section">
         <div class="section-tag">COMPATIBLE CRASH PLATFORMS:</div>
         <div class="logo-wall">
             <img src="logos/1win.png" alt="1win">
@@ -298,32 +554,63 @@
             });
         });
 
-        let count = 1.00;
-        let target = (Math.random() * 5 + 1.5).toFixed(2);
+               // --- GLOBAL SYNCHRONIZATION ENGINE ---
         const countDisplay = document.getElementById('count');
         const statusMsg = document.getElementById('status-msg');
         const plane = document.getElementById('plane-vis');
         const explosion = document.getElementById('explosion-vis');
 
-        setInterval(() => {
-            if (count < target) {
-                count += 0.015;
-                countDisplay.innerText = count.toFixed(2) + 'x';
+        // This function creates a predictable random number based on a seed
+        function getGlobalTarget(seed) {
+            let x = Math.sin(seed) * 10000;
+            let randomFraction = x - Math.floor(x);
+            return (randomFraction * 5 + 1.5).toFixed(2); // Targets between 1.50x and 6.50x
+        }
+
+        function syncGlobalGame() {
+            const now = Date.now();
+            const cycleDuration = 10000; // 10 seconds total per round
+            const flyingDuration = 7000; // 7 seconds of plane flying
+            
+            // Create a unique Game ID based on global UTC time
+            const gameId = Math.floor(now / cycleDuration);
+            const timeInCycle = now % cycleDuration; // Milliseconds passed in current game
+            
+            // Everyone in the world gets the exact same target for this Game ID
+            const target = getGlobalTarget(gameId);
+
+            if (timeInCycle < flyingDuration) {
+                // --- FLYING PHASE ---
+                // Calculate exactly what the multiplier should be right now
+                let currentCount = 1.00 + ((target - 1.00) * (timeInCycle / flyingDuration));
+                
+                countDisplay.innerText = currentCount.toFixed(2) + 'x';
                 plane.style.opacity = "1";
                 explosion.classList.remove('active');
+                
+                statusMsg.innerText = "BYPASSING_AFRICA_NODES...";
+                statusMsg.style.color = "#888";
             } else {
+                // --- CRASHED PHASE ---
+                countDisplay.innerText = target + 'x';
+                plane.style.opacity = "0";
+                
+                // Trigger explosion only at the exact moment of the crash
+                if (timeInCycle < flyingDuration + 100) {
+                    explosion.classList.add('active');
+                }
+                
                 statusMsg.innerText = "CRASH_IDENTIFIED: " + target + "x";
                 statusMsg.style.color = "white";
-                plane.style.opacity = "0";
-                explosion.classList.add('active');
-                setTimeout(() => {
-                    count = 1.00;
-                    target = (Math.random() * 5 + 1.5).toFixed(2);
-                    statusMsg.innerText = "BYPASSING_AFRICA_NODES...";
-                    statusMsg.style.color = "#888";
-                }, 2000);
             }
-        }, 60);
+            
+            // Loop this continuously to keep it perfectly synced to the millisecond
+            requestAnimationFrame(syncGlobalGame);
+        }
+
+        // Start the global sync
+        syncGlobalGame();
+
 
         const logs = ["> Port_Scan: SUCCESS", "> Extracting_Seed...", "> Bypassing_Auth...", "> Packet_Relay: ACTIVE"];
         setInterval(() => {
@@ -331,8 +618,9 @@
             const div = document.createElement('div');
             div.innerText = logs[Math.floor(Math.random() * logs.length)];
             logBox.prepend(div);
-            if(logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
+            if (logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
         }, 3000);
     </script>
 </body>
+
 </html>
