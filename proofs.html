@@ -32,17 +32,17 @@
             display: flex; flex-direction: column;
         }
 
-        /* Added Total Extracted Header */
+        /* Total Extracted Header */
         .total-extracted-container {
             padding: 15px; text-align: center; border-bottom: 1px solid #222; background: #0a0a0a; z-index: 10;
         }
         .total-extracted-label { font-size: 8px; color: #666; margin-bottom: 5px; letter-spacing: 2px; }
         #total-extracted { font-size: 24px; color: var(--green); text-shadow: 0 0 10px var(--green); font-weight: bold; }
 
-        /* Updated Grid for 4 Columns */
+        /* Updated Grid for 5 Columns */
         .term-header {
             background: #111; padding: 10px 15px; font-size: 8px; color: #555;
-            display: grid; grid-template-columns: 0.8fr 1fr 0.8fr 1fr; border-bottom: 1px solid #222; z-index: 10;
+            display: grid; grid-template-columns: 0.8fr 1fr 0.8fr 1fr 0.6fr; border-bottom: 1px solid #222; z-index: 10;
         }
 
         #log-container {
@@ -50,9 +50,9 @@
             padding: 0 15px;
         }
 
-        /* Updated Grid for 4 Columns */
+        /* Updated Grid for 5 Columns */
         .tx-row {
-            display: grid; grid-template-columns: 0.8fr 1fr 0.8fr 1fr; padding: 12px 0;
+            display: grid; grid-template-columns: 0.8fr 1fr 0.8fr 1fr 0.6fr; padding: 12px 0; align-items: center;
             border-bottom: 1px solid #111; font-size: 10px; animation: slideIn 0.4s ease-out;
         }
 
@@ -60,6 +60,8 @@
         .tx-platform { color: #aaa; font-size: 9px; text-shadow: 0 0 2px #aaa; }
         .tx-user { color: #888; }
         .tx-amt { color: var(--green); font-weight: bold; text-align: right; text-shadow: 0 0 5px var(--green); }
+        .btn-verify { color: #0088cc; font-size: 8px; cursor: pointer; text-decoration: underline; text-align: right; z-index: 25; position: relative;}
+        .btn-verify:hover { color: #fff; }
 
         .system-ticker {
             height: 30px; background: #900; color: #fff; font-size: 8px;
@@ -84,11 +86,24 @@
             letter-spacing: 1px;
         }
 
+        /* --- VERIFY MODAL STYLES --- */
+        #verify-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .modal-content {
+            background: #050505; border: 1px solid var(--accent); padding: 20px;
+            width: 85%; max-width: 350px; border-radius: 5px; box-shadow: 0 0 30px rgba(255,0,51,0.3);
+            font-size: 10px; color: var(--green); position: relative; animation: slideIn 0.3s ease-out;
+        }
+        .close-btn { color: #888; position: absolute; right: 15px; top: 12px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.3s;}
+        .close-btn:hover { color: #fff; }
+
         @keyframes pulse-red {
             0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 51, 0.6); }
             50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 0, 51, 0.9); }
         }
-
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -100,28 +115,41 @@
     </a>
 
     <div class="terminal-window">
-        <!-- New Total Extracted Counter -->
+        <!-- Total Extracted Counter -->
         <div class="total-extracted-container">
             <div class="total-extracted-label">TOTAL EXTRACTED TODAY (USD)</div>
             <div id="total-extracted">$1,452,890</div>
         </div>
 
-        <!-- Updated 4-Column Header -->
+        <!-- Updated 5-Column Header -->
         <div class="term-header">
             <span>LOCATION</span>
             <span>TARGET</span>
             <span>NODE_ID</span>
             <span style="text-align:right;">PAYOUT</span>
+            <span style="text-align:right;">ACTION</span>
         </div>
         
         <div id="log-container"></div>
     </div>
 
     <!-- Floating Buy Button -->
-    <a href="index.html" class="floating-cta">GET LICENSE KEY</a>
+    <a href="index.html#buy" class="floating-cta">GET LICENSE KEY</a>
 
     <div class="system-ticker">
         <marquee scrollamount="10">ENCRYPTING DATA_PACKETS... BYPASSING SPORTY_GATEWAY... SERVER_STABLE... INJECTING_0x442... NEW_PAYOUT_DETECTED...</marquee>
+    </div>
+
+    <!-- VERIFICATION MODAL -->
+    <div id="verify-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="document.getElementById('verify-modal').style.display='none'">&times;</span>
+            <div style="color: #fff; margin-bottom: 15px; font-size: 13px; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 10px;">SYSTEM_LOG_VERIFICATION</div>
+            <div style="margin-bottom: 10px; color: #aaa;">STATUS: <span style="color:var(--green)">SUCCESS (200 OK)</span></div>
+            <div style="margin-bottom: 10px; color: #aaa;">BLOCK_HASH:<br><span id="modal-hash" style="color:#fff; word-break: break-all; font-size: 9px;"></span></div>
+            <div style="margin-bottom: 10px; color: #aaa;">INJECTION_NODE: <span style="color:#fff;">AUTH_BYPASS_V4</span></div>
+            <div style="color: #aaa;">FOOTPRINT: <span style="color:var(--green);">CLEARED (Undetected)</span></div>
+        </div>
     </div>
 
     <script>
@@ -135,7 +163,6 @@
             {n: 'SENEGAL', c: 'CFA'}, {n: 'TANZANIA', c: 'TSh'}, {n: 'ZAMBIA', c: 'ZK'}
         ];
         
-        // Added platforms list
         const platforms = ['1WIN', '1XBET', 'SPORTYBET', 'BET9JA', 'MSPORT', 'BETWAY', 'MELBET', 'PREMIERBET'];
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -148,34 +175,44 @@
             let amount;
             if(country.c === '₦') {
                 amount = Math.floor(Math.random() * 85000) + 8000;
-                amount = Math.round(amount / 50) * 50; // Rounds to nearest 50 (e.g., 14,350)
+                amount = Math.round(amount / 50) * 50; 
             } else if(country.c === '₵') {
                 amount = Math.floor(Math.random() * 800) + 150;
             } else {
                 amount = Math.floor(Math.random() * 5000) + 500;
             }
 
-            // Update Total Extracted Pool (Random USD equivalent $50 - $400)
+            // Update Total Extracted Pool
             const usdEquivalent = Math.floor(Math.random() * 350) + 50;
             totalExtracted += usdEquivalent;
             totalDisplay.innerText = "$" + totalExtracted.toLocaleString();
 
             const row = document.createElement('div');
             row.className = 'tx-row';
-            // Added the target platform column
+            
+            // Added the [VERIFY] button to the innerHTML
             row.innerHTML = `
                 <span class="tx-country">[${country.n}]</span>
                 <span class="tx-platform">${plat}</span>
                 <span class="tx-user">${user}</span>
                 <span class="tx-amt">${country.c}${amount.toLocaleString()}</span>
+                <span class="btn-verify" onclick="showVerify()">[VERIFY]</span>
             `;
 
             container.prepend(row);
 
-            // Keep the DOM clean: Remove oldest rows if there are more than 20
+            // Keep the DOM clean
             if (container.children.length > 25) {
                 container.removeChild(container.lastChild);
             }
+        }
+
+        // Verification Modal Logic
+        window.showVerify = function() {
+            // Generates a fake realistic crypto hash string
+            const fakeHash = "0x" + Math.random().toString(16).substr(2, 12) + Math.random().toString(16).substr(2, 12) + Math.random().toString(16).substr(2, 12);
+            document.getElementById('modal-hash').innerText = fakeHash.toUpperCase();
+            document.getElementById('verify-modal').style.display = 'flex';
         }
 
         // Start generating new rows every 2.2 seconds
