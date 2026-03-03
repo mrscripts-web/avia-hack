@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AFRICA HACKS | Secure Checkout</title>
+    <style>
+        :root {
+            --glow-red: #ff0033;
+            --bg-dark: #050505;
+            --panel-bg: #0f0f0f;
+            --text-dim: #888;
+            --whatsapp: #25d366;
+            --telegram: #0088cc;
+            --warning: #ffaa00;
+        }
+
+        body { 
+            margin: 0; padding: 0; 
+            background: var(--bg-dark); 
+            font-family: 'JetBrains Mono', monospace, sans-serif; 
+            color: white; 
+            overflow-x: hidden;
+        }
+
+        /* --- CRT EFFECT --- */
+        body::after {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        .glow-header {
+            height: 60px; background: var(--panel-bg); border-bottom: 1px solid var(--glow-red);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
+        }
+        .header-link { color: var(--text-dim); text-decoration: none; font-size: 10px; font-weight: bold; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; transition: 0.3s;}
+        .header-link:hover { background: #222; color: #fff; border-color: var(--glow-red); }
+        .page-title { font-size: 12px; color: var(--glow-red); font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px var(--glow-red);}
+
+        /* --- MAIN CONTENT --- */
+        .container { max-width: 500px; margin: 0 auto; padding: 20px 15px; position: relative; z-index: 10; }
+
+        /* SELECTION BOXES */
+        .config-box { background: #080808; border: 1px solid #1a1a1a; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group:last-child { margin-bottom: 0; }
+        label { display: block; font-size: 9px; color: var(--text-dim); margin-bottom: 5px; letter-spacing: 1px; }
+        select { 
+            width: 100%; padding: 12px; background: #000; border: 1px solid #333; 
+            color: white; font-family: monospace; font-size: 12px; font-weight: bold;
+            border-radius: 4px; outline: none; appearance: none; cursor: pointer;
+        }
+        select:focus { border-color: var(--glow-red); box-shadow: 0 0 10px rgba(255,0,51,0.2); }
+
+        /* PAYMENT DETAILS BOX */
+        .payment-box {
+            background: #050505; border: 1px dashed var(--glow-red); padding: 25px 15px;
+            border-radius: 6px; text-align: center; margin-bottom: 20px;
+            box-shadow: inset 0 0 20px rgba(255,0,51,0.05);
+        }
+        .pay-amount-label { font-size: 10px; color: #aaa; letter-spacing: 1px; }
+        .pay-amount { font-size: 32px; color: white; font-weight: 900; margin: 5px 0 15px 0; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        
+        .qr-container { background: white; padding: 10px; display: inline-block; border-radius: 4px; margin-bottom: 15px; }
+        .qr-container img { width: 140px; height: 140px; display: block; }
+        
+        .wallet-address-box {
+            background: #111; border: 1px solid #333; padding: 12px; border-radius: 4px;
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        }
+        .wallet-string { font-size: 10px; color: var(--warning); word-break: break-all; text-align: left; }
+        .btn-copy {
+            background: var(--glow-red); color: white; border: none; padding: 8px 12px;
+            font-size: 9px; font-weight: bold; border-radius: 3px; cursor: pointer;
+            transition: 0.3s; font-family: monospace;
+        }
+        .btn-copy:hover { box-shadow: 0 0 15px var(--glow-red); }
+
+        /* TIMER & STATUS */
+        .timer-box { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-bottom: 20px; border-bottom: 1px solid #1a1a1a; padding-bottom: 10px; }
+        .timer-val { color: var(--glow-red); font-weight: bold; font-size: 12px; animation: pulse-text 1s infinite; }
+        
+        .status-box { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 10px; color: var(--warning); font-weight: bold; margin-bottom: 30px; }
+        .spinner { width: 14px; height: 14px; border: 2px solid transparent; border-top-color: var(--warning); border-right-color: var(--warning); border-radius: 50%; animation: spin 1s linear infinite; }
+
+        /* ACTION FOOTER */
+        .action-info { font-size: 9px; color: #888; text-align: center; margin-bottom: 10px; line-height: 1.5; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-contact { padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; font-size: 11px; color: white; text-transform: uppercase; text-decoration: none; }
+        .btn-wa { background: var(--whatsapp); box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); }
+        .btn-tg { background: var(--telegram); box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); }
+
+        /* TOAST */
+        .toast { position: fixed; bottom: -50px; left: 50%; transform: translateX(-50%); background: var(--whatsapp); color: black; padding: 10px 20px; border-radius: 5px; font-family: monospace; font-weight: bold; font-size: 11px; z-index: 10000; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); pointer-events: none; }
+        .toast.show { bottom: 30px; opacity: 1; }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulse-text { 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+
+    <header class="glow-header">
+        <a href="index.html#buy" class="header-link">◄ CANCEL</a>
+        <div class="page-title">SECURE_CHECKOUT</div>
+        <div style="width: 50px;"></div> <!-- Spacer -->
+    </header>
+
+    <div class="container">
+        
+        <div class="config-box">
+            <div class="input-group">
+                <label>1. SELECT LICENSE TIER</label>
+                <select id="plan-select" onchange="updateCheckout()">
+                    <option value="30">24 HOURS ACCESS ($30)</option>
+                    <option value="65">72 HOURS ACCESS ($65)</option>
+                    <option value="200">1 WEEK ACCESS ($200)</option>
+                    <option value="600">1 MONTH ACCESS ($600)</option>
+                    <option value="2500" selected>LIFETIME LICENSE ($2,500)</option>
+                    <option value="6000">RESELLER LICENSE ($6,000)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>2. SELECT PAYMENT METHOD</label>
+                <select id="crypto-select" onchange="updateCheckout()">
+                    <option value="USDT_TRC20">USDT (TRC20 Network)</option>
+                    <option value="BTC">Bitcoin (BTC)</option>
+                    <option value="TRX">Tron (TRX)</option>
+                    <option value="BNB">Binance Coin (BNB Smart Chain)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="payment-box">
+            <div class="pay-amount-label">AMOUNT TO SEND:</div>
+            <div class="pay-amount" id="display-amount">$2,500.00</div>
+            
+            <div class="qr-container">
+                <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WAITING" alt="QR Code">
+            </div>
+
+            <label style="text-align: left; color: #fff;">SEND EXACTLY TO THIS <span id="display-network">USDT_TRC20</span> ADDRESS:</label>
+            <div class="wallet-address-box">
+                <div class="wallet-string" id="display-address">LOADING...</div>
+                <button class="btn-copy" onclick="copyAddress()">COPY</button>
+            </div>
+        </div>
+
+        <div class="timer-box">
+            <span>SESSION EXPIRES IN:</span>
+            <span class="timer-val" id="countdown">14:59</span>
+        </div>
+
+        <div class="status-box">
+            <div class="spinner"></div>
+            AWAITING BLOCKCHAIN CONFIRMATION...
+        </div>
+
+        <div class="action-info">
+            <strong>IMPORTANT:</strong> Once you have sent the payment, take a screenshot of the successful transaction. Click one of the buttons below to send the screenshot to our automated system to receive your License Key instantly.
+        </div>
+
+        <div class="contact-grid">
+            <a href="https://wa.me/YOUR_NUMBER" class="btn-contact btn-wa" target="_blank">SEND VIA WHATSAPP</a>
+            <a href="https://t.me/YOUR_TELEGRAM" class="btn-contact btn-tg" target="_blank">SEND VIA TELEGRAM</a>
+        </div>
+
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-notification" class="toast">ADDRESS COPIED TO CLIPBOARD!</div>
+
+    <script>
+        // --- 1. CONFIGURE YOUR WALLET ADDRESSES HERE ---
+        const wallets = {
+            "USDT_TRC20": "T_YOUR_USDT_TRC20_ADDRESS_HERE",
+            "BTC": "bc1q_YOUR_BITCOIN_ADDRESS_HERE",
+            "TRX": "T_YOUR_TRON_ADDRESS_HERE",
+            "BNB": "0x_YOUR_BNB_BSC_ADDRESS_HERE"
+        };
+
+        // --- 2. UPDATE CHECKOUT LOGIC ---
+        function updateCheckout() {
+            const planPrice = document.getElementById('plan-select').value;
+            const cryptoType = document.getElementById('crypto-select').value;
+            
+            // Format Price
+            document.getElementById('display-amount').innerText = "$" + Number(planPrice).toLocaleString() + ".00";
+            
+            // Update Network Label
+            document.getElementById('display-network').innerText = cryptoType.replace('_', ' ');
+
+            // Update Wallet Address
+            const address = wallets[cryptoType];
+            document.getElementById('display-address').innerText = address;
+
+            // Generate QR Code dynamically using a public API
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${address}&bgcolor=ffffff`;
+            document.getElementById('qr-image').src = qrUrl;
+        }
+
+        // --- 3. COPY TO CLIPBOARD ---
+        function copyAddress() {
+            const address = document.getElementById('display-address').innerText;
+            navigator.clipboard.writeText(address).then(() => {
+                const toast = document.getElementById('toast-notification');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            });
+        }
+
+        // --- 4. COUNTDOWN TIMER (15 Minutes) ---
+        let timeRemaining = 15 * 60; // 15 mins in seconds
+        const timerDisplay = document.getElementById('countdown');
+
+        setInterval(() => {
+            if(timeRemaining <= 0) {
+                timerDisplay.innerText = "EXPIRED";
+                timerDisplay.style.color = "red";
+                return;
+            }
+            timeRemaining--;
+            let m = Math.floor(timeRemaining / 60);
+            let s = timeRemaining % 60;
+            timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }, 1000);
+
+        // Run once on load to populate fields
+        updateCheckout();
+    </script>
+</body>
+</html>
