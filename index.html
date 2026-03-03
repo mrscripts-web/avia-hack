@@ -66,29 +66,11 @@
         }
 
         @keyframes map-glitch {
-            0% {
-                transform: translate(0);
-                clip-path: inset(10% 0 30% 0);
-            }
-
-            25% {
-                transform: translate(-10px, 5px);
-                filter: hue-rotate(90deg);
-            }
-
-            50% {
-                transform: translate(-5px, -10px);
-                clip-path: inset(40% 0 10% 0);
-            }
-
-            75% {
-                transform: translate(10px, 5px);
-                filter: invert(0);
-            }
-
-            100% {
-                transform: translate(0);
-            }
+            0% { transform: translate(0); clip-path: inset(10% 0 30% 0); }
+            25% { transform: translate(-10px, 5px); filter: hue-rotate(90deg); }
+            50% { transform: translate(-5px, -10px); clip-path: inset(40% 0 10% 0); }
+            75% { transform: translate(10px, 5px); filter: invert(0); }
+            100% { transform: translate(0); }
         }
 
         .loading-text {
@@ -160,15 +142,8 @@
         }
 
         @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.3;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
         /* --- Predictor Viewport with Radar Grid --- */
@@ -200,15 +175,8 @@
         }
 
         @keyframes plane-hover {
-
-            0%,
-            100% {
-                transform: translateY(0) rotate(5deg);
-            }
-
-            50% {
-                transform: translateY(-15px) rotate(-2deg);
-            }
+            0%, 100% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(-2deg); }
         }
 
         .explosion {
@@ -228,15 +196,8 @@
         }
 
         @keyframes explode {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(2.5);
-                opacity: 0;
-            }
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
         }
 
         .disclaimer-text {
@@ -273,35 +234,12 @@
 
         /* Crash Text Glitch Animation */
         @keyframes text-glitch {
-            0% {
-                text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff;
-                transform: translate(1px, 1px);
-            }
-
-            20% {
-                text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff;
-                transform: translate(-1px, -1px);
-            }
-
-            40% {
-                text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff;
-                transform: translate(1px, -1px);
-            }
-
-            60% {
-                text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff;
-                transform: translate(-1px, 1px);
-            }
-
-            80% {
-                text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff;
-                transform: translate(2px, 0);
-            }
-
-            100% {
-                text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff;
-                transform: translate(0, 0);
-            }
+            0% { text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff; transform: translate(1px, 1px); }
+            20% { text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff; transform: translate(-1px, -1px); }
+            40% { text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff; transform: translate(1px, -1px); }
+            60% { text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff; transform: translate(-1px, 1px); }
+            80% { text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff; transform: translate(2px, 0); }
+            100% { text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff; transform: translate(0, 0); }
         }
 
         .is-crashed {
@@ -309,7 +247,7 @@
             color: #fff !important;
         }
 
-        /* --- Platform Section with Small Text --- */
+        /* --- Platform Section --- */
         .platform-section {
             padding: 25px 15px;
             background: #000;
@@ -328,57 +266,27 @@
         .logo-wall {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 25px;
             align-items: center;
             max-width: 500px;
             margin: 0 auto;
         }
 
-        .platform-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .platform-item img {
+        .logo-wall img {
             width: 100%;
-            max-width: 70px;
+            max-width: 90px;
             height: auto;
+            margin: 0 auto;
             display: block;
             filter: grayscale(1) brightness(2);
             opacity: 0.5;
             transition: 0.4s;
         }
 
-        .platform-item img:hover {
+        .logo-wall img:hover {
             filter: none;
             opacity: 1;
             transform: scale(1.1);
-        }
-
-        .platform-name {
-            font-size: 9px;
-            color: #555;
-            font-family: monospace;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: 0.4s;
-        }
-
-        .platform-item:hover .platform-name {
-            color: var(--glow-red);
-            text-shadow: 0 0 8px rgba(255, 0, 51, 0.6);
-        }
-
-        .more-platforms-text {
-            text-align: center;
-            font-size: 9px;
-            color: var(--text-dim);
-            font-family: monospace;
-            letter-spacing: 2px;
-            margin-top: 25px;
-            text-transform: uppercase;
         }
 
         /* --- Buttons & Action Grid --- */
@@ -434,17 +342,9 @@
         }
 
         @keyframes border-pulse {
-            0% {
-                border-color: #222;
-            }
-
-            50% {
-                border-color: rgba(255, 0, 51, 0.5);
-            }
-
-            100% {
-                border-color: #222;
-            }
+            0% { border-color: #222; }
+            50% { border-color: rgba(255, 0, 51, 0.5); }
+            100% { border-color: #222; }
         }
 
         .price-row {
@@ -469,16 +369,8 @@
             animation: none;
         }
 
-        .duration {
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .amount {
-            color: var(--glow-red);
-            font-weight: 900;
-            font-size: 20px;
-        }
+        .duration { font-weight: 700; font-size: 14px; }
+        .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
 
         /* --- Payment & Footer --- */
         .payment-methods {
@@ -557,24 +449,11 @@
             border: 1px solid #111;
         }
 
-        .node-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-        }
+        .node-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .node-dot.online { background: var(--whatsapp); box-shadow: 0 0 8px var(--whatsapp); }
+        .node-dot.syncing { background: #ffaa00; box-shadow: 0 0 8px #ffaa00; animation: blink 1s infinite; }
 
-        .node-dot.online {
-            background: var(--whatsapp);
-            box-shadow: 0 0 8px var(--whatsapp);
-        }
-
-        .node-dot.syncing {
-            background: #ffaa00;
-            box-shadow: 0 0 8px #ffaa00;
-            animation: blink 1s infinite;
-        }
-
-        /* --- Popups & Toasts --- */
+        /* --- Toasts --- */
         .toast {
             position: fixed;
             bottom: -50px;
@@ -592,63 +471,7 @@
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             pointer-events: none;
         }
-
-        .toast.show {
-            bottom: 30px;
-            opacity: 1;
-        }
-
-        .purchase-popup {
-            position: fixed;
-            bottom: -80px;
-            left: 20px;
-            background: rgba(10, 10, 10, 0.95);
-            border: 1px solid #333;
-            border-left: 3px solid var(--whatsapp);
-            padding: 12px 15px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
-            transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 9999;
-            pointer-events: none;
-            font-family: monospace;
-            font-size: 9px;
-            color: #aaa;
-        }
-
-        .purchase-popup.show {
-            bottom: 20px;
-        }
-
-        .purchase-popup .highlight {
-            color: var(--whatsapp);
-            font-weight: bold;
-            font-size: 10px;
-        }
-
-        .popup-icon {
-            font-size: 16px;
-            animation: ring 2s infinite;
-        }
-
-        @keyframes ring {
-
-            0%,
-            100% {
-                transform: rotate(0deg);
-            }
-
-            25% {
-                transform: rotate(15deg);
-            }
-
-            75% {
-                transform: rotate(-15deg);
-            }
-        }
+        .toast.show { bottom: 30px; opacity: 1; }
     </style>
 </head>
 
@@ -689,51 +512,26 @@
     <div class="platform-section">
         <div class="section-tag">COMPATIBLE CRASH PLATFORMS:</div>
         <div class="logo-wall">
-            <div class="platform-item"><img src="logos/1win.png" alt="1win">
-                <div class="platform-name">1WIN</div>
-            </div>
-            <div class="platform-item"><img src="logos/1xbet.png" alt="1xbet">
-                <div class="platform-name">1XBET</div>
-            </div>
-            <div class="platform-item"><img src="logos/msport.png" alt="msport">
-                <div class="platform-name">MSPORT</div>
-            </div>
-            <div class="platform-item"><img src="logos/bet9ja.png" alt="bet9ja">
-                <div class="platform-name">BET9JA</div>
-            </div>
-            <div class="platform-item"><img src="logos/betway.png" alt="betway">
-                <div class="platform-name">BETWAY</div>
-            </div>
-            <div class="platform-item"><img src="logos/linebet.png" alt="linebet">
-                <div class="platform-name">LINEBET</div>
-            </div>
-            <div class="platform-item"><img src="logos/melbet.png" alt="melbet">
-                <div class="platform-name">MELBET</div>
-            </div>
-            <div class="platform-item"><img src="logos/mozzart.png" alt="mozzartbet">
-                <div class="platform-name">MOZZART</div>
-            </div>
-            <div class="platform-item"><img src="logos/premierbet.png" alt="premierbet">
-                <div class="platform-name">PREMIERBET</div>
-            </div>
-            <div class="platform-item"><img src="logos/sportybet.png" alt="sportybet">
-                <div class="platform-name">SPORTYBET</div>
-            </div>
-            <div class="platform-item"><img src="logos/goobet.png" alt="goobet">
-                <div class="platform-name">GOOBET</div>
-            </div>
-            <div class="platform-item"><img src="logos/betika.png" alt="betika">
-                <div class="platform-name">BETIKA</div>
-            </div>
+            <img src="logos/1win.png" alt="1win">
+            <img src="logos/1xbet.png" alt="1xbet">
+            <img src="logos/msport.png" alt="msport">
+            <img src="logos/bet9ja.png" alt="bet9ja">
+            <img src="logos/betway.png" alt="betway">
+            <img src="logos/linebet.png" alt="linebet">
+            <img src="logos/melbet.png" alt="melbet">
+            <img src="logos/mozzart.png" alt="mozzartbet">
+            <img src="logos/premierbet.png" alt="premierbet">
+            <img src="logos/sportybet.png" alt="sportybet">
+            <img src="logos/goobet.png" alt="goobet">
+            <img src="logos/betika.png" alt="betika">
         </div>
-        <div class="more-platforms-text">(AND +16 MORE PLATFORMS)</div>
     </div>
 
     <div class="action-grid">
         <a href="proofs.html" class="btn btn-preview">(LIVE PROOF)</a>
         <a href="https://wa.me/YOUR_NUMBER" class="btn btn-whatsapp">WHATSAPP</a>
         <a href="https://t.me/YOUR_TELEGRAM" class="btn btn-telegram">TELEGRAM</a>
-        <a href="#buy" class="btn btn-play">GET LICENSE</a>
+        <a href="predictor.html" class="btn btn-play">PLAY NOW</a>
     </div>
 
     <!-- Anti-Ban Badge -->
@@ -746,14 +544,14 @@
     </div>
 
     <div class="pricing-section" id="buy">
-        <!-- Scarcity Bar -->
+        <!-- Scarcity Bar (500 Limit) -->
         <div style="margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; font-size: 9px; font-family: monospace; color: var(--glow-red); font-weight: bold; margin-bottom: 5px;">
                 <span>DAILY LICENSE LIMIT</span>
-                <span>87 / 100 SOLD</span>
+                <span><span id="licenses-sold">0</span> / 500 SOLD</span>
             </div>
             <div style="width: 100%; background: #222; height: 6px; border-radius: 3px; overflow: hidden;">
-                <div style="width: 87%; background: var(--glow-red); height: 100%; box-shadow: 0 0 10px var(--glow-red);"></div>
+                <div id="license-bar" style="width: 0%; background: var(--glow-red); height: 100%; box-shadow: 0 0 10px var(--glow-red);"></div>
             </div>
             <div style="font-size: 8px; color: #666; text-align: right; margin-top: 4px;">RESETS IN <span id="scarcity-timer">00:00:00</span></div>
         </div>
@@ -798,14 +596,6 @@
 
     <!-- Interactive Elements -->
     <div id="toast-notification" class="toast">ADDRESS COPIED TO CLIPBOARD!</div>
-
-    <div id="purchase-popup" class="purchase-popup">
-        <div class="popup-icon">🔔</div>
-        <div class="popup-text">
-            <span id="popup-user" class="highlight">User_**** (NG)</span> just purchased<br>
-            <span id="popup-plan" style="color: white; font-weight: bold;">LIFETIME LICENSE</span>
-        </div>
-    </div>
 
     <script>
         // --- Page Load Transition ---
@@ -923,31 +713,11 @@
             });
         });
 
-        // --- LIVE PURCHASE POPUP ---
-        const countries = ['NG', 'GH', 'ZA', 'KE', 'UG', 'TZ', 'RW', 'ZM'];
-        const plans = ['24 HOURS ACCESS', '72 HOURS ACCESS', '1 WEEK ACCESS', '1 MONTH ACCESS', 'LIFETIME LICENSE'];
-        const popup = document.getElementById('purchase-popup');
-        const popupUser = document.getElementById('popup-user');
-        const popupPlan = document.getElementById('popup-plan');
-
-        function triggerPurchasePopup() {
-            const randomId = Math.floor(Math.random() * 9000) + 1000;
-            const country = countries[Math.floor(Math.random() * countries.length)];
-            const plan = plans[Math.floor(Math.random() * plans.length)];
-
-            popupUser.innerText = `User_${randomId} (${country})`;
-            popupPlan.innerText = plan;
-            popup.classList.add('show');
-            setTimeout(() => popup.classList.remove('show'), 4000);
-
-            const nextTime = Math.floor(Math.random() * 12000) + 8000;
-            setTimeout(triggerPurchasePopup, nextTime);
-        }
-        setTimeout(triggerPurchasePopup, 3000);
-
-        // --- SCARCITY TIMER ---
-        setInterval(() => {
+        // --- DYNAMIC SCARCITY TIMER & DAILY LICENSE LOGIC ---
+        function updateScarcityAndLicenses() {
             const now = new Date();
+            
+            // 1. Timer Logic
             const tomorrow = new Date(now);
             tomorrow.setUTCHours(24, 0, 0, 0);
             const diff = tomorrow - now;
@@ -960,7 +730,38 @@
                 String(h).padStart(2, '0') + ':' +
                 String(m).padStart(2, '0') + ':' +
                 String(s).padStart(2, '0');
-        }, 1000);
+
+            // 2. License Counter Logic (Adds 12 to 28 every hour automatically based on clock)
+            const startOfDay = new Date(now);
+            startOfDay.setUTCHours(0, 0, 0, 0);
+            const hoursElapsed = Math.floor((now - startOfDay) / 3600000);
+            const minutesElapsed = now.getUTCMinutes();
+            
+            let sold = 0;
+            
+            // Add completed hours (Deterministic pseudo-random)
+            for(let i = 0; i < hoursElapsed; i++) {
+                let seed = startOfDay.getTime() + i;
+                let pseudoRandom = Math.abs(Math.sin(seed)) * 17; // Values between 0 and 17
+                sold += Math.floor(12 + pseudoRandom); // Result between 12 and ~28
+            }
+            
+            // Add partial amount for the current hour (proportional to minutes elapsed)
+            let currentHourSeed = startOfDay.getTime() + hoursElapsed;
+            let currentHourTotal = 12 + Math.abs(Math.sin(currentHourSeed)) * 17;
+            sold += Math.floor((minutesElapsed / 60) * currentHourTotal);
+            
+            // Cap it at 500 max just in case
+            sold = Math.min(sold, 500);
+
+            // Update DOM Elements
+            document.getElementById('licenses-sold').innerText = sold;
+            document.getElementById('license-bar').style.width = (sold / 500) * 100 + "%";
+        }
+        
+        setInterval(updateScarcityAndLicenses, 1000);
+        updateScarcityAndLicenses(); // Run immediately on load
+        
     </script>
 </body>
 
