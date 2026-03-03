@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AFRICA HACKS | Network Status</title>
+    <style>
+        :root {
+            --glow-red: #ff0033;
+            --bg-dark: #050505;
+            --panel-bg: #0f0f0f;
+            --text-dim: #888;
+            --green: #00ff00;
+            --green-dim: #008800;
+        }
+
+        body { 
+            margin: 0; padding: 0; 
+            background: var(--bg-dark); 
+            font-family: 'JetBrains Mono', monospace, sans-serif; 
+            color: white; 
+            overflow-x: hidden;
+        }
+
+        /* --- CRT EFFECT --- */
+        body::after {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        .glow-header {
+            height: 60px; background: var(--panel-bg); border-bottom: 1px solid #222;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: sticky; top: 0; z-index: 100;
+        }
+        .header-link { color: var(--text-dim); text-decoration: none; font-size: 10px; font-weight: bold; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; transition: 0.3s;}
+        .header-link:hover { background: #222; color: #fff; }
+        .page-title { font-size: 12px; color: white; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,255,255,0.5);}
+
+        /* --- MAIN CONTENT --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px 15px; position: relative; z-index: 10; }
+
+        /* STATUS BANNER */
+        .status-banner {
+            background: rgba(0, 255, 0, 0.05); border: 1px solid var(--green);
+            padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 25px;
+            box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1), 0 0 15px rgba(0, 255, 0, 0.1);
+            animation: pulse-green 3s infinite;
+        }
+        .status-title { font-size: 18px; color: var(--green); font-weight: 900; letter-spacing: 3px; margin-bottom: 5px; text-shadow: 0 0 10px var(--green);}
+        .status-sub { font-size: 9px; color: var(--green-dim); letter-spacing: 1px; }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1), 0 0 15px rgba(0, 255, 0, 0.1); }
+            50% { box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.2), 0 0 25px rgba(0, 255, 0, 0.2); }
+        }
+
+        /* METRICS BAR */
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .metric-box { background: var(--panel-bg); border: 1px solid #1a1a1a; padding: 15px; border-radius: 6px; }
+        .metric-label { font-size: 8px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; }
+        .metric-val { font-size: 20px; font-weight: bold; color: white; }
+        .highlight-red { color: var(--glow-red); text-shadow: 0 0 10px var(--glow-red); }
+
+        .progress-bg { width: 100%; height: 4px; background: #222; border-radius: 2px; margin-top: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--green); width: 42%; transition: width 1s ease-in-out; }
+
+        /* NODE GRID */
+        .section-title { font-size: 10px; color: #aaa; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 5px; letter-spacing: 2px; }
+        .node-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 30px; }
+        .node-card {
+            background: #080808; border: 1px solid #111; padding: 12px; border-radius: 6px;
+            display: flex; flex-direction: column; gap: 5px; transition: 0.3s;
+        }
+        .node-card:hover { border-color: #333; }
+        .node-header { display: flex; justify-content: space-between; align-items: center; font-size: 10px; font-weight: bold; color: #ddd; }
+        .status-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); animation: blink 1.5s infinite; }
+        .node-detail { display: flex; justify-content: space-between; font-size: 8px; color: var(--text-dim); }
+        .ping-val { color: var(--green); font-weight: bold; }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* TERMINAL LOGS */
+        .terminal-box {
+            background: #020202; border: 1px solid #1a1a1a; border-left: 2px solid var(--glow-red);
+            height: 120px; border-radius: 4px; padding: 10px; overflow-y: hidden;
+            display: flex; flex-direction: column-reverse; font-size: 9px; color: #666;
+        }
+        .log-line { margin-bottom: 4px; animation: slideUp 0.2s ease-out; }
+        .log-time { color: #444; margin-right: 8px; }
+        .log-action { color: #aaa; }
+        .log-success { color: var(--green-dim); }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <header class="glow-header">
+        <a href="index.html" class="header-link">◄ RETURN</a>
+        <div class="page-title">NETWORK_STATUS</div>
+        <div style="width: 50px;"></div> <!-- Spacer for centering -->
+    </header>
+
+    <div class="container">
+        
+        <div class="status-banner">
+            <div class="status-title">ALL SYSTEMS OPERATIONAL</div>
+            <div class="status-sub">NEURAL_SYNC UPTIME: 99.98%</div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-box">
+                <div class="metric-label">GLOBAL SERVER LOAD</div>
+                <div class="metric-val" id="cpu-load">42%</div>
+                <div class="progress-bg"><div class="progress-fill" id="cpu-bar"></div></div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">FIREWALLS BYPASSED (TODAY)</div>
+                <div class="metric-val highlight-red" id="bypassed-count">142,891</div>
+                <div style="font-size: 7px; color: var(--text-dim); margin-top: 5px;">+ UPDATING LIVE</div>
+            </div>
+        </div>
+
+        <div class="section-title">ACTIVE BYPASS NODES</div>
+        
+        <div class="node-grid">
+            <!-- NIGERIA -->
+            <div class="node-card">
+                <div class="node-header"><span>NGN_NODE</span><div class="status-dot"></div></div>
+                <div class="node-detail"><span>STATUS:</span><span style="color:var(--green)">ONLINE</span></div>
+                <div class="node-detail"><span>LATENCY:</span><span class="ping-val" id="ping-ng">14ms</span></div>
+            </div>
+            <!-- KENYA -->
+            <div class="node-card">
+                <div class="node-header"><span>KES_NODE</span><div class="status-dot"></div></div>
+                <div class="node-detail"><span>STATUS:</span><span style="color:var(--green)">ONLINE</span></div>
+                <div class="node-detail"><span>LATENCY:</span><span class="ping-val" id="ping-ke">18ms</span></div>
+            </div>
+            <!-- SOUTH AFRICA -->
+            <div class="node-card">
+                <div class="node-header"><span>ZAR_NODE</span><div class="status-dot"></div></div>
+                <div class="node-detail"><span>STATUS:</span><span style="color:var(--green)">ONLINE</span></div>
+                <div class="node-detail"><span>LATENCY:</span><span class="ping-val" id="ping-za">22ms</span></div>
+            </div>
+            <!-- GHANA -->
+            <div class="node-card">
+                <div class="node-header"><span>GHS_NODE</span><div class="status-dot"></div></div>
+                <div class="node-detail"><span>STATUS:</span><span style="color:var(--green)">ONLINE</span></div>
+                <div class="node-detail"><span>LATENCY:</span><span class="ping-val" id="ping-gh">16ms</span></div>
+            </div>
+            <!-- UGANDA -->
+            <div class="node-card">
+                <div class="node-header"><span>UGX_NODE</span><div class="status-dot"></div></div>
+                <div class="node-detail"><span>STATUS:</span><span style="color:var(--green)">ONLINE</span></div>
+                <div class="node-detail"><span>LATENCY:</span><span class="ping-val" id="ping-ug">25ms</span></div>
+            </div>
+            <!-- TANZANIA -->
+            <div class="node-card">
+                <div class="node-header"><span>TZS_NODE</span><div class="status-dot"></div></div>
+                <div class="node-detail"><span>STATUS:</span><span style="color:var(--green)">ONLINE</span></div>
+                <div class="node-detail"><span>LATENCY:</span><span class="ping-val" id="ping-tz">21ms</span></div>
+            </div>
+        </div>
+
+        <div class="section-title">LIVE SECURITY LOGS</div>
+        <div class="terminal-box" id="sec-logs">
+            <!-- Logs generate here -->
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. LIVE PING SIMULATOR ---
+        const nodes = [
+            { id: 'ping-ng', base: 12 },
+            { id: 'ping-ke', base: 16 },
+            { id: 'ping-za', base: 20 },
+            { id: 'ping-gh', base: 14 },
+            { id: 'ping-ug', base: 22 },
+            { id: 'ping-tz', base: 19 }
+        ];
+
+        setInterval(() => {
+            nodes.forEach(node => {
+                // Fluctuate around the base ping by -3 to +8 ms
+                const currentPing = node.base + Math.floor(Math.random() * 11) - 3;
+                document.getElementById(node.id).innerText = currentPing + "ms";
+            });
+        }, 2000);
+
+        // --- 2. GLOBAL CPU LOAD SIMULATOR ---
+        const cpuLoadTxt = document.getElementById('cpu-load');
+        const cpuBar = document.getElementById('cpu-bar');
+        
+        setInterval(() => {
+            // Random CPU load between 35% and 68%
+            const load = Math.floor(Math.random() * 33) + 35;
+            cpuLoadTxt.innerText = load + "%";
+            cpuBar.style.width = load + "%";
+            
+            // Change color if load gets high
+            if(load > 60) {
+                cpuBar.style.background = "#ffaa00"; // Orange warning
+                cpuLoadTxt.style.color = "#ffaa00";
+            } else {
+                cpuBar.style.background = "var(--green)";
+                cpuLoadTxt.style.color = "white";
+            }
+        }, 3500);
+
+        // --- 3. FIREWALL BYPASS COUNTER ---
+        let bypassedBase = 142891;
+        const bypassedTxt = document.getElementById('bypassed-count');
+        
+        setInterval(() => {
+            // Add 1 to 5 blocks every second
+            bypassedBase += Math.floor(Math.random() * 5) + 1;
+            bypassedTxt.innerText = bypassedBase.toLocaleString();
+        }, 1200);
+
+        // --- 4. TERMINAL LOG GENERATOR ---
+        const logBox = document.getElementById('sec-logs');
+        const platforms = ['1XBET', 'SPORTYBET', 'BETWAY', 'MSPORT', 'BET9JA', '1WIN'];
+        const actions = [
+            "Intercepted Hash payload from",
+            "Deflected anti-bot packet on",
+            "Spoofed DNS routing for",
+            "Cleared footprint logs on",
+            "Injected neural bypass into"
+        ];
+
+        function addLog() {
+            const now = new Date();
+            const timeStr = String(now.getHours()).padStart(2, '0') + ":" + 
+                            String(now.getMinutes()).padStart(2, '0') + ":" + 
+                            String(now.getSeconds()).padStart(2, '0');
+            
+            const plat = platforms[Math.floor(Math.random() * platforms.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            div.innerHTML = `<span class="log-time">[${timeStr}]</span> <span class="log-action">${action} <span style="color:#fff;">${plat}_MAIN</span></span> <span class="log-success">...SUCCESS</span>`;
+            
+            logBox.prepend(div);
+
+            // Keep clean
+            if(logBox.children.length > 7) {
+                logBox.removeChild(logBox.lastChild);
+            }
+
+            // Schedule next log
+            const nextLogDelay = Math.floor(Math.random() * 2000) + 1000; // 1 to 3 seconds
+            setTimeout(addLog, nextLogDelay);
+        }
+
+        // Initialize first few logs
+        for(let i=0; i<5; i++) {
+            addLog();
+        }
+
+    </script>
+</body>
+</html>
