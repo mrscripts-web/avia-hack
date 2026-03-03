@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AFRICA HACKS | Safe Extraction Guide</title>
+    <style>
+        :root {
+            --glow-red: #ff0033;
+            --bg-dark: #050505;
+            --panel-bg: #0f0f0f;
+            --text-dim: #888;
+            --green: #00ff00;
+            --warning: #ffaa00;
+        }
+
+        body { 
+            margin: 0; padding: 0; 
+            background: var(--bg-dark); 
+            font-family: 'JetBrains Mono', monospace, sans-serif; 
+            color: white; 
+            overflow-x: hidden;
+        }
+
+        /* --- CRT EFFECT --- */
+        body::after {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        .glow-header {
+            height: 60px; background: var(--panel-bg); border-bottom: 1px solid var(--glow-red);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
+        }
+        .header-link { color: var(--text-dim); text-decoration: none; font-size: 10px; font-weight: bold; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; transition: 0.3s;}
+        .header-link:hover { background: #222; color: #fff; border-color: var(--glow-red); }
+        .page-title { font-size: 12px; color: var(--glow-red); font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px var(--glow-red);}
+
+        /* --- MAIN CONTENT --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px 15px; position: relative; z-index: 10; }
+
+        /* WARNING BANNER */
+        .warning-banner {
+            background: rgba(255, 170, 0, 0.05); border: 1px solid var(--warning);
+            padding: 15px; border-radius: 8px; margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.1);
+            display: flex; gap: 15px; align-items: center;
+        }
+        .warning-icon { font-size: 24px; animation: pulse-warn 2s infinite; }
+        .warning-text-title { color: var(--warning); font-size: 11px; font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; }
+        .warning-text-desc { color: #ccc; font-size: 9px; line-height: 1.5; }
+
+        @keyframes pulse-warn {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+        }
+
+        /* STEP CARDS */
+        .step-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .step-card {
+            background: #080808; border: 1px solid #1a1a1a; border-left: 3px solid #333;
+            padding: 15px; border-radius: 4px; display: flex; gap: 15px; transition: 0.3s;
+        }
+        .step-card:hover { border-left-color: var(--glow-red); background: #0a0a0a; transform: translateX(5px); }
+        .step-number {
+            font-size: 24px; font-weight: 900; color: #222; text-shadow: 1px 1px 0 #444;
+            min-width: 30px; display: flex; align-items: center; justify-content: center;
+        }
+        .step-title { font-size: 11px; color: white; font-weight: bold; letter-spacing: 1px; margin-bottom: 6px; }
+        .step-desc { font-size: 9px; color: var(--text-dim); line-height: 1.6; }
+        .highlight { color: var(--glow-red); font-weight: bold; }
+        .highlight-green { color: var(--green); font-weight: bold; }
+
+        /* INTERACTIVE FOOTPRINT BUTTON */
+        .ghost-protocol {
+            background: #030303; border: 1px dashed #222; padding: 25px 15px;
+            text-align: center; border-radius: 8px; margin-top: 20px;
+        }
+        .ghost-title { font-size: 12px; color: #fff; margin-bottom: 15px; letter-spacing: 2px; }
+        .btn-clear {
+            background: #111; color: var(--glow-red); border: 1px solid var(--glow-red);
+            padding: 15px 30px; border-radius: 4px; font-weight: bold; font-family: monospace;
+            font-size: 12px; cursor: pointer; letter-spacing: 2px; transition: 0.3s;
+            box-shadow: inset 0 0 10px rgba(255,0,51,0.2); width: 100%; max-width: 300px;
+        }
+        .btn-clear:hover { background: var(--glow-red); color: white; box-shadow: 0 0 20px var(--glow-red); }
+        .btn-clear:disabled { background: var(--green); color: black; border-color: var(--green); box-shadow: 0 0 20px var(--green); cursor: not-allowed; }
+
+        /* TERMINAL LOADER */
+        #clear-log { display: none; font-size: 8px; color: #666; margin-top: 15px; text-align: left; background: #000; padding: 10px; border: 1px solid #111; border-radius: 4px; height: 60px; overflow: hidden; flex-direction: column-reverse; }
+        .log-line { animation: slideUp 0.2s ease-out; margin-bottom: 3px; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <header class="glow-header">
+        <a href="index.html" class="header-link">◄ RETURN</a>
+        <div class="page-title">EXTRACTION_PROTOCOL</div>
+        <div style="width: 50px;"></div> <!-- Spacer -->
+    </header>
+
+    <div class="container">
+        
+        <div class="warning-banner">
+            <div class="warning-icon">⚠️</div>
+            <div>
+                <div class="warning-text-title">CRITICAL SECURITY WARNING</div>
+                <div class="warning-text-desc">Do not extract more than <strong style="color:white;">$5,000 USD</strong> (or equivalent local currency) per day. High-volume withdrawals trigger manual casino audits. Stay under the radar to protect your betting account.</div>
+            </div>
+        </div>
+
+        <div class="step-container">
+            
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div>
+                    <div class="step-title">NODE INJECTION</div>
+                    <div class="step-desc">Open the Predictor Tool, select your target platform, and input your <span class="highlight">Secure License Key</span>. Wait for the terminal to bypass the casino firewall and establish a connection.</div>
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div>
+                    <div class="step-title">NEURAL CALIBRATION</div>
+                    <div class="step-desc">Once logged in, <span class="highlight">DO NOT place a bet on the first round.</span> Allow the Neural Link to sync with the live server hash for exactly one cycle to ensure 100% accuracy.</div>
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div>
+                    <div class="step-title">SAFE EXTRACTION (CRUCIAL)</div>
+                    <div class="step-desc">The predictor will show the absolute crash point. You must <span class="highlight-green">ALWAYS cash out 0.10x BEFORE</span> the predicted number to account for internet latency. <br><br><i>Example: If the tool predicts 3.50x, cash out at exactly 3.40x.</i></div>
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <div>
+                    <div class="step-title">GHOST PROTOCOL</div>
+                    <div class="step-desc">After finishing your daily session, you must clear your device's fingerprint to prevent tracking. Use the Ghost Protocol button below before logging back into your regular betting account.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="ghost-protocol">
+            <div class="ghost-title">SYSTEM FOOTPRINT MANAGER</div>
+            <button class="btn-clear" id="btn-clear" onclick="initiateGhostProtocol()">ERASE FOOTPRINT</button>
+            <div id="clear-log"></div>
+        </div>
+
+    </div>
+
+    <script>
+        function initiateGhostProtocol() {
+            const btn = document.getElementById('btn-clear');
+            const logBox = document.getElementById('clear-log');
+            
+            btn.innerText = "BYPASSING...";
+            btn.style.pointerEvents = "none";
+            logBox.style.display = "flex";
+            
+            const lines = [
+                "> MASKING IP ADDRESS...",
+                "> CLEARING BROWSER CACHE...",
+                "> OVERWRITING MAC_ADDRESS...",
+                "> PURGING SESSION TOKENS...",
+                "> INJECTING FAKE TELEMETRY...",
+                "> FOOTPRINT ERASED. SYSTEM SECURE."
+            ];
+
+            let delay = 0;
+            
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'log-line';
+                    
+                    if(index === lines.length - 1) {
+                        div.innerHTML = `<span style="color:var(--green); font-weight:bold;">${line}</span>`;
+                        btn.innerText = "FOOTPRINT CLEARED";
+                        btn.disabled = true; // Changes to green via CSS
+                    } else {
+                        div.innerText = line;
+                    }
+                    
+                    logBox.prepend(div);
+                    
+                    // Keep logs clean
+                    if(logBox.children.length > 5) {
+                        logBox.removeChild(logBox.lastChild);
+                    }
+                }, delay);
+                
+                // Increase delay for realistic typing effect
+                delay += Math.floor(Math.random() * 600) + 400; 
+            });
+        }
+    </script>
+</body>
+</html>
