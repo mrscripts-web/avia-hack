@@ -27,6 +27,7 @@
             --text-dim: #888;
             --whatsapp: #25d366;
             --telegram: #0088cc;
+            --green: #00ff00;
         }
 
         /* --- Global Reset & Entrance Fade --- */
@@ -318,32 +319,42 @@
         /* --- Buttons & Action Grid --- */
         .action-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns to fit WhatsApp, Checkout, and Telegram */
+            gap: 8px;
             padding: 0 15px;
             margin-top: 15px;
         }
 
         .btn {
-            padding: 16px;
+            padding: 14px 2px;
             border-radius: 8px;
             text-align: center;
             font-weight: 800;
-            font-size: 13px;
+            font-size: 10px;
             color: white;
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-preview {
             background: #111;
             border: 1px solid #333;
-            grid-column: span 2;
+            grid-column: span 3; /* spans all 3 columns */
             color: #888;
+            font-size: 12px;
         }
 
         .btn-whatsapp {
             background: var(--whatsapp);
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+        }
+
+        .btn-checkout {
+            background: #ffaa00; /* Gold */
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.2);
         }
 
         .btn-telegram {
@@ -352,14 +363,15 @@
         }
 
         .btn-play {
-            grid-column: span 2;
+            grid-column: span 3; /* spans all 3 columns */
             background: var(--glow-red);
-            margin-top: 10px;
+            margin-top: 5px;
             font-size: 18px;
             letter-spacing: 4px;
             box-shadow: 0 0 25px rgba(255, 0, 51, 0.5);
             animation: pulse-red 2s infinite;
             border: none;
+            padding: 16px 2px;
         }
 
         /* --- Pricing Section --- */
@@ -385,6 +397,8 @@
             transition: all 0.3s ease;
             cursor: pointer;
             animation: border-pulse 3s infinite;
+            color: white;
+            text-decoration: none;
         }
 
         .price-row:hover {
@@ -446,12 +460,35 @@
             overflow: hidden;
         }
 
-        /* Footer Node Status */
+        /* Footer & Status Button */
         footer {
             padding: 40px 20px;
             text-align: center;
             font-size: 9px;
             line-height: 2;
+        }
+
+        .btn-status {
+            background: #0a0a0a;
+            color: var(--green);
+            border: 1px solid var(--green);
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-block;
+            transition: 0.3s;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+            text-decoration: none;
+        }
+
+        .btn-status:hover {
+            background: var(--green);
+            color: #000;
+            box-shadow: 0 0 15px var(--green);
         }
 
         .node-status-container {
@@ -556,9 +593,16 @@
 
     <div class="action-grid">
         <a href="proofs.html" class="btn btn-preview">(LIVE PROOF)</a>
+        <!-- Added Checkout Button between WhatsApp and Telegram -->
         <a href="https://wa.me/YOUR_NUMBER" class="btn btn-whatsapp">WHATSAPP</a>
+        <a href="checkout.html" class="btn btn-checkout">CHECKOUT</a>
         <a href="https://t.me/YOUR_TELEGRAM" class="btn btn-telegram">TELEGRAM</a>
+        
         <a href="predictor.html" class="btn btn-play">PLAY NOW</a>
+    </div>
+
+    <div style="text-align: center; margin-top: 15px;">
+        <a href="guide.html" style="color: var(--text-dim); font-size: 9px; font-family: monospace; text-decoration: underline; letter-spacing: 1px;">📖 READ SAFE EXTRACTION GUIDE</a>
     </div>
 
     <!-- Anti-Ban Badge -->
@@ -583,12 +627,13 @@
             <div style="font-size: 8px; color: #666; text-align: right; margin-top: 4px;">RESETS IN <span id="scarcity-timer">00:00:00</span></div>
         </div>
 
-        <div class="price-row"><span class="duration">24 HOURS ACCESS</span> <span class="amount">$30</span></div>
-        <div class="price-row"><span class="duration">72 HOURS ACCESS</span> <span class="amount">$65</span></div>
-        <div class="price-row"><span class="duration">1 WEEK ACCESS</span> <span class="amount">$200</span></div>
-        <div class="price-row"><span class="duration">1 MONTH ACCESS</span> <span class="amount">$600</span></div>
-        <div class="price-row" style="border-color: var(--glow-red); background: rgba(255,0,51,0.05);"><span class="duration">LIFETIME LICENSE</span> <span class="amount">$2,500</span></div>
-        <div class="price-row"><span class="duration">RESELLER LICENSE</span> <span class="amount">$6,000</span></div>
+        <!-- Made Price Rows Clickable Links to Checkout Page -->
+        <a href="checkout.html" class="price-row"><span class="duration">24 HOURS ACCESS</span> <span class="amount">$30</span></a>
+        <a href="checkout.html" class="price-row"><span class="duration">72 HOURS ACCESS</span> <span class="amount">$65</span></a>
+        <a href="checkout.html" class="price-row"><span class="duration">1 WEEK ACCESS</span> <span class="amount">$200</span></a>
+        <a href="checkout.html" class="price-row"><span class="duration">1 MONTH ACCESS</span> <span class="amount">$600</span></a>
+        <a href="checkout.html" class="price-row" style="border-color: var(--glow-red); background: rgba(255,0,51,0.05);"><span class="duration">LIFETIME LICENSE</span> <span class="amount">$2,500</span></a>
+        <a href="checkout.html" class="price-row"><span class="duration">RESELLER LICENSE</span> <span class="amount">$6,000</span></a>
     </div>
 
     <div class="payment-methods">
@@ -604,6 +649,11 @@
     <div class="terminal" id="log-box"></div>
 
     <footer>
+        <!-- Live Status Button -->
+        <div style="margin-bottom: 25px;">
+            <a href="status.html" class="btn-status">🔴 LIVE NETWORK STATUS</a>
+        </div>
+        
         <div style="margin-bottom: 15px; color: #555;">&copy; 2026 AFRICA HACKS GROUP</div>
         <div class="node-status-container">
             <div class="node">
@@ -637,7 +687,7 @@
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
                 const dest = this.getAttribute('href');
-                if (dest.includes('.html')) {
+                if (dest && dest.includes('.html')) {
                     e.preventDefault();
                     document.getElementById('transition-layer').classList.add('active');
                     setTimeout(() => window.location.href = dest, 1200);
