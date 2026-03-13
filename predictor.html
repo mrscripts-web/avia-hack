@@ -6,7 +6,7 @@
     <title>AFRICA HACKS | Neural Link v8.1</title>
     <style>
         :root { --accent: #ff0033; --bg: #010101; }
-        body { background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; font-size: 10px; }
+        body { background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; }
         
         /* --- CRT SCANLINE EFFECT --- */
         body::before {
@@ -15,72 +15,112 @@
             z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
-        /* Stage 1: Selection */
-        #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; height: 100vh; overflow-y: auto; }
+        /* --- STAGE 1: SELECTION --- */
+        #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; height: 100vh; overflow-y: auto; position: relative; z-index: 10; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
         .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
-        .card img { width: 100%; max-width: 60px; filter: grayscale(1) opacity(0.3); }
-        .card.active { border-color: var(--accent); background: rgba(255,0,51,0.05); }
-        .card.active img { filter: none; opacity: 1; }
+        .card img { width: 100%; max-width: 60px; filter: grayscale(1) opacity(0.3); transition: 0.3s; }
+        .card.other-btn { font-size: 12px; font-weight: bold; color: #888; letter-spacing: 1px;}
+        .card:hover { border-color: #333; }
+        .card.active { border-color: var(--accent); background: rgba(255,0,51,0.05); box-shadow: 0 0 15px rgba(255,0,51,0.2); }
+        .card.active img { filter: none; opacity: 1; transform: scale(1.1); }
+        .card.active.other-btn { color: var(--accent); }
         
-        .activation-box { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; display: none; margin-bottom: 20px; }
-        input { width: 85%; padding: 12px; background: #000; border: 1px solid #222; color: var(--accent); text-align: center; letter-spacing: 4px; border-radius: 4px; margin-bottom: 15px; outline: none; }
+        .activation-box { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; display: none; margin-bottom: 20px; animation: slideUp 0.3s ease-out; }
+        input[type="text"] { width: 85%; padding: 12px; background: #000; border: 1px solid #222; color: var(--accent); text-align: center; letter-spacing: 4px; border-radius: 4px; margin-bottom: 15px; outline: none; font-family: monospace; font-weight: bold; }
+        input[type="text"]:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,51,0.2); }
         
-        .btn-start { background: var(--accent); color: white; padding: 14px; border: none; border-radius: 4px; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; margin-bottom: 10px; }
+        .btn-start { background: var(--accent); color: white; padding: 14px; border: none; border-radius: 4px; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 2px; transition: 0.3s; }
+        .btn-start:hover { box-shadow: 0 0 20px var(--accent); }
         .btn-buy { background: #111; color: #888; border: 1px solid #222; padding: 10px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 8px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .btn-buy:hover { background: #222; color: white; }
+
+        /* Custom Platform Input & Suggestions */
+        .custom-platform-section { display: none; margin-bottom: 20px; }
+        .platform-suggestions {
+            display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;
+            max-height: 100px; overflow-y: auto;
+            justify-content: center;
+        }
+        .suggestion-item {
+            background: #111; color: #888; padding: 5px 8px;
+            border-radius: 3px; font-size: 9px; cursor: pointer; transition: 0.2s;
+            border: 1px solid #222;
+        }
+        .suggestion-item:hover { background: #333; color: white; border-color: var(--accent); }
 
         /* --- DEVICE INTERCEPTOR BOX --- */
-        .fingerprint-box {
-            background: rgba(255, 0, 0, 0.03);
-            border: 1px solid #1a0000;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: left;
-            border-radius: 4px;
-        }
+        .fingerprint-box { background: rgba(255, 0, 0, 0.03); border: 1px solid #1a0000; padding: 15px; margin-top: 20px; text-align: left; border-radius: 4px; }
         .box-header { font-size: 8px; color: var(--accent); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
         .id-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 4px; color: #555; }
         .id-row span:last-child { color: #aaa; font-weight: bold; }
-        .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
-
-        /* Stage 2 & 3 Styles (Kept from your original) */
+        
+        /* --- STAGE 2: TERMINAL --- */
         #terminal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .term-line { color: var(--accent); margin-bottom: 4px; width: 280px; }
+        .term-line { color: var(--accent); margin-bottom: 4px; width: 280px; text-shadow: 0 0 5px var(--accent); }
+
+        /* --- STAGE 3: DASHBOARD --- */
         #hack-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
         .dash-header { height: 45px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #050505; }
         .main-layout { display: flex; flex: 1; overflow: hidden; }
-        .side-panel { width: 80px; border-right: 1px solid #111; padding: 10px; display: flex; flex-direction: column; gap: 20px; background: #020202; }
+        
+        .side-panel { width: 80px; border-right: 1px solid #111; padding: 15px 10px; display: flex; flex-direction: column; gap: 25px; background: #020202; }
+        .side-panel.right { border-right: none; border-left: 1px solid #111; }
+        
         .center-content { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .multiplier-circle { width: 190px; height: 190px; border: 1px solid #111; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        #prediction-val { font-size: 44px; color: white; text-shadow: 0 0 15px var(--accent); }
-        .history-bar { height: 70px; border-top: 1px solid #111; display: flex; align-items: center; gap: 10px; padding: 0 15px; overflow-x: auto; }
-        .hist-item { min-width: 45px; height: 45px; border: 1px solid #1a1a1a; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; }
-        @keyframes blinker { 50% { opacity: 0; } }
+        .multiplier-circle { width: 190px; height: 190px; border: 1px solid #111; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); background: #050505; }
+        #prediction-val { font-size: 44px; color: white; text-shadow: 0 0 15px var(--accent); transition: 0.3s; }
+        
+        .history-bar { height: 70px; border-top: 1px solid #111; display: flex; align-items: center; gap: 10px; padding: 0 15px; overflow-x: auto; background: #020202; }
+        .hist-item { min-width: 45px; height: 45px; border: 1px solid #1a1a1a; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; animation: popIn 0.3s ease-out; }
+        
+        /* --- NEW CSS CLASSES FIXED --- */
+        .logout-btn { background: #111; color: #888; border: 1px solid #333; padding: 6px 12px; font-size: 8px; border-radius: 3px; cursor: pointer; font-weight: bold; transition: 0.3s; letter-spacing: 1px; }
+        .logout-btn:hover { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .stat-label { font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 4px; }
+        .stat-val { font-size: 11px; color: var(--accent); font-weight: bold; text-shadow: 0 0 8px rgba(255,0,51,0.4); }
+        .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
+        .blink { animation: fast-blink 0.2s infinite; color: #fff !important; text-shadow: 0 0 10px #fff !important; }
+        
+        @keyframes blinker { 50% { opacity: 0.3; } }
+        @keyframes fast-blink { 50% { opacity: 0.3; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
+    <!-- STAGE 1: SETUP -->
     <div id="selection-screen">
         <h2 style="font-size: 9px; letter-spacing: 3px; color: #444;">AFRICA_SECURE_GATE v8.1</h2>
         <div class="grid">
-            <div class="card" onclick="select(this, 'SportyBet', '#ff0033')"><img src="logos/sportybet.png"></div>
-            <div class="card" onclick="select(this, '1Win', '#007bff')"><img src="logos/1win.png"></div>
-            <div class="card" onclick="select(this, 'Betway', '#00ff00')"><img src="logos/betway.png"></div>
-            <div class="card" onclick="select(this, '1xBet', '#00acee')"><img src="logos/1xbet.png"></div>
-            <div class="card" onclick="select(this, 'Bet9ja', '#008d36')"><img src="logos/bet9ja.png"></div>
-            <div class="card" onclick="select(this, 'MSport', '#ffc107')"><img src="logos/msport.png"></div>
-            <div class="card" onclick="select(this, 'goobet', '#022cfa')"><img src="logos/goobet.png"></div>
-            <div class="card" onclick="select(this, 'Mozzart', '#2d3291')"><img src="logos/mozzart.png"></div>
-            <div class="card" onclick="select(this, 'Betika', '#8dc63f')"><img src="logos/betika.png"></div>
-            <div class="card" onclick="select(this, 'Premier Bet', '#23fa02')"><img src="logos/premierbet.png"></div>
-            <div class="card" onclick="select(this, 'LineBet', '#004a34')"><img src="logos/linebet.png"></div>
-            <div class="card" onclick="select(this, 'MelBet', '#f7941d')"><img src="logos/melbet.png"></div>
+            <div class="card" onclick="select(this, 'SportyBet', '#ff0033')"><img src="logos/sportybet.png" alt="SportyBet"></div>
+            <div class="card" onclick="select(this, '1Win', '#007bff')"><img src="logos/1win.png" alt="1Win"></div>
+            <div class="card" onclick="select(this, 'Betway', '#00ff00')"><img src="logos/betway.png" alt="Betway"></div>
+            <div class="card" onclick="select(this, '1xBet', '#00acee')"><img src="logos/1xbet.png" alt="1xBet"></div>
+            <div class="card" onclick="select(this, 'Bet9ja', '#008d36')"><img src="logos/bet9ja.png" alt="Bet9ja"></div>
+            <div class="card" onclick="select(this, 'MSport', '#ffc107')"><img src="logos/msport.png" alt="MSport"></div>
+            <div class="card" onclick="select(this, 'goobet', '#022cfa')"><img src="logos/goobet.png" alt="Goobet"></div>
+            <div class="card" onclick="select(this, 'Mozzart', '#2d3291')"><img src="logos/mozzart.png" alt="MozzartBet"></div>
+            <div class="card" onclick="select(this, 'Betika', '#8dc63f')"><img src="logos/betika.png" alt="Betika"></div>
+            <div class="card" onclick="select(this, 'Premier Bet', '#23fa02')"><img src="logos/premierbet.png" alt="Premier Bet"></div>
+            <div class="card" onclick="select(this, 'LineBet', '#004a34')"><img src="logos/linebet.png" alt="LineBet"></div>
+            <div class="card" onclick="select(this, 'MelBet', '#f7941d')"><img src="logos/melbet.png" alt="MelBet"></div>
+            <!-- NEW: OTHER PLATFORM BUTTON -->
+            <div class="card other-btn" onclick="selectOtherPlatform(this)">OTHER</div>
+        </div>
+
+        <!-- NEW: CUSTOM PLATFORM INPUT SECTION -->
+        <div id="custom-platform-input-section" class="custom-platform-section">
+            <label style="display:block; font-size:9px; color:#666; margin-bottom:5px; letter-spacing:1px;">ENTER PLATFORM NAME:</label>
+            <input type="text" id="custom-platform-name" placeholder="E.G. BETKING, KONGA BET" onkeyup="filterSuggestions()" onfocus="showSuggestions()" onblur="hideSuggestions(event)">
+            <div id="platform-suggestions" class="platform-suggestions"></div>
         </div>
 
         <div class="activation-box" id="activation-ui">
-            <input type="text" id="license-key" placeholder="SECURE_KEY">
+            <input type="text" id="license-key" placeholder="ENTER SECURE KEY" autocomplete="off">
             <button class="btn-start" onclick="initiate()">BYPASS SERVER</button>
-            <button class="btn-buy" onclick="window.open('https://t.me/yourusername', '_blank')">🛒 BUY LICENSE KEY</button>
+            <button class="btn-buy" onclick="window.location.href='index.html#buy'">🛒 BUY LICENSE KEY</button>
         </div>
 
         <div class="fingerprint-box">
@@ -89,54 +129,91 @@
             <div class="id-row"><span>NODE_OS:</span> <span id="user-os">DETECTING...</span></div>
             <div class="id-row"><span>POWER_LVL:</span> <span id="user-battery">--%</span></div>
             <div class="id-row"><span>CONNECTION:</span> <span id="user-isp">ENCRYPTED</span></div>
-            <div style="font-size: 6px; color: #222; margin-top: 8px; text-align: center;">LOG_ID: AF-NET-99102-X</div>
+            <div style="font-size: 6px; color: #333; margin-top: 10px; text-align: center;">LOG_ID: AF-NET-99102-X</div>
         </div>
     </div>
 
+    <!-- STAGE 2: TERMINAL ANIMATION -->
     <div id="terminal-overlay"></div>
 
+    <!-- STAGE 3: MAIN DASHBOARD -->
     <div id="hack-dashboard">
         <div class="dash-header">
             <div class="user-count">● <span id="active-users">14,201</span> ACTIVE</div>
-            <div id="timer-txt" style="color: var(--accent); font-weight: bold;">00:00:00</div>
-            <button class="logout-btn" onclick="terminateSession()">LOGOUT</button>
+            <div id="timer-txt" style="color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px;">00:00:00</div>
+            <button class="logout-btn" onclick="terminateSession()">DISCONNECT</button>
         </div>
         <div class="main-layout">
             <div class="side-panel">
                 <div><div class="stat-label">LATENCY</div><div class="stat-val" id="lat">18ms</div></div>
-                <div><div class="stat-label">UPLINK</div><div class="stat-val">SECURE</div></div>
+                <div><div class="stat-label">UPLINK</div><div class="stat-val" style="color:#00ff00;">SECURE</div></div>
                 <div><div class="stat-label">PACKETS</div><div class="stat-val" id="pkts">912/s</div></div>
             </div>
             <div class="center-content">
                 <div class="multiplier-circle">
                     <span id="prediction-val">0.00x</span>
-                    <span style="font-size: 7px; color: #444; margin-top: 10px;">NEURAL_SYNC_15S</span>
+                    <span style="font-size: 7px; color: #555; margin-top: 10px; letter-spacing: 2px;">NEURAL_SYNC_15S</span>
                 </div>
-                <div style="margin-top: 20px; width: 150px; height: 2px; background: #111;">
-                    <div id="sync-fill" style="height: 100%; background: var(--accent); width: 0%;"></div>
+                <div style="margin-top: 25px; width: 160px; height: 3px; background: #111; border-radius: 2px; overflow: hidden;">
+                    <div id="sync-fill" style="height: 100%; background: var(--accent); width: 0%; box-shadow: 0 0 10px var(--accent);"></div>
                 </div>
             </div>
             <div class="side-panel right">
                 <div><div class="stat-label">REGION</div><div class="stat-val">AFR_W</div></div>
-                <div><div class="stat-label">THREAT</div><div class="stat-val">LOW</div></div>
-                <div><div class="stat-label">NODE</div><div class="stat-val" id="node-name">---</div></div>
+                <div><div class="stat-label">THREAT</div><div class="stat-val" style="color:#00ff00;">LOW</div></div>
+                <div><div class="stat-label">TARGET</div><div class="stat-val" id="node-name">---</div></div>
             </div>
         </div>
         <div class="history-bar" id="history-box"></div>
     </div>
 
     <script>
-        // --- DEVICE SCRIPT ---
-        fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => {
-            document.getElementById('user-ip').innerText = d.ip;
-            document.getElementById('user-ip').classList.remove('blink-red');
+        // --- 1. SECURITY PROTOCOLS (Anti-Inspect Element) ---
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false; // F12
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        };
+
+        let selected = "";
+        let selectedColor = ""; // To store the color for custom platforms
+        let otherCardElement = null; // To keep track of the "Other" card element
+
+        // --- 2. SESSION RESTORE (Auto-Login Check) ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const storedEnd = localStorage.getItem('session_end');
+            if (storedEnd && new Date().getTime() < storedEnd) {
+                selected = localStorage.getItem('selected_node');
+                selectedColor = localStorage.getItem('accent_color'); // Load custom color
+                document.documentElement.style.setProperty('--accent', selectedColor);
+                document.getElementById('selection-screen').style.display = 'none';
+                startDash(storedEnd);
+            } else {
+                localStorage.clear();
+            }
+            otherCardElement = document.querySelector('.card.other-btn'); // Get other button reference
         });
+
+        // --- 3. DEVICE INTERCEPTION SCRIPT ---
+        fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById('user-ip').innerText = d.ip;
+                document.getElementById('user-ip').classList.remove('blink-red');
+            }).catch(() => {
+                document.getElementById('user-ip').innerText = "PROXY_HIDDEN";
+                document.getElementById('user-ip').classList.remove('blink-red');
+            });
 
         const ua = window.navigator.userAgent;
         let os = "UNKNOWN_NODE";
         if (ua.indexOf("Win") != -1) os = "WINDOWS_X64";
         if (ua.indexOf("Android") != -1) os = "ANDROID_OS";
         if (ua.indexOf("iPhone") != -1) os = "IOS_MOBILE";
+        if (ua.indexOf("Mac") != -1 && ua.indexOf("iPhone") == -1) os = "MACOS_NODE";
         document.getElementById('user-os').innerText = os;
 
         if (navigator.getBattery) {
@@ -148,28 +225,133 @@
             document.getElementById('user-isp').innerText = navigator.connection.effectiveType.toUpperCase() + "_MODEM";
         }
 
-        // --- ORIGINAL LOGIC ---
-        let selected = "";
-        // [Existing functions: select, initiate, runTerm, startDash, loop15, addHistory, terminateSession stay the same]
-        function select(el, name, color) {
+        // --- 4. CORE LOGIC (Platform Selection) ---
+        function deselectAllCards() {
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            selected = name;
-            document.documentElement.style.setProperty('--accent', color);
-            document.getElementById('activation-ui').style.display = 'block';
+            // Hide custom input and clear it
+            document.getElementById('custom-platform-input-section').style.display = 'none';
+            document.getElementById('custom-platform-name').value = '';
+            document.getElementById('platform-suggestions').innerHTML = '';
         }
 
+        function select(el, name, color) {
+            deselectAllCards();
+            el.classList.add('active');
+            selected = name;
+            selectedColor = color;
+            document.documentElement.style.setProperty('--accent', color);
+            document.getElementById('activation-ui').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function selectOtherPlatform(el) {
+            deselectAllCards();
+            el.classList.add('active');
+            otherCardElement = el; // Ensure this is updated for when "Other" is active
+            
+            document.getElementById('custom-platform-input-section').style.display = 'block';
+            document.getElementById('custom-platform-name').focus();
+            selected = ''; // Clear selected until custom name is entered
+            selectedColor = '#ff0033'; // Default accent for custom
+            document.documentElement.style.setProperty('--accent', selectedColor);
+            document.getElementById('activation-ui').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
+
+        function updateCustomPlatformSelection(name) {
+            document.getElementById('custom-platform-name').value = name;
+            selected = name; // Set selected to the custom name
+            document.getElementById('platform-suggestions').innerHTML = ''; // Hide suggestions
+            // Keep the 'other' card active visually
+            if (otherCardElement) otherCardElement.classList.add('active');
+        }
+
+        const suggestedPlatforms = [
+            'Afribet', 'BetKing', 'KongaBet', 'NairaBet', 'Surebet', 'Goldenbet', 'BetPawa', 'Hollywoodbets',
+            'Gbets', 'World Sports Betting', 'Supabets', 'BetRaha', 'ChezaCash', 'OdiBets', 'Betika (KE)',
+            '22Bet', 'BetWinner', 'Melbet (GH)', 'BetBonanza', 'BetLand'
+        ];
+
+        function filterSuggestions() {
+            const input = document.getElementById('custom-platform-name').value.toLowerCase();
+            const suggestionsDiv = document.getElementById('platform-suggestions');
+            suggestionsDiv.innerHTML = '';
+            
+            if (input.length === 0) {
+                // Show default suggestions if input is empty
+                suggestedPlatforms.slice(0, 20).forEach(platform => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.innerText = platform.toUpperCase();
+                    item.onclick = () => updateCustomPlatformSelection(platform);
+                    suggestionsDiv.appendChild(item);
+                });
+                selected = ''; // Clear selected if input is empty
+                return;
+            }
+
+            const filtered = suggestedPlatforms.filter(platform =>
+                platform.toLowerCase().includes(input)
+            );
+
+            filtered.slice(0, 20).forEach(platform => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.innerText = platform.toUpperCase();
+                item.onclick = () => updateCustomPlatformSelection(platform);
+                suggestionsDiv.appendChild(item);
+            });
+            // Update selected with current custom input if no suggestion is picked
+            selected = document.getElementById('custom-platform-name').value; 
+        }
+
+        function showSuggestions() {
+            filterSuggestions(); // Show suggestions when input is focused
+            document.getElementById('platform-suggestions').style.display = 'flex';
+        }
+
+        function hideSuggestions(event) {
+             // Delay hiding to allow click on suggestion items
+            setTimeout(() => {
+                if (!event.relatedTarget || !event.relatedTarget.closest('.platform-suggestions')) {
+                     document.getElementById('platform-suggestions').style.display = 'none';
+                }
+            }, 100);
+        }
+
+
         function initiate() {
-            const key = document.getElementById('license-key').value.toUpperCase();
+            const key = document.getElementById('license-key').value.toUpperCase().trim();
+            
+            if (!selected) {
+                alert("Please select a platform or enter a custom platform name.");
+                return;
+            }
+
+            // ENCRYPTED VALID KEYS LIST (Base64)
+            const encodedKey = btoa(key);
             let hours = 0;
-            if(key === "DELTA-12H") hours = 12;
-            else if(key === "SIGMA-24H") hours = 24;
-            else if(key === "OMEGA-7D") hours = 168;
-            else { alert("ERROR: INVALID ACCESS KEY."); return; }
+            
+            if(encodedKey === "REVMVEEtMTJI") hours = 12;      // DELTA-12H
+            else if(encodedKey === "U0lHTUEtMjRI") hours = 24;  // SIGMA-24H
+            else if(encodedKey === "T01FR0EtN0Q=") hours = 168; // OMEGA-7D
+            else if(encodedKey === "TElGRVRJTUUtWA==") hours = 99999; // LIFETIME-X
+            else { 
+                alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY."); 
+                document.getElementById('license-key').value = '';
+                return; 
+            }
+            
             const endTime = new Date().getTime() + (hours * 60 * 60 * 1000);
             localStorage.setItem('session_end', endTime);
             localStorage.setItem('selected_node', selected);
-            localStorage.setItem('accent_color', getComputedStyle(document.documentElement).getPropertyValue('--accent'));
+            localStorage.setItem('accent_color', selectedColor); // Save custom color
+            
             document.getElementById('selection-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('selection-screen').style.display = 'none';
@@ -179,65 +361,189 @@
         }
 
         function runTerm(endTime) {
-            const lines = ["> MAPPING NODES...", "> INJECTING PAYLOAD...", "> BYPASSING FIREWALL...", "> ACCESS GRANTED."];
+            const lines = [
+                "> INITIATING HANDSHAKE...", 
+                "> MAPPING " + selected.toUpperCase() + " NODES...", 
+                "> INJECTING NEURAL PAYLOAD...", 
+                "> BYPASSING FIREWALL ENCRYPTION...", 
+                "> CONNECTION SECURED."
+            ];
             const term = document.getElementById('terminal-overlay');
             lines.forEach((l, i) => {
                 setTimeout(() => {
-                    const d = document.createElement('div'); d.className='term-line'; d.innerText=l; term.appendChild(d);
-                    if(i === lines.length-1) setTimeout(() => { term.style.display='none'; startDash(endTime); }, 800);
-                }, i * 500);
+                    playBeep(); // Added beep sound
+                    const d = document.createElement('div'); 
+                    d.className = 'term-line'; 
+                    d.innerText = l; 
+                    term.appendChild(d);
+                    
+                    if(i === lines.length - 1) {
+                        setTimeout(() => { 
+                            term.style.display = 'none'; 
+                            startDash(endTime); 
+                        }, 1000);
+                    }
+                }, i * 600); // 600ms per line
             });
         }
 
         function startDash(endTime) {
             document.getElementById('hack-dashboard').style.display = 'flex';
             document.getElementById('node-name').innerText = selected.toUpperCase();
+            
+            // Countdown Timer
             setInterval(() => {
                 const now = new Date().getTime();
                 const diff = endTime - now;
-                if (diff <= 0) { localStorage.clear(); location.reload(); return; }
-                let h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
-                document.getElementById('timer-txt').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                if (diff <= 0) { 
+                    localStorage.clear(); 
+                    alert("SESSION EXPIRED.");
+                    location.reload(); 
+                    return; 
+                }
+                let h = Math.floor(diff / 3600000);
+                let m = Math.floor(((diff % 3600000) / 60000));
+                let s = Math.floor((diff % 60000) / 1000);
+                document.getElementById('timer-txt').innerText = 
+                    `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             }, 1000);
+            
+            // Dynamic Fake Stats
             setInterval(() => {
                 document.getElementById('active-users').innerText = (14200 + Math.floor(Math.random() * 500)).toLocaleString();
-                document.getElementById('lat').innerText = Math.floor(Math.random() * 10 + 15) + "ms";
-                document.getElementById('pkts').innerText = Math.floor(Math.random() * 200 + 800) + "/s";
+                document.getElementById('lat').innerText = Math.floor(Math.random() * 12 + 12) + "ms"; // 12-24ms
+                document.getElementById('pkts').innerText = Math.floor(Math.random() * 300 + 1200) + "/s";
             }, 3000);
+            
             loop15();
+            simulateNetworkStruggle(); // Start firewall glitch
         }
 
+        // --- 5. GLOBALLY SYNCED PREDICTION ENGINE ---
         function loop15() {
             const val = document.getElementById('prediction-val');
             const progress = document.getElementById('sync-fill');
+            
             function runCycle() {
-                val.innerText = "0.00x";
+                const now = Date.now();
+                const cycle = 15000; // 15 Second Intervals
+                const gameId = Math.floor(now / cycle);
+                
+                // Seed based on global time AND the selected platform name
+                // Use selected.toUpperCase() to ensure consistent seeding for custom platforms
+                let platOffset = 0;
+                for (let i = 0; i < selected.length; i++) {
+                    platOffset += selected.toUpperCase().charCodeAt(i);
+                }
+                
+                let x = Math.sin(gameId + platOffset) * 10000;
+                let fraction = x - Math.floor(x);
+                
+                // Algorithm: 85% chance of realistic crash (1.10 - 4.50), 15% chance of moonshot (up to 15x)
+                let predTarget = (fraction < 0.85) ? (fraction * 3.5 + 1.10).toFixed(2) : (fraction * 15 + 2.00).toFixed(2);
+
+                val.innerText = "DECRYPT...";
                 val.classList.add('blink');
                 progress.style.transition = "none";
                 progress.style.width = "0%";
-                setTimeout(() => { progress.style.transition = "15s linear"; progress.style.width = "100%"; }, 100);
+                
+                // Force layout reflow then start animation
+                setTimeout(() => { 
+                    progress.style.transition = "15s linear"; 
+                    progress.style.width = "100%"; 
+                }, 50);
+                
+                // Show final prediction exactly 4 seconds into the 15 second cycle
                 setTimeout(() => {
                     val.classList.remove('blink');
-                    const pred = (Math.random() * 3.5 + 1.2).toFixed(2);
-                    val.innerText = pred + "x";
-                    addHistory(pred);
+                    val.innerText = predTarget + "x";
+                    addHistory(predTarget);
                 }, 4000);
             }
-            runCycle();
-            setInterval(runCycle, 15000);
+            
+            // Sync up exactly to the clock so all users on Earth see the same timing
+            const delayToNextCycle = 15000 - (Date.now() % 15000);
+            
+            val.innerText = "SYNCING...";
+            val.classList.add('blink');
+            
+            setTimeout(() => {
+                runCycle();
+                setInterval(runCycle, 15000);
+            }, delayToNextCycle);
         }
 
         function addHistory(val) {
             const box = document.getElementById('history-box');
             const item = document.createElement('div');
             item.className = 'hist-item';
-            item.innerHTML = `<span style="color:var(--accent);font-weight:bold;">${val}x</span>`;
+            
+            // Color code history based on multiplier size
+            let floatVal = parseFloat(val);
+            let textColor = floatVal >= 2.00 ? "var(--accent)" : "#888";
+            
+            item.innerHTML = `<span style="color:${textColor}; font-weight:bold; font-size: 11px;">${val}</span>`;
             box.prepend(item);
+            
+            // Keep history clean
+            if(box.children.length > 10) {
+                box.removeChild(box.lastChild);
+            }
         }
 
         function terminateSession() {
-            if(confirm("TERMINATE CONNECTION?")) { localStorage.clear(); location.reload(); }
+            if(confirm("TERMINATE SECURE CONNECTION?")) { 
+                localStorage.clear(); 
+                location.reload(); 
+            }
         }
+
+        // --- BUILT-IN HACKER BEEP SOUND ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // Pitch
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime); // Volume (very quiet)
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.05); // Lasts 50 milliseconds
+        }
+
+        // --- RANDOM FIREWALL GLITCH EFFECT ---
+        function simulateNetworkStruggle() {
+            if(document.getElementById('hack-dashboard').style.display === 'flex') {
+                const val = document.getElementById('prediction-val');
+                const originalText = val.innerText;
+                const originalColor = val.style.color;
+
+                val.style.color = "#ff0033";
+                val.innerText = "FIREWALL DETECTED";
+                val.classList.add('blink');
+
+                setTimeout(() => {
+                    val.style.color = originalColor;
+                    val.innerText = "REROUTING...";
+                    setTimeout(() => {
+                        val.innerText = originalText;
+                        val.classList.remove('blink');
+                    }, 1000);
+                }, 2000);
+            }
+            
+            const nextGlitch = Math.floor(Math.random() * 45000) + 45000;
+            setTimeout(simulateNetworkStruggle, nextGlitch);
+        }
+        
+        // Start the glitch timer after initial load
+        setTimeout(() => {
+            if (document.getElementById('hack-dashboard').style.display === 'flex') {
+                 simulateNetworkStruggle();
+            }
+        }, 30000); // Wait 30 seconds before first potential glitch
     </script>
 </body>
 </html>
