@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AFRICA HACKS | Active Exploit Contracts</title>
+    <style>
+        :root {
+            --glow-red: #ff0033;
+            --bg-dark: #050505;
+            --panel-bg: #0f0f0f;
+            --text-dim: #888;
+            --green: #00ff00;
+            --blue: #00ddff;
+        }
+
+        body { 
+            margin: 0; padding: 0; 
+            background: var(--bg-dark); 
+            font-family: 'JetBrains Mono', monospace, sans-serif; 
+            color: white; 
+            overflow-x: hidden;
+        }
+
+        /* --- CRT EFFECT --- */
+        body::after {
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        .glow-header {
+            height: 60px; background: var(--panel-bg); border-bottom: 1px solid var(--glow-red);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
+        }
+        .header-link { color: var(--text-dim); text-decoration: none; font-size: 10px; font-weight: bold; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; transition: 0.3s;}
+        .header-link:hover { background: #222; color: #fff; border-color: var(--glow-red); }
+        .page-title { font-size: 12px; color: var(--glow-red); font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px var(--glow-red);}
+
+        /* --- MAIN CONTENT --- */
+        .container { max-width: 700px; margin: 0 auto; padding: 20px 15px 80px 15px; position: relative; z-index: 10; }
+
+        .auth-banner {
+            background: rgba(0, 221, 255, 0.05); border: 1px solid var(--blue);
+            padding: 15px; border-radius: 4px; margin-bottom: 25px; text-align: center;
+            box-shadow: inset 0 0 15px rgba(0, 221, 255, 0.1);
+        }
+        .auth-title { color: var(--blue); font-size: 11px; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px; }
+        .auth-desc { font-size: 9px; color: #aaa; line-height: 1.5; }
+
+        .section-header {
+            font-size: 11px; color: #fff; border-bottom: 1px solid #333; padding-bottom: 8px;
+            margin-bottom: 15px; letter-spacing: 2px; display: flex; justify-content: space-between; align-items: flex-end;
+        }
+
+        /* --- CONTRACT GRIDS --- */
+        .contract-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
+        @media(min-width: 600px) { .contract-grid { grid-template-columns: 1fr 1fr; } }
+
+        .contract-card {
+            background: #080808; border: 1px solid #1a1a1a; padding: 15px; border-radius: 6px;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .contract-card:hover { border-color: #444; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .contract-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--green); }
+        .contract-card.warning::before { background: var(--warning, #ffaa00); }
+
+        .c-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .c-title { font-size: 12px; font-weight: bold; color: #fff; }
+        .c-badge { background: rgba(0, 255, 0, 0.1); color: var(--green); padding: 3px 6px; font-size: 8px; font-weight: bold; border-radius: 3px; border: 1px solid var(--green); }
+        .c-badge.warning { background: rgba(255, 170, 0, 0.1); color: #ffaa00; border-color: #ffaa00; }
+
+        .c-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 6px; border-bottom: 1px dashed #1a1a1a; padding-bottom: 4px; }
+        .c-label { color: #666; }
+        .c-val { color: #ccc; font-weight: bold; }
+        .c-val.red { color: var(--glow-red); }
+        .c-val.blue { color: var(--blue); }
+        .hash-code { font-family: monospace; font-size: 8px; color: #444; margin-top: 10px; text-align: right; }
+
+        /* --- TOOLCHAIN SECTION --- */
+        .tool-list { display: flex; flex-direction: column; gap: 10px; }
+        .tool-item {
+            background: #050505; border: 1px solid #111; padding: 12px; border-radius: 4px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .tool-name { font-size: 10px; color: #fff; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .tool-icon { color: var(--glow-red); font-size: 12px; }
+        .tool-status { font-size: 8px; color: var(--text-dim); }
+        .tool-status span { color: var(--green); }
+
+        /* --- FLOATING CTA --- */
+        .floating-cta {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--glow-red); color: white; padding: 12px 30px; font-size: 11px;
+            font-weight: bold; text-decoration: none; border-radius: 4px; letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255, 0, 51, 0.6); animation: pulse-red 2s infinite; z-index: 100;
+            white-space: nowrap;
+        }
+        @keyframes pulse-red {
+            0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 20px rgba(255, 0, 51, 0.6); }
+            50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 30px rgba(255, 0, 51, 0.9); }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="glow-header">
+        <a href="index.html" class="header-link">◄ RETURN</a>
+        <div class="page-title">SYSTEM_REGISTRY</div>
+        <div style="width: 50px;"></div> <!-- Spacer -->
+    </header>
+
+    <div class="container">
+        
+        <div class="auth-banner">
+            <div class="auth-title">AUTHORIZATION CONFIRMED: GUEST_VIEW</div>
+            <div class="auth-desc">Below is the live registry of all active Zero-Day exploits, API backdoors, and data-scraping contracts maintained by the AFRICA_HACKS group to keep the Predictor Tool functional.</div>
+        </div>
+
+        <!-- CASINO BACKDOORS -->
+        <div class="section-header">
+            <span>ACTIVE BACKDOOR LEASES</span>
+            <span style="font-size: 8px; color: #666;">AUTO-RENEWING</span>
+        </div>
+
+        <div class="contract-grid">
+            <!-- 1XBET -->
+            <div class="contract-card">
+                <div class="c-top">
+                    <div class="c-title">1XBET_MAIN_NODE</div>
+                    <div class="c-badge">ACTIVE</div>
+                </div>
+                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">RNG_SEED_DECRYPTOR</span></div>
+                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">ROOT_READ_ONLY</span></div>
+                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$45,000 USD</span></div>
+                <div class="hash-code">SYNC_HASH: <span class="live-hash">0x8F...</span></div>
+            </div>
+
+            <!-- SPORTYBET -->
+            <div class="contract-card">
+                <div class="c-top">
+                    <div class="c-title">SPORTY_API_V4</div>
+                    <div class="c-badge">ACTIVE</div>
+                </div>
+                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">WEBSOCKET_SNIFFER</span></div>
+                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">PACKET_INTERCEPT</span></div>
+                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$38,500 USD</span></div>
+                <div class="hash-code">SYNC_HASH: <span class="live-hash">0x8F...</span></div>
+            </div>
+
+            <!-- BETWAY -->
+            <div class="contract-card warning">
+                <div class="c-top">
+                    <div class="c-title">BETWAY_AUTH_SYS</div>
+                    <div class="c-badge warning">ROUTING...</div>
+                </div>
+                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">TOKEN_CLONING</span></div>
+                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">BYPASS_AUTH</span></div>
+                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$22,000 USD</span></div>
+                <div class="hash-code">SYNC_HASH: <span class="live-hash" style="color:#ffaa00;">RECONNECTING...</span></div>
+            </div>
+
+            <!-- MSPORT -->
+            <div class="contract-card">
+                <div class="c-top">
+                    <div class="c-title">MSPORT_GATEWAY</div>
+                    <div class="c-badge">ACTIVE</div>
+                </div>
+                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">LATENCY_SPOOFING</span></div>
+                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">TIME_DELAY_MANIP</span></div>
+                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$18,000 USD</span></div>
+                <div class="hash-code">SYNC_HASH: <span class="live-hash">0x8F...</span></div>
+            </div>
+        </div>
+
+        <!-- TOOLCHAIN -->
+        <div class="section-header">
+            <span>INTEGRATED CYBER-TOOLCHAIN</span>
+            <span style="font-size: 8px; color: #666;">PROPRIETARY</span>
+        </div>
+
+        <div class="tool-list">
+            <div class="tool-item">
+                <div class="tool-name"><span class="tool-icon">⚡</span> QUANTUM_RNG_CRACKER v6.2</div>
+                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name"><span class="tool-icon">🛡️</span> CLOUDFLARE_ZERO_DAY_BYPASS</div>
+                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name"><span class="tool-icon">🕸️</span> DEEP_PACKET_INSPECTOR_PRO</div>
+                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name"><span class="tool-icon">👻</span> GHOST_FOOTPRINT_ERASER</div>
+                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <a href="index.html#buy" class="floating-cta">PURCHASE LICENSE KEY</a>
+
+    <script>
+        // --- LIVE HASH GENERATOR ---
+        // Makes the cards look like they are constantly communicating with the casino servers
+        function generateHash() {
+            const hashes = document.querySelectorAll('.live-hash');
+            hashes.forEach(hash => {
+                if(hash.innerText === "RECONNECTING...") return; // Skip the warning one
+                
+                const randomStr = Math.random().toString(16).substr(2, 12).toUpperCase();
+                hash.innerText = "0x" + randomStr;
+            });
+        }
+        
+        // Update hashes every 1.5 seconds
+        setInterval(generateHash, 1500);
+        generateHash();
+    </script>
+</body>
+</html>
