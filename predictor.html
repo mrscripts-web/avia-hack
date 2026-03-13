@@ -20,7 +20,10 @@
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
         .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
         .card img { width: 100%; max-width: 60px; filter: grayscale(1) opacity(0.3); transition: 0.3s; }
-        .card.other-btn { font-size: 12px; font-weight: bold; color: #888; letter-spacing: 1px;}
+        
+        /* ADDED: grid-column: 2; to center the button in the 3-column grid */
+        .card.other-btn { font-size: 12px; font-weight: bold; color: #888; letter-spacing: 1px; grid-column: 2; }
+        
         .card:hover { border-color: #333; }
         .card.active { border-color: var(--accent); background: rgba(255,0,51,0.05); box-shadow: 0 0 15px rgba(255,0,51,0.2); }
         .card.active img { filter: none; opacity: 1; transform: scale(1.1); }
@@ -90,7 +93,6 @@
 </head>
 <body>
 
-    <!-- STAGE 1: SETUP -->
     <div id="selection-screen">
         <h2 style="font-size: 9px; letter-spacing: 3px; color: #444;">AFRICA_SECURE_GATE v8.1</h2>
         <div class="grid">
@@ -106,11 +108,9 @@
             <div class="card" onclick="select(this, 'Premier Bet', '#23fa02')"><img src="logos/premierbet.png" alt="Premier Bet"></div>
             <div class="card" onclick="select(this, 'LineBet', '#004a34')"><img src="logos/linebet.png" alt="LineBet"></div>
             <div class="card" onclick="select(this, 'MelBet', '#f7941d')"><img src="logos/melbet.png" alt="MelBet"></div>
-            <!-- NEW: OTHER PLATFORM BUTTON -->
             <div class="card other-btn" onclick="selectOtherPlatform(this)">OTHER</div>
         </div>
 
-        <!-- NEW: CUSTOM PLATFORM INPUT SECTION -->
         <div id="custom-platform-input-section" class="custom-platform-section">
             <label style="display:block; font-size:9px; color:#666; margin-bottom:5px; letter-spacing:1px;">ENTER PLATFORM NAME:</label>
             <input type="text" id="custom-platform-name" placeholder="E.G. BETKING, KONGA BET" onkeyup="filterSuggestions()" onfocus="showSuggestions()" onblur="hideSuggestions(event)">
@@ -133,10 +133,8 @@
         </div>
     </div>
 
-    <!-- STAGE 2: TERMINAL ANIMATION -->
     <div id="terminal-overlay"></div>
 
-    <!-- STAGE 3: MAIN DASHBOARD -->
     <div id="hack-dashboard">
         <div class="dash-header">
             <div class="user-count">● <span id="active-users">14,201</span> ACTIVE</div>
