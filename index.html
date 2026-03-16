@@ -6,28 +6,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AFRICA HACKS | Institutional Flight Predictor</title>
     <meta name="title" content="AFRICA HACKS | Institutional Flight Predictor">
-<meta name="description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
-<meta property="og:title" content="AFRICA HACKS | Institutional Flight Predictor">
-<meta property="og:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
-<meta property="og:image" content="logos/Africa.png">
-
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
-<meta property="twitter:title" content="AFRICA HACKS | Institutional Flight Predictor">
-<meta property="twitter:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
-<meta property="twitter:image" content="logos/Africa.png">
-<link rel="icon" type="‎logos/favicon.png" href="logos/favicon.png">
+    <meta name="description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
+    <meta property="og:title" content="AFRICA HACKS | Institutional Flight Predictor">
+    <meta property="og:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
+    <meta property="og:image" content="logos/Africa.png">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
+    <meta property="twitter:title" content="AFRICA HACKS | Institutional Flight Predictor">
+    <meta property="twitter:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
+    <meta property="twitter:image" content="logos/Africa.png">
+    <link rel="icon" type="image/png" href="logos/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Inter:wght@200;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --glow-red: #ff0033;
+            --glow-red-dim: rgba(255, 0, 51, 0.15);
             --bg-dark: #050505;
-            --panel-bg: #0f0f0f;
+            --panel-bg: #0a0a0a;
             --text-dim: #888;
             --whatsapp: #25d366;
             --telegram: #0088cc;
             --green: #00ff00;
+            --gold: #ffaa00;
+            --cyan: #00ddff;
+        }
+
+        * { box-sizing: border-box; }
+
+        /* --- CRT Scanline Overlay --- */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 9998;
         }
 
         /* --- Global Reset & Entrance Fade --- */
@@ -42,22 +65,36 @@
             transition: opacity 0.6s ease-in;
         }
 
-        body.loaded {
-            opacity: 1;
-        }
+        body.loaded { opacity: 1; }
 
         a {
             text-decoration: none;
             transition: 0.3s ease;
         }
 
+        /* --- Particle Canvas Background --- */
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Ensure all content is above particles */
+        header, .viewport, .platform-section, .action-grid,
+        .pricing-section, .payment-methods, .terminal, footer,
+        .stats-strip, .anti-ban-badge, .guide-link, .testimonial-ticker,
+        .social-proof-toast, #toast-notification {
+            position: relative;
+            z-index: 1;
+        }
+
         /* --- Africa Glitch Transition Overlay --- */
         #transition-layer {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background: #000;
             display: flex;
             flex-direction: column;
@@ -90,7 +127,7 @@
 
         .loading-text {
             margin-top: 25px;
-            font-family: monospace;
+            font-family: 'JetBrains Mono', monospace;
             color: var(--glow-red);
             letter-spacing: 4px;
             font-size: 10px;
@@ -98,11 +135,36 @@
             font-weight: bold;
         }
 
+        .loading-bar-container {
+            width: 200px;
+            height: 3px;
+            background: #222;
+            border-radius: 2px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .loading-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--glow-red);
+            box-shadow: 0 0 10px var(--glow-red);
+            border-radius: 2px;
+            animation: load-fill 1.2s ease-in-out forwards;
+        }
+
+        @keyframes load-fill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
         /* --- Header Styles --- */
         .glow-header {
-            height: 70px;
-            background: var(--panel-bg);
-            border-bottom: 2px solid var(--glow-red);
+            height: 65px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 0, 51, 0.4);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -110,16 +172,17 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
+            box-shadow: 0 5px 30px rgba(255, 0, 51, 0.15), 0 1px 0 rgba(255,0,51,0.3);
         }
 
         .logo {
             font-weight: 900;
             letter-spacing: 1px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .logo span {
@@ -128,28 +191,37 @@
         }
 
         .header-logo {
-            height: 35px;
+            height: 32px;
             width: auto;
-            filter: drop-shadow(0 0 5px var(--glow-red));
+            filter: drop-shadow(0 0 8px var(--glow-red));
+            animation: logo-pulse 3s infinite ease-in-out;
         }
 
-        /* Live Users in Header */
+        @keyframes logo-pulse {
+            0%, 100% { filter: drop-shadow(0 0 5px var(--glow-red)); }
+            50% { filter: drop-shadow(0 0 15px var(--glow-red)) drop-shadow(0 0 30px rgba(255,0,51,0.3)); }
+        }
+
         .live-users-container {
             display: flex;
             align-items: center;
             gap: 8px;
+            background: rgba(255, 0, 51, 0.08);
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 0, 51, 0.2);
         }
 
         .live-users-text {
             font-size: 9px;
-            color: #888;
-            font-family: monospace;
+            color: #ccc;
+            font-family: 'JetBrains Mono', monospace;
             font-weight: bold;
         }
 
         .status-dot {
-            height: 8px;
-            width: 8px;
+            height: 7px;
+            width: 7px;
             background: var(--glow-red);
             border-radius: 50%;
             box-shadow: 0 0 10px var(--glow-red);
@@ -161,37 +233,65 @@
             50% { opacity: 0.3; }
         }
 
-        /* --- Predictor Viewport with Radar Grid --- */
+        /* --- Predictor Viewport with Canvas Graph --- */
         .viewport {
-            background-color: var(--panel-bg);
+            background-color: #080808;
             background-image:
-                linear-gradient(rgba(255, 0, 51, 0.15) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 51, 0.15) 1px, transparent 1px);
-            background-size: 20px 20px;
-            border: 1px solid #222;
-            border-radius: 12px;
-            height: 300px;
-            margin: 20px 15px;
+                linear-gradient(rgba(255, 0, 51, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 51, 0.07) 1px, transparent 1px);
+            background-size: 25px 25px;
+            border: 1px solid rgba(255, 0, 51, 0.25);
+            border-radius: 16px;
+            height: 340px;
+            margin: 15px 12px;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+            box-shadow:
+                inset 0 0 60px rgba(0, 0, 0, 0.9),
+                0 0 40px rgba(255, 0, 51, 0.08);
+        }
+
+        /* Radar sweep inside viewport */
+        .viewport::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 300%; height: 300%;
+            transform: translate(-50%, -50%);
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                rgba(255, 0, 51, 0.06) 30deg,
+                transparent 60deg
+            );
+            animation: radar-sweep 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes radar-sweep {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        #graph-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
         }
 
         .plane-box {
             position: absolute;
-            width: 70px;
+            width: 55px;
             z-index: 5;
-            transition: opacity 0.2s;
-            animation: plane-hover 3s infinite ease-in-out;
-        }
-
-        @keyframes plane-hover {
-            0%, 100% { transform: translateY(0) rotate(5deg); }
-            50% { transform: translateY(-15px) rotate(-2deg); }
+            transform: rotate(65deg); /* This fixes the direction */
+            transition: opacity 0.3s, transform 0.3s;
+            filter: drop-shadow(0 0 10px var(--glow-red));
         }
 
         .explosion {
@@ -207,46 +307,56 @@
         }
 
         .explosion.active {
-            animation: explode 0.5s ease-out forwards;
+            animation: explode 0.6s ease-out forwards;
         }
 
         @keyframes explode {
             0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 0.8; }
+            100% { transform: scale(3); opacity: 0; }
         }
 
         .disclaimer-text {
             position: absolute;
-            bottom: 12px;
+            bottom: 10px;
             width: 90%;
             text-align: center;
-            font-size: 9px;
-            color: #ffffff;
+            font-size: 8px;
+            color: rgba(255,255,255,0.5);
             font-weight: bold;
-            font-family: monospace;
+            font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             pointer-events: none;
-            text-shadow: 0px 1px 4px rgba(0,0,0,0.9);
+            z-index: 10;
         }
 
         .multiplier-text {
             z-index: 10;
             text-align: center;
+            position: relative;
         }
 
         .multiplier-text h1 {
-            font-size: 70px;
+            font-size: 72px;
             margin: 0;
             font-weight: 200;
-            text-shadow: 0 0 30px var(--glow-red);
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 40px var(--glow-red), 0 0 80px rgba(255,0,51,0.3);
+            line-height: 1;
         }
 
         .target-label {
             color: var(--glow-red);
-            font-family: monospace;
-            font-size: 10px;
-            letter-spacing: 2px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        #status-msg {
+            font-family: 'JetBrains Mono', monospace;
         }
 
         /* Crash Text Glitch Animation */
@@ -264,26 +374,77 @@
             color: #fff !important;
         }
 
+        /* Screen shake on crash */
+        @keyframes screen-shake {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-3px, 2px); }
+            20% { transform: translate(3px, -2px); }
+            30% { transform: translate(-2px, 3px); }
+            40% { transform: translate(2px, -1px); }
+            50% { transform: translate(-1px, 2px); }
+        }
+
+        .viewport.shake {
+            animation: screen-shake 0.4s ease-out;
+        }
+
+        /* --- Stats Strip --- */
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            margin: 0 12px 15px 12px;
+            background: #111;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #1a1a1a;
+        }
+
+        .stat-item {
+            background: var(--panel-bg);
+            padding: 14px 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--glow-red);
+            text-shadow: 0 0 10px rgba(255,0,51,0.4);
+        }
+
+        .stat-label {
+            font-size: 7px;
+            color: #555;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
         /* --- Platform Section --- */
         .platform-section {
-            padding: 25px 15px;
+            padding: 30px 15px;
             background: #000;
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid #111;
+            border-bottom: 1px solid #111;
         }
 
         .section-tag {
             font-size: 8px;
             color: var(--glow-red);
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-weight: 900;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .logo-wall {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
             align-items: center;
             max-width: 500px;
             margin: 0 auto;
@@ -291,43 +452,78 @@
 
         .logo-wall img {
             width: 100%;
-            max-width: 90px;
+            max-width: 80px;
             height: auto;
             margin: 0 auto;
             display: block;
             filter: grayscale(1) brightness(2);
-            opacity: 0.5;
+            opacity: 0.4;
             transition: 0.4s;
         }
 
         .logo-wall img:hover {
             filter: none;
             opacity: 1;
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
-        
+
         .more-platforms-text {
             text-align: center;
             font-size: 9px;
             color: var(--text-dim);
-            font-family: monospace;
+            font-family: 'JetBrains Mono', monospace;
             letter-spacing: 2px;
-            margin-top: 25px;
+            margin-top: 20px;
             text-transform: uppercase;
+        }
+
+        /* --- Testimonial Ticker --- */
+        .testimonial-ticker {
+            overflow: hidden;
+            background: rgba(255, 0, 51, 0.05);
+            border-top: 1px solid rgba(255, 0, 51, 0.15);
+            border-bottom: 1px solid rgba(255, 0, 51, 0.15);
+            padding: 10px 0;
+            white-space: nowrap;
+        }
+
+        .ticker-track {
+            display: inline-flex;
+            animation: ticker-scroll 30s linear infinite;
+            gap: 50px;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .ticker-item .flag { font-size: 14px; }
+        .ticker-item .amount-won { color: var(--whatsapp); font-weight: bold; }
+        .ticker-item .plat { color: var(--glow-red); }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         /* --- Buttons & Action Grid --- */
         .action-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns to fit WhatsApp, Checkout, and Telegram */
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            padding: 0 15px;
+            padding: 0 12px;
             margin-top: 15px;
         }
 
         .btn {
             padding: 14px 2px;
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
             font-weight: 800;
             font-size: 10px;
@@ -336,61 +532,179 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
         }
 
+        .btn:hover { transform: translateY(-2px); }
+
         .btn-preview {
-            background: #111;
+            background: rgba(255,255,255,0.03);
             border: 1px solid #333;
-            grid-column: span 3; /* spans all 3 columns */
+            grid-column: span 3;
             color: #888;
-            font-size: 12px;
+            font-size: 11px;
+            gap: 6px;
+        }
+
+        .btn-preview:hover {
+            border-color: var(--glow-red);
+            color: #fff;
+            background: rgba(255,0,51,0.05);
         }
 
         .btn-whatsapp {
             background: var(--whatsapp);
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.25);
         }
+        .btn-whatsapp:hover { box-shadow: 0 6px 30px rgba(37, 211, 102, 0.4); }
 
         .btn-checkout {
-            background: #ffaa00; /* Gold */
+            background: linear-gradient(135deg, #ffaa00, #ff7700);
             color: #000;
-            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(255, 170, 0, 0.25);
         }
+        .btn-checkout:hover { box-shadow: 0 6px 30px rgba(255, 170, 0, 0.4); }
 
         .btn-telegram {
             background: var(--telegram);
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 136, 204, 0.25);
         }
+        .btn-telegram:hover { box-shadow: 0 6px 30px rgba(0, 136, 204, 0.4); }
 
         .btn-play {
-            grid-column: span 3; /* spans all 3 columns */
-            background: var(--glow-red);
+            grid-column: span 3;
+            background: linear-gradient(135deg, #ff0033, #cc0028);
             margin-top: 5px;
-            font-size: 18px;
-            letter-spacing: 4px;
-            box-shadow: 0 0 25px rgba(255, 0, 51, 0.5);
+            font-size: 16px;
+            letter-spacing: 5px;
+            box-shadow: 0 0 30px rgba(255, 0, 51, 0.4);
             animation: pulse-red 2s infinite;
             border: none;
-            padding: 16px 2px;
+            padding: 18px 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-play::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 70%
+            );
+            animation: btn-shine 3s infinite;
+        }
+
+        @keyframes btn-shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 51, 0.7), 0 0 60px rgba(255,0,51,0.2); }
+        }
+
+        /* --- Guide Link --- */
+        .guide-link {
+            text-align: center;
+            margin-top: 15px;
+            padding: 0 12px;
+        }
+
+        .guide-link a {
+            color: var(--text-dim);
+            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            text-decoration: underline;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .guide-link a:hover { color: var(--glow-red); }
+
+        /* --- Anti-Ban Badge --- */
+        .anti-ban-badge {
+            background: rgba(37, 211, 102, 0.06);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            margin: 20px 12px 15px 12px;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+
+        .anti-ban-badge:hover {
+            background: rgba(37, 211, 102, 0.1);
+            border-color: var(--whatsapp);
+            transform: translateY(-1px);
+        }
+
+        .anti-ban-icon { font-size: 28px; }
+
+        .anti-ban-title {
+            color: var(--whatsapp);
+            font-size: 11px;
+            font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        .anti-ban-desc {
+            color: #777;
+            font-size: 9px;
+            margin-top: 4px;
+            line-height: 1.5;
         }
 
         /* --- Pricing Section --- */
         .pricing-section {
-            padding: 10px 15px 30px 15px;
+            padding: 10px 12px 30px 12px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pricing-header h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #fff;
+            letter-spacing: 4px;
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+        }
+
+        .pricing-header p {
+            font-size: 9px;
+            color: #555;
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         @keyframes border-pulse {
-            0% { border-color: #222; }
-            50% { border-color: rgba(255, 0, 51, 0.5); }
-            100% { border-color: #222; }
+            0% { border-color: #1a1a1a; }
+            50% { border-color: rgba(255, 0, 51, 0.3); }
+            100% { border-color: #1a1a1a; }
         }
 
         .price-row {
             background: var(--panel-bg);
-            border: 1px solid #222;
+            border: 1px solid #1a1a1a;
             margin-bottom: 8px;
-            padding: 18px;
-            border-radius: 10px;
+            padding: 16px 18px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -399,44 +713,133 @@
             animation: border-pulse 3s infinite;
             color: white;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
         }
+
+        .price-row::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,0,51,0.03) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .price-row:hover::before { opacity: 1; }
 
         .price-row:hover {
             border-color: var(--glow-red);
-            box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
-            background: rgba(255, 0, 51, 0.05);
+            box-shadow: 0 0 25px rgba(255, 0, 51, 0.3);
             transform: translateY(-2px);
             animation: none;
         }
 
-        .duration { font-weight: 700; font-size: 14px; }
-        .amount { color: var(--glow-red); font-weight: 900; font-size: 20px; }
+        .price-row.popular {
+            border-color: var(--glow-red);
+            background: rgba(255, 0, 51, 0.05);
+            animation: none;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 0; right: 0;
+            background: var(--glow-red);
+            color: white;
+            font-size: 7px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 0 12px 0 8px;
+            letter-spacing: 1px;
+        }
+
+        .duration {
+            font-weight: 700;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .amount {
+            color: var(--glow-red);
+            font-weight: 900;
+            font-size: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 10px rgba(255,0,51,0.3);
+        }
+
+        /* --- Scarcity --- */
+        .scarcity-container {
+            margin-bottom: 20px;
+            background: var(--panel-bg);
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .scarcity-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--glow-red);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .scarcity-bar-bg {
+            width: 100%;
+            background: #1a1a1a;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .scarcity-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--glow-red), #ff6644);
+            box-shadow: 0 0 10px var(--glow-red);
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        .scarcity-footer {
+            font-size: 8px;
+            color: #444;
+            text-align: right;
+            margin-top: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
 
         /* --- Payment & Footer --- */
         .payment-methods {
             padding: 20px;
             text-align: center;
             background: rgba(255, 255, 255, 0.02);
-            margin: 0 15px;
-            border-radius: 8px;
+            margin: 0 12px;
+            border-radius: 12px;
             font-size: 10px;
-            color: #666;
+            color: #555;
             font-weight: bold;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            border: 1px solid #1a1a1a;
         }
 
         .pay-icons {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            margin-top: 12px;
+            gap: 20px;
+            margin-top: 15px;
         }
 
         .pay-icons img {
-            height: 20px !important;
+            height: 24px !important;
             width: auto !important;
             filter: grayscale(1) brightness(1.5);
-            opacity: 0.6;
+            opacity: 0.5;
             transition: 0.4s;
             cursor: pointer;
         }
@@ -444,107 +847,244 @@
         .pay-icons img:hover {
             filter: none;
             opacity: 1;
-            transform: scale(1.2);
+            transform: scale(1.3);
         }
 
+        /* --- Terminal --- */
         .terminal {
             background: #000;
-            height: 100px;
-            border: 1px solid #222;
-            margin: 20px 15px;
-            padding: 12px;
-            font-family: monospace;
+            height: 110px;
+            border: 1px solid #1a1a1a;
+            margin: 20px 12px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             color: #444;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
+            position: relative;
+        }
+
+        .terminal::before {
+            content: 'TERMINAL — LIVE FEED';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            background: #0a0a0a;
+            padding: 4px 14px;
+            font-size: 7px;
+            color: #333;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .terminal-content {
+            margin-top: 16px;
+        }
+
+        .terminal .cursor-blink {
+            display: inline-block;
+            width: 6px;
+            height: 12px;
+            background: var(--glow-red);
+            animation: cursor-blink-anim 0.8s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes cursor-blink-anim {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         /* Footer & Status Button */
         footer {
-            padding: 40px 20px;
+            padding: 30px 15px 40px;
             text-align: center;
             font-size: 9px;
             line-height: 2;
         }
 
         .btn-status {
-            background: #0a0a0a;
+            background: rgba(10, 10, 10, 0.8);
             color: var(--green);
-            border: 1px solid var(--green);
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-size: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 9px;
             font-weight: bold;
-            font-family: monospace;
+            font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
             letter-spacing: 2px;
             display: inline-block;
             transition: 0.3s;
-            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.05);
             text-decoration: none;
         }
 
         .btn-status:hover {
             background: var(--green);
             color: #000;
-            box-shadow: 0 0 15px var(--green);
+            box-shadow: 0 0 20px var(--green);
         }
 
         .node-status-container {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-top: 10px;
+            margin-bottom: 20px;
         }
 
         .node {
             display: flex;
             align-items: center;
             gap: 5px;
-            font-family: monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 8px;
-            color: #666;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 4px 8px;
-            border-radius: 4px;
+            color: #555;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 5px 10px;
+            border-radius: 5px;
             border: 1px solid #111;
         }
 
         .node-dot { width: 6px; height: 6px; border-radius: 50%; }
         .node-dot.online { background: var(--whatsapp); box-shadow: 0 0 8px var(--whatsapp); }
-        .node-dot.syncing { background: #ffaa00; box-shadow: 0 0 8px #ffaa00; animation: blink 1s infinite; }
+        .node-dot.syncing { background: var(--gold); box-shadow: 0 0 8px var(--gold); animation: blink 1s infinite; }
+
+        .footer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .footer-copy {
+            color: #333;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 2px;
+        }
 
         /* --- Toasts --- */
         .toast {
             position: fixed;
-            bottom: -50px;
+            bottom: -60px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--whatsapp);
             color: black;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-family: monospace;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
             font-weight: bold;
             font-size: 11px;
             z-index: 10000;
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .toast.show { bottom: 30px; opacity: 1; }
+
+        /* --- Social Proof Purchase Notification --- */
+        .social-proof-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            max-width: 340px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 0, 51, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9990;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .social-proof-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .sp-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 0, 51, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .sp-text {
+            font-size: 10px;
+            color: #aaa;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+        }
+
+        .sp-text strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .sp-text .sp-plan {
+            color: var(--glow-red);
+            font-weight: bold;
+        }
+
+        .sp-time {
+            font-size: 8px;
+            color: #444;
+        }
+
+        /* --- Scroll Reveal --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 360px) {
+            .multiplier-text h1 { font-size: 56px; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .logo-wall { grid-template-columns: repeat(3, 1fr); }
+        }
     </style>
 </head>
 
 <body>
 
+    <!-- Particle Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Transition Overlay -->
     <div id="transition-layer">
         <img src="logos/Africa.png" class="glitch-map" alt="AFRICA_NODE">
         <div class="loading-text">BYPASSING_SECURE_NODES...</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar-fill"></div>
+        </div>
     </div>
 
+    <!-- Header -->
     <header class="glow-header">
         <div class="logo">
             <img src="logos/Africa.png" alt="Logo" class="header-logo">
@@ -556,14 +1096,16 @@
         </div>
     </header>
 
-    <div class="viewport">
+    <!-- Predictor Viewport -->
+    <div class="viewport" id="viewport">
+        <canvas id="graph-canvas"></canvas>
         <div class="plane-box" id="plane-vis">
             <svg viewBox="0 0 24 24" fill="var(--glow-red)" xmlns="http://www.w3.org/2000/svg">
                 <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" />
             </svg>
         </div>
         <div class="explosion" id="explosion-vis"></div>
-        <div class="disclaimer-text">THIS ISN'T THE REAL PREDICTIONS FOR THE PLATFORMS, to get right predictions buy the licence key</div>
+        <div class="disclaimer-text">THIS ISN'T THE REAL PREDICTIONS — BUY THE LICENCE KEY FOR ACCURATE PREDICTIONS</div>
 
         <div class="multiplier-text">
             <div class="target-label">BYPASSING_AFRICA_NODES...</div>
@@ -572,8 +1114,29 @@
         </div>
     </div>
 
-    <div class="platform-section">
-        <div class="section-tag">COMPATIBLE CRASH PLATFORMS:</div>
+    <!-- Stats Strip -->
+    <div class="stats-strip reveal">
+        <div class="stat-item">
+            <div class="stat-value" id="stat-predictions">0</div>
+            <div class="stat-label">PREDICTIONS</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">ACCURACY</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="stat-active">0</div>
+            <div class="stat-label">ACTIVE USERS</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">0%</div>
+            <div class="stat-label">BAN RATE</div>
+        </div>
+    </div>
+
+    <!-- Platform Logos -->
+    <div class="platform-section reveal">
+        <div class="section-tag">COMPATIBLE CRASH PLATFORMS</div>
         <div class="logo-wall">
             <img src="logos/1win.png" alt="1win">
             <img src="logos/1xbet.png" alt="1xbet">
@@ -588,55 +1151,69 @@
             <img src="logos/goobet.png" alt="goobet">
             <img src="logos/betika.png" alt="betika">
         </div>
-        <div class="more-platforms-text">(16 MORE PLATFORMS AVAILABLE)</div>
+        <div class="more-platforms-text">+ 16 MORE PLATFORMS AVAILABLE</div>
     </div>
 
-    <div class="action-grid">
-        <a href="proofs.html" class="btn btn-preview">(LIVE PROOF)</a>
-        <!-- Added Checkout Button between WhatsApp and Telegram -->
+    <!-- Testimonial Ticker -->
+    <div class="testimonial-ticker">
+        <div class="ticker-track" id="ticker-track"></div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-grid reveal">
+        <a href="proofs.html" class="btn btn-preview">📹 LIVE PROOF</a>
         <a href="https://wa.me/212772865239" class="btn btn-whatsapp">WHATSAPP</a>
         <a href="checkout.html" class="btn btn-checkout">CHECKOUT</a>
         <a href="https://t.me/enh_os" class="btn btn-telegram">TELEGRAM</a>
-        
-        <a href="predictor.html" class="btn btn-play">PLAY NOW</a>
+        <a href="predictor.html" class="btn btn-play">▶ PLAY NOW</a>
     </div>
 
-    <div style="text-align: center; margin-top: 15px;">
-        <a href="guide.html" style="color: var(--text-dim); font-size: 9px; font-family: monospace; text-decoration: underline; letter-spacing: 1px;">📖 READ SAFE EXTRACTION GUIDE</a>
+    <div class="guide-link">
+        <a href="guide.html">📖 READ SAFE EXTRACTION GUIDE</a>
     </div>
 
     <!-- Anti-Ban Badge -->
-    <div style="background: rgba(37, 211, 102, 0.1); border: 1px solid var(--whatsapp); margin: 25px 15px 15px 15px; padding: 12px; border-radius: 8px; display: flex; align-items: center; gap: 15px;">
-        <div style="font-size: 24px;">🛡️</div>
+    <div class="anti-ban-badge reveal">
+        <div class="anti-ban-icon">🛡️</div>
         <div>
-            <div style="color: var(--whatsapp); font-size: 11px; font-weight: bold; font-family: monospace; letter-spacing: 1px;">100% ANTI-BAN PROTECTION</div>
-            <div style="color: #aaa; font-size: 9px; margin-top: 3px;">Our Node-Bypass technology spoofs your IP and clears cache automatically. 0% account ban rate in 2024.</div>
+            <div class="anti-ban-title">100% ANTI-BAN PROTECTION</div>
+            <div class="anti-ban-desc">Our Node-Bypass technology spoofs your IP and clears cache automatically. 0% account ban rate in 2024.</div>
         </div>
     </div>
 
-    <div class="pricing-section" id="buy">
-        <!-- Scarcity Bar (500 Limit) -->
-        <div style="margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; font-size: 9px; font-family: monospace; color: var(--glow-red); font-weight: bold; margin-bottom: 5px;">
+    <!-- Pricing -->
+    <div class="pricing-section reveal" id="buy">
+        <div class="pricing-header">
+            <h2>SELECT YOUR LICENSE</h2>
+            <p>INSTANT ACTIVATION AFTER PAYMENT</p>
+        </div>
+
+        <div class="scarcity-container">
+            <div class="scarcity-header">
                 <span>DAILY LICENSE LIMIT</span>
                 <span><span id="licenses-sold">0</span> / 500 SOLD</span>
             </div>
-            <div style="width: 100%; background: #222; height: 6px; border-radius: 3px; overflow: hidden;">
-                <div id="license-bar" style="width: 0%; background: var(--glow-red); height: 100%; box-shadow: 0 0 10px var(--glow-red);"></div>
+            <div class="scarcity-bar-bg">
+                <div class="scarcity-bar-fill" id="license-bar" style="width: 0%;"></div>
             </div>
-            <div style="font-size: 8px; color: #666; text-align: right; margin-top: 4px;">RESETS IN <span id="scarcity-timer">00:00:00</span></div>
+            <div class="scarcity-footer">RESETS IN <span id="scarcity-timer">00:00:00</span></div>
         </div>
 
-        <!-- Made Price Rows Clickable Links to Checkout Page -->
-        <a href="checkout.html" class="price-row"><span class="duration">24 HOURS ACCESS</span> <span class="amount">$30</span></a>
-        <a href="checkout.html" class="price-row"><span class="duration">72 HOURS ACCESS</span> <span class="amount">$65</span></a>
-        <a href="checkout.html" class="price-row"><span class="duration">1 WEEK ACCESS</span> <span class="amount">$200</span></a>
-        <a href="checkout.html" class="price-row"><span class="duration">1 MONTH ACCESS</span> <span class="amount">$600</span></a>
-        <a href="checkout.html" class="price-row" style="border-color: var(--glow-red); background: rgba(255,0,51,0.05);"><span class="duration">LIFETIME LICENSE</span> <span class="amount">$2,500</span></a>
-        <a href="checkout.html" class="price-row"><span class="duration">RESELLER LICENSE</span> <span class="amount">$6,000</span></a>
+        <a href="checkout.html" class="price-row"><span class="duration">24 HOURS ACCESS</span><span class="amount">$30</span></a>
+        <a href="checkout.html" class="price-row"><span class="duration">72 HOURS ACCESS</span><span class="amount">$65</span></a>
+        <a href="checkout.html" class="price-row popular">
+            <span class="popular-badge">MOST POPULAR</span>
+            <span class="duration">1 WEEK ACCESS</span><span class="amount">$200</span>
+        </a>
+        <a href="checkout.html" class="price-row"><span class="duration">1 MONTH ACCESS</span><span class="amount">$600</span></a>
+        <a href="checkout.html" class="price-row" style="border-color: var(--glow-red); background: rgba(255,0,51,0.05);">
+            <span class="duration">LIFETIME LICENSE</span><span class="amount">$2,500</span>
+        </a>
+        <a href="checkout.html" class="price-row"><span class="duration">RESELLER LICENSE</span><span class="amount">$6,000</span></a>
     </div>
 
-    <div class="payment-methods">
+    <!-- Payment Methods -->
+    <div class="payment-methods reveal">
         CLICK ICON TO COPY PAYMENT ADDRESS
         <div class="pay-icons">
             <img src="logos/bitcoin-btc-logo.png" alt="BTC" data-address="33c3eLYc6Vy7d9dnbAi9n2yVKb7ed5KJMF">
@@ -646,40 +1223,35 @@
         </div>
     </div>
 
-    <div class="terminal" id="log-box"></div>
+    <!-- Terminal -->
+    <div class="terminal reveal">
+        <div class="terminal-content" id="log-box"></div>
+    </div>
 
+    <!-- Footer -->
     <footer>
         <div class="node-status-container">
-            <div class="node">
-                <div class="node-dot online"></div> NGN_NODE
-            </div>
-            <div class="node">
-                <div class="node-dot online"></div> GHS_NODE
-            </div>
-            <div class="node">
-                <div class="node-dot online"></div> ZAR_NODE
-            </div>
-            <div class="node">
-                <div class="node-dot syncing"></div> KES_NODE
-            </div>
+            <div class="node"><div class="node-dot online"></div> NGN_NODE</div>
+            <div class="node"><div class="node-dot online"></div> GHS_NODE</div>
+            <div class="node"><div class="node-dot online"></div> ZAR_NODE</div>
+            <div class="node"><div class="node-dot syncing"></div> KES_NODE</div>
+            <div class="node"><div class="node-dot online"></div> TZS_NODE</div>
         </div>
-        <!-- Live Status & Contracts Buttons -->
-        <div style="margin-bottom: 25px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            <a href="status.html" class="btn-status">🔴 LIVE NETWORK STATUS</a>
-            <a href="contracts.html" class="btn-status" style="border-color: #00ddff; color: #00ddff; box-shadow: inset 0 0 10px rgba(0, 221, 255, 0.1);">📜 VIEW EXPLOIT CONTRACTS</a>
-        </div>
-        
-        <div style="margin-bottom: 15px; color: #555;">&copy; 2022-2026 AFRICA HACKS GROUP</div>
-        
-        <!-- ... the rest of the node dots ... -->
 
+        <div class="footer-buttons">
+            <a href="status.html" class="btn-status">🔴 LIVE NETWORK STATUS</a>
+            <a href="contracts.html" class="btn-status" style="border-color: var(--cyan); color: var(--cyan); box-shadow: inset 0 0 10px rgba(0, 221, 255, 0.08);">📜 EXPLOIT CONTRACTS</a>
+        </div>
+
+        <div class="footer-copy">&copy; 2022-2026 AFRICA HACKS GROUP</div>
     </footer>
 
-    <!-- Interactive Elements -->
+    <!-- Toasts -->
     <div id="toast-notification" class="toast">ADDRESS COPIED TO CLIPBOARD!</div>
+    <div class="social-proof-toast" id="social-proof"></div>
 
     <script>
-        // --- Page Load Transition ---
+        // ===== PAGE LOAD =====
         window.addEventListener('load', () => document.body.classList.add('loaded'));
         window.addEventListener('pageshow', () => {
             const loader = document.getElementById('transition-layer');
@@ -687,7 +1259,7 @@
             document.body.classList.add('loaded');
         });
 
-        // Link handler
+        // ===== LINK HANDLER =====
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
                 const dest = this.getAttribute('href');
@@ -699,11 +1271,153 @@
             });
         });
 
-        // --- GLOBAL GAME SYNC ---
+        // ===== PARTICLE BACKGROUND =====
+        (function() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            for (let i = 0; i < 40; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    size: Math.random() * 1.5 + 0.5,
+                    alpha: Math.random() * 0.3 + 0.05
+                });
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 0, 51, ${p.alpha})`;
+                    ctx.fill();
+                });
+
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(255, 0, 51, ${0.06 * (1 - dist / 120)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        })();
+
+        // ===== GRAPH CANVAS =====
+        const graphCanvas = document.getElementById('graph-canvas');
+        const gCtx = graphCanvas.getContext('2d');
+        let graphPoints = [];
+
+        function resizeGraph() {
+            const vp = document.getElementById('viewport');
+            graphCanvas.width = vp.offsetWidth;
+            graphCanvas.height = vp.offsetHeight;
+        }
+        resizeGraph();
+        window.addEventListener('resize', resizeGraph);
+
+        function drawGraph(progress, crashed) {
+            const w = graphCanvas.width;
+            const h = graphCanvas.height;
+            gCtx.clearRect(0, 0, w, h);
+
+            if (crashed) return;
+
+            const startX = w * 0.08;
+            const startY = h * 0.85;
+            const endX = startX + (w * 0.84) * progress;
+            const endY = startY - (h * 0.65) * Math.pow(progress, 0.7);
+
+            // Build curve
+            gCtx.beginPath();
+            gCtx.moveTo(startX, startY);
+
+            const steps = 60;
+            for (let i = 0; i <= steps * progress; i++) {
+                const t = i / steps;
+                const x = startX + (w * 0.84) * t;
+                const y = startY - (h * 0.65) * Math.pow(t, 0.7);
+                gCtx.lineTo(x, y);
+            }
+
+            // Gradient fill under curve
+            const grad = gCtx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, 'rgba(255, 0, 51, 0.15)');
+            grad.addColorStop(1, 'rgba(255, 0, 51, 0)');
+
+            gCtx.lineTo(endX, h);
+            gCtx.lineTo(startX, h);
+            gCtx.closePath();
+            gCtx.fillStyle = grad;
+            gCtx.fill();
+
+            // Draw line
+            gCtx.beginPath();
+            gCtx.moveTo(startX, startY);
+            for (let i = 0; i <= steps * progress; i++) {
+                const t = i / steps;
+                const x = startX + (w * 0.84) * t;
+                const y = startY - (h * 0.65) * Math.pow(t, 0.7);
+                gCtx.lineTo(x, y);
+            }
+            gCtx.strokeStyle = '#ff0033';
+            gCtx.lineWidth = 2.5;
+            gCtx.shadowColor = '#ff0033';
+            gCtx.shadowBlur = 15;
+            gCtx.stroke();
+            gCtx.shadowBlur = 0;
+
+            // Dot at tip
+            gCtx.beginPath();
+            gCtx.arc(endX, endY, 4, 0, Math.PI * 2);
+            gCtx.fillStyle = '#fff';
+            gCtx.shadowColor = '#ff0033';
+            gCtx.shadowBlur = 20;
+            gCtx.fill();
+            gCtx.shadowBlur = 0;
+
+            // Move plane to tip
+            const plane = document.getElementById('plane-vis');
+            const vpRect = document.getElementById('viewport');
+            plane.style.left = (endX / w * 100 - 5) + '%';
+            plane.style.top = (endY / h * 100 - 10) + '%';
+        }
+
+        // ===== GLOBAL GAME SYNC =====
         const countDisplay = document.getElementById('count');
         const statusMsg = document.getElementById('status-msg');
         const plane = document.getElementById('plane-vis');
         const explosion = document.getElementById('explosion-vis');
+        const viewport = document.getElementById('viewport');
+        let wasCrashed = false;
 
         function getGlobalTarget(seed) {
             let x = Math.sin(seed) * 10000;
@@ -720,27 +1434,46 @@
             const target = getGlobalTarget(gameId);
 
             if (timeInCycle < flyingDuration) {
-                let currentCount = 1.00 + ((target - 1.00) * (timeInCycle / flyingDuration));
+                const progress = timeInCycle / flyingDuration;
+                let currentCount = 1.00 + ((target - 1.00) * progress);
                 countDisplay.innerText = currentCount.toFixed(2) + 'x';
                 countDisplay.classList.remove('is-crashed');
                 plane.style.opacity = "1";
                 explosion.classList.remove('active');
                 statusMsg.innerText = "BYPASSING_AFRICA_NODES...";
-                statusMsg.style.color = "#888";
+                statusMsg.style.color = "#666";
+                viewport.classList.remove('shake');
+                wasCrashed = false;
+
+                drawGraph(progress, false);
             } else {
                 countDisplay.innerText = target + 'x';
                 countDisplay.classList.add('is-crashed');
                 plane.style.opacity = "0";
-                if (timeInCycle < flyingDuration + 100) explosion.classList.add('active');
+
+                if (!wasCrashed) {
+                    explosion.classList.add('active');
+                    viewport.classList.add('shake');
+                    // Position explosion at plane's last position
+                    const planeLeft = plane.style.left;
+                    const planeTop = plane.style.top;
+                    explosion.style.left = planeLeft;
+                    explosion.style.top = planeTop;
+                    wasCrashed = true;
+                }
+
                 statusMsg.innerText = "CRASH_IDENTIFIED: " + target + "x";
-                statusMsg.style.color = "white";
+                statusMsg.style.color = "#ff4444";
+
+                drawGraph(1, true);
             }
             requestAnimationFrame(syncGlobalGame);
         }
         syncGlobalGame();
 
-        // --- LIVE USERS (8,000 - 17,000 Sync) ---
+        // ===== LIVE USERS (8,000 - 17,000) =====
         const usersDisplay = document.getElementById('live-users');
+        const statActive = document.getElementById('stat-active');
 
         function syncGlobalUsers() {
             const now = Date.now();
@@ -750,99 +1483,191 @@
             const combinedWave = (wave1 * 0.6) + (wave2 * 0.3) + (wave3 * 0.1);
             const syncedUserCount = Math.floor(12500 + (combinedWave * 4500));
             usersDisplay.innerText = syncedUserCount.toLocaleString();
+            statActive.innerText = syncedUserCount.toLocaleString();
             setTimeout(syncGlobalUsers, 2000);
         }
         syncGlobalUsers();
 
-        // --- DYNAMIC HACKER TERMINAL ---
-        const platformsList = ['1WIN', '1XBET', 'SPORTYBET', 'BET9JA', 'MSPORT', 'BETWAY'];
+        // ===== ANIMATED STAT COUNTER =====
+        (function() {
+            const target = 1847293;
+            const el = document.getElementById('stat-predictions');
+            let current = 0;
+            const step = Math.ceil(target / 60);
+            function countUp() {
+                current += step;
+                if (current >= target) { current = target; el.innerText = current.toLocaleString(); return; }
+                el.innerText = current.toLocaleString();
+                requestAnimationFrame(countUp);
+            }
+            setTimeout(countUp, 800);
+        })();
+
+        // ===== TERMINAL LOGS =====
+        const platformsList = ['1WIN', '1XBET', 'SPORTYBET', 'BET9JA', 'MSPORT', 'BETWAY', 'MELBET', 'LINEBET'];
         setInterval(() => {
             const logBox = document.getElementById('log-box');
             const plat = platformsList[Math.floor(Math.random() * platformsList.length)];
-            const hex = Math.random().toString(16).substring(2, 8).toUpperCase();
-            const ping = Math.floor(Math.random() * 40) + 12;
+            const hex = Math.random().toString(16).substring(2, 10).toUpperCase();
+            const ping = Math.floor(Math.random() * 40) + 8;
+            const seed = Math.random().toString(36).substring(2, 14);
 
             const logs = [
-                `> [SYS] Injecting payload into ${plat}_NODE...`,
-                `> [SEC] Hash Decrypted: 0x${hex}...`,
-                `> [NET] Bypassing SSL on ${plat} main server...`,
-                `> [SYNC] Connection Secured. Latency: ${ping}ms`,
-                `> [CRASH] Extracting seed from API...`
+                { text: `> [SYS] Injecting payload into ${plat}_NODE...`, color: '#555' },
+                { text: `> [SEC] Hash: 0x${hex}`, color: '#ff0033' },
+                { text: `> [NET] SSL bypass on ${plat} — ${ping}ms`, color: '#555' },
+                { text: `> [OK!] Connection to ${plat} secured`, color: '#25d366' },
+                { text: `> [API] Seed extracted: ${seed}`, color: '#ffaa00' },
+                { text: `> [CRASH] Next target computed for ${plat}`, color: '#ff0033' },
             ];
 
+            const chosen = logs[Math.floor(Math.random() * logs.length)];
             const div = document.createElement('div');
-            let logText = logs[Math.floor(Math.random() * logs.length)];
-            if (logText.includes('[SEC]')) div.style.color = "var(--glow-red)";
-            if (logText.includes('[SYNC]')) div.style.color = "var(--whatsapp)";
-
-            div.innerText = logText;
+            div.style.color = chosen.color;
+            div.style.marginBottom = '2px';
+            div.innerText = chosen.text;
             logBox.prepend(div);
-            if (logBox.children.length > 5) logBox.removeChild(logBox.lastChild);
-        }, 2500);
+            if (logBox.children.length > 6) logBox.removeChild(logBox.lastChild);
+        }, 2200);
 
-        // --- COPY TO CLIPBOARD ---
+        // ===== COPY TO CLIPBOARD =====
         document.querySelectorAll('.pay-icons img').forEach(icon => {
             icon.addEventListener('click', function() {
                 const address = this.getAttribute('data-address');
                 if (!address) return;
                 navigator.clipboard.writeText(address).then(() => {
                     const toast = document.getElementById('toast-notification');
-                    toast.innerText = `${this.alt} ADDRESS COPIED!`;
+                    toast.innerText = `✅ ${this.alt} ADDRESS COPIED!`;
                     toast.classList.add('show');
                     setTimeout(() => toast.classList.remove('show'), 3000);
                 });
             });
         });
 
-        // --- DYNAMIC SCARCITY TIMER & DAILY LICENSE LOGIC ---
+        // ===== SCARCITY TIMER & LICENSE =====
         function updateScarcityAndLicenses() {
             const now = new Date();
-            
-            // 1. Timer Logic
             const tomorrow = new Date(now);
             tomorrow.setUTCHours(24, 0, 0, 0);
             const diff = tomorrow - now;
 
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            const h = Math.floor((diff % (86400000)) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
 
             document.getElementById('scarcity-timer').innerText =
                 String(h).padStart(2, '0') + ':' +
                 String(m).padStart(2, '0') + ':' +
                 String(s).padStart(2, '0');
 
-            // 2. License Counter Logic (Adds 12 to 28 every hour automatically based on clock)
             const startOfDay = new Date(now);
             startOfDay.setUTCHours(0, 0, 0, 0);
             const hoursElapsed = Math.floor((now - startOfDay) / 3600000);
             const minutesElapsed = now.getUTCMinutes();
-            
+
             let sold = 0;
-            
-            // Add completed hours (Deterministic pseudo-random)
-            for(let i = 0; i < hoursElapsed; i++) {
+            for (let i = 0; i < hoursElapsed; i++) {
                 let seed = startOfDay.getTime() + i;
-                let pseudoRandom = Math.abs(Math.sin(seed)) * 17; // Values between 0 and 17
-                sold += Math.floor(12 + pseudoRandom); // Result between 12 and ~28
+                let pseudoRandom = Math.abs(Math.sin(seed)) * 17;
+                sold += Math.floor(12 + pseudoRandom);
             }
-            
-            // Add partial amount for the current hour (proportional to minutes elapsed)
+
             let currentHourSeed = startOfDay.getTime() + hoursElapsed;
             let currentHourTotal = 12 + Math.abs(Math.sin(currentHourSeed)) * 17;
             sold += Math.floor((minutesElapsed / 60) * currentHourTotal);
-            
-            // Cap it at 500 max just in case
             sold = Math.min(sold, 500);
 
-            // Update DOM Elements
             document.getElementById('licenses-sold').innerText = sold;
             document.getElementById('license-bar').style.width = (sold / 500) * 100 + "%";
         }
-        
+
         setInterval(updateScarcityAndLicenses, 1000);
-        updateScarcityAndLicenses(); // Run immediately on load
-        
+        updateScarcityAndLicenses();
+
+        // ===== TESTIMONIAL TICKER =====
+        (function() {
+            const testimonials = [
+                { flag: '🇳🇬', name: 'Tunde A.', amount: '+$420', plat: '1WIN' },
+                { flag: '🇬🇭', name: 'Kwame M.', amount: '+$310', plat: 'SPORTYBET' },
+                { flag: '🇿🇦', name: 'Sipho K.', amount: '+$890', plat: 'BETWAY' },
+                { flag: '🇰🇪', name: 'Brian O.', amount: '+$155', plat: '1XBET' },
+                { flag: '🇹🇿', name: 'Juma H.', amount: '+$620', plat: 'BET9JA' },
+                { flag: '🇺🇬', name: 'Dennis W.', amount: '+$275', plat: 'MSPORT' },
+                { flag: '🇨🇲', name: 'Paul N.', amount: '+$540', plat: 'MELBET' },
+                { flag: '🇸🇳', name: 'Amadou D.', amount: '+$380', plat: 'LINEBET' },
+                { flag: '🇿🇲', name: 'Moses C.', amount: '+$195', plat: '1WIN' },
+                { flag: '🇲🇿', name: 'Carlos S.', amount: '+$710', plat: 'SPORTYBET' },
+            ];
+
+            const track = document.getElementById('ticker-track');
+            let html = '';
+            // Duplicate for seamless loop
+            for (let r = 0; r < 2; r++) {
+                testimonials.forEach(t => {
+                    html += `<div class="ticker-item">
+                        <span class="flag">${t.flag}</span>
+                        <span>${t.name} won <span class="amount-won">${t.amount}</span> on <span class="plat">${t.plat}</span></span>
+                    </div>`;
+                });
+            }
+            track.innerHTML = html;
+        })();
+
+        // ===== SOCIAL PROOF PURCHASE NOTIFICATIONS =====
+        (function() {
+            const countries = [
+                { flag: '🇳🇬', country: 'Nigeria' },
+                { flag: '🇬🇭', country: 'Ghana' },
+                { flag: '🇿🇦', country: 'South Africa' },
+                { flag: '🇰🇪', country: 'Kenya' },
+                { flag: '🇹🇿', country: 'Tanzania' },
+                { flag: '🇺🇬', country: 'Uganda' },
+                { flag: '🇨🇲', country: 'Cameroon' },
+                { flag: '🇸🇳', country: 'Senegal' },
+            ];
+            const plans = ['24 HOURS', '72 HOURS', '1 WEEK', '1 MONTH', 'LIFETIME'];
+            const times = ['2 min ago', '5 min ago', '8 min ago', '12 min ago', 'just now', '1 min ago'];
+            const names = ['John', 'David', 'Emmanuel', 'Grace', 'Ibrahim', 'Fatima', 'Samuel', 'Blessing', 'Abdul', 'Sarah'];
+
+            const spEl = document.getElementById('social-proof');
+
+            function showProof() {
+                const c = countries[Math.floor(Math.random() * countries.length)];
+                const plan = plans[Math.floor(Math.random() * plans.length)];
+                const time = times[Math.floor(Math.random() * times.length)];
+                const name = names[Math.floor(Math.random() * names.length)];
+
+                spEl.innerHTML = `
+                    <div class="sp-avatar">${c.flag}</div>
+                    <div class="sp-text">
+                        <strong>${name}</strong> from ${c.country}<br>
+                        purchased <span class="sp-plan">${plan}</span> access
+                        <span class="sp-time">· ${time}</span>
+                    </div>
+                `;
+
+                spEl.classList.add('show');
+                setTimeout(() => spEl.classList.remove('show'), 4500);
+            }
+
+            // First one after 8 seconds, then every 15-25 seconds
+            setTimeout(() => {
+                showProof();
+                setInterval(showProof, 15000 + Math.random() * 10000);
+            }, 8000);
+        })();
+
+        // ===== SCROLL REVEAL =====
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+        revealElements.forEach(el => revealObserver.observe(el));
     </script>
 </body>
 
