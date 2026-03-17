@@ -4,17 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA HACKS | Institutional Flight Predictor</title>
-    <meta name="title" content="AFRICA HACKS | Institutional Flight Predictor">
+    <title>AFRICA_HACKS | Institutional Flight Predictor</title>
+    <meta name="title" content="AFRICA_HACKS | Institutional Flight Predictor">
     <meta name="description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
-    <meta property="og:title" content="AFRICA HACKS | Institutional Flight Predictor">
+    <meta property="og:title" content="AFRICA_HACKS | Institutional Flight Predictor">
     <meta property="og:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
     <meta property="og:image" content="logos/Africa.png">
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
-    <meta property="twitter:title" content="AFRICA HACKS | Institutional Flight Predictor">
+    <meta property="twitter:title" content="AFRICA_HACKS | Institutional Flight Predictor">
     <meta property="twitter:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
     <meta property="twitter:image" content="logos/Africa.png">
     <link rel="icon" type="image/png" href="logos/favicon.png">
@@ -90,7 +90,7 @@
             z-index: 1;
         }
 
-        /* --- Africa Glitch Transition Overlay --- */
+        /* --- Clean Transition Overlay --- */
         #transition-layer {
             position: fixed;
             top: 0; left: 0;
@@ -111,22 +111,23 @@
             pointer-events: all;
         }
 
-        .glitch-map {
-            width: 250px;
-            filter: invert(1) brightness(2);
-            animation: map-glitch 0.15s infinite;
+        .glitch-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -2px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
         }
 
-        @keyframes map-glitch {
-            0% { transform: translate(0); clip-path: inset(10% 0 30% 0); }
-            25% { transform: translate(-10px, 5px); filter: hue-rotate(90deg); }
-            50% { transform: translate(-5px, -10px); clip-path: inset(40% 0 10% 0); }
-            75% { transform: translate(10px, 5px); filter: invert(0); }
-            100% { transform: translate(0); }
+        .glitch-text span {
+            color: var(--glow-red);
+            text-shadow: 0 0 10px var(--glow-red);
         }
 
         .loading-text {
-            margin-top: 25px;
+            margin-top: 15px;
             font-family: 'JetBrains Mono', monospace;
             color: var(--glow-red);
             letter-spacing: 4px;
@@ -185,7 +186,12 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .logo span {
+        .logo-text {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .logo-text span {
             color: var(--glow-red);
             text-shadow: 0 0 10px var(--glow-red);
         }
@@ -489,7 +495,7 @@
 
         .ticker-track {
             display: inline-flex;
-            animation: ticker-scroll 50s linear infinite;
+            animation: ticker-scroll 65s linear infinite;
             gap: 50px;
         }
 
@@ -1072,23 +1078,20 @@
 
 <body>
 
-    <!-- Particle Background -->
     <canvas id="particle-canvas"></canvas>
 
-    <!-- Transition Overlay -->
     <div id="transition-layer">
-        <img src="logos/Africa.png" class="glitch-map" alt="AFRICA_NODE">
-        <div class="loading-text">BYPASSING_SECURE_NODES...</div>
+        <div class="glitch-text">AFRICA<span>_HACKS</span></div>
         <div class="loading-bar-container">
             <div class="loading-bar-fill"></div>
         </div>
+        <div class="loading-text">BYPASSING_SECURE_NODES...</div>
     </div>
 
-    <!-- Header -->
     <header class="glow-header">
         <div class="logo">
             <img src="logos/Africa.png" alt="Logo" class="header-logo">
-            AFRICA<span>HACKS</span>
+            <span class="logo-text">AFRICA<span>_HACKS</span></span>
         </div>
         <div class="live-users-container">
             <div class="live-users-text"><span id="live-users">12,500</span> ONLINE</div>
@@ -1096,7 +1099,6 @@
         </div>
     </header>
 
-    <!-- Predictor Viewport -->
     <div class="viewport" id="viewport">
         <canvas id="graph-canvas"></canvas>
         <div class="plane-box" id="plane-vis">
@@ -1114,7 +1116,6 @@
         </div>
     </div>
 
-    <!-- Stats Strip -->
     <div class="stats-strip reveal">
         <div class="stat-item">
             <div class="stat-value" id="stat-predictions">0</div>
@@ -1134,7 +1135,6 @@
         </div>
     </div>
 
-    <!-- Platform Logos -->
     <div class="platform-section reveal">
         <div class="section-tag">COMPATIBLE CRASH PLATFORMS</div>
         <div class="logo-wall">
@@ -1154,12 +1154,10 @@
         <div class="more-platforms-text">+ 16 MORE PLATFORMS AVAILABLE</div>
     </div>
 
-    <!-- Testimonial Ticker -->
     <div class="testimonial-ticker">
         <div class="ticker-track" id="ticker-track"></div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="action-grid reveal">
         <a href="proofs.html" class="btn btn-preview">📹 LIVE PROOF</a>
         <a href="https://wa.me/212772865239" class="btn btn-whatsapp">WHATSAPP</a>
@@ -1172,7 +1170,6 @@
         <a href="guide.html">📖 READ SAFE EXTRACTION GUIDE</a>
     </div>
 
-    <!-- Anti-Ban Badge -->
     <div class="anti-ban-badge reveal">
         <div class="anti-ban-icon">🛡️</div>
         <div>
@@ -1181,7 +1178,6 @@
         </div>
     </div>
 
-    <!-- Pricing -->
     <div class="pricing-section reveal" id="buy">
         <div class="pricing-header">
             <h2>SELECT YOUR LICENSE</h2>
@@ -1212,7 +1208,6 @@
         <a href="checkout.html" class="price-row"><span class="duration">RESELLER LICENSE</span><span class="amount">$6,000</span></a>
     </div>
 
-    <!-- Payment Methods -->
     <div class="payment-methods reveal">
         CLICK ICON TO COPY PAYMENT ADDRESS
         <div class="pay-icons">
@@ -1223,12 +1218,10 @@
         </div>
     </div>
 
-    <!-- Terminal -->
     <div class="terminal reveal">
         <div class="terminal-content" id="log-box"></div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="node-status-container">
             <div class="node"><div class="node-dot online"></div> NGN_NODE</div>
@@ -1246,7 +1239,6 @@
         <div class="footer-copy">&copy; 2022-2026 AFRICA HACKS GROUP</div>
     </footer>
 
-    <!-- Toasts -->
     <div id="toast-notification" class="toast">ADDRESS COPIED TO CLIPBOARD!</div>
     <div class="social-proof-toast" id="social-proof"></div>
 
@@ -1471,7 +1463,7 @@
         }
         syncGlobalGame();
 
-        // ===== LIVE USERS (8,000 - 17,000) =====
+        // ===== LIVE USERS =====
         const usersDisplay = document.getElementById('live-users');
         const statActive = document.getElementById('stat-active');
 
@@ -1587,40 +1579,40 @@
         // ===== TESTIMONIAL TICKER =====
         (function() {
             const testimonials = [
-    { flag: '🇳🇬', name: 'Tunde A.', amount: '+$420', plat: '1WIN' },
-    { flag: '🇬🇭', name: 'Kwame M.', amount: '+$310', plat: 'SPORTYBET' },
-    { flag: '🇿🇦', name: 'Sipho K.', amount: '+$890', plat: 'BETWAY' },
-    { flag: '🇰🇪', name: 'Brian O.', amount: '+$155', plat: '1XBET' },
-    { flag: '🇹🇿', name: 'Juma H.', amount: '+$620', plat: 'BET9JA' },
-    { flag: '🇺🇬', name: 'Dennis W.', amount: '+$275', plat: 'MSPORT' },
-    { flag: '🇨🇲', name: 'Paul N.', amount: '+$540', plat: 'MELBET' },
-    { flag: '🇸🇳', name: 'Amadou D.', amount: '+$380', plat: 'LINEBET' },
-    { flag: '🇿🇲', name: 'Moses C.', amount: '+$195', plat: '1WIN' },
-    { flag: '🇲🇿', name: 'Carlos S.', amount: '+$710', plat: 'SPORTYBET' },
-    { flag: '🇲🇦', name: 'Youssef B.', amount: '+$950', plat: '1XBET' },
-    { flag: '🇪🇬', name: 'Ahmed M.', amount: '+$1,200', plat: 'MELBET' },
-    { flag: '🇨🇮', name: 'Koffi A.', amount: '+$240', plat: 'PREMIERBET' },
-    { flag: '🇩🇿', name: 'Malik F.', amount: '+$580', plat: 'LINEBET' },
-    { flag: '🇦🇴', name: 'Joao P.', amount: '+$415', plat: '1WIN' },
-    { flag: '🇷🇼', name: 'Jean D.', amount: '+$180', plat: 'BETWAY' },
-    { flag: '🇿🇼', name: 'Tendai M.', amount: '+$330', plat: 'SPORTYBET' },
-    { flag: '🇲🇼', name: 'Chisomo T.', amount: '+$210', plat: 'MSPORT' },
-    { flag: '🇧🇯', name: 'Pascal L.', amount: '+$670', plat: 'BET9JA' },
-    { flag: '🇲🇱', name: 'Oumar S.', amount: '+$490', plat: 'MELBET' },
-    { flag: '🇪🇹', name: 'Abebe G.', amount: '+$150', plat: '1XBET' },
-    { flag: '🇬🇳', name: 'Alpha C.', amount: '+$820', plat: '1WIN' },
-    { flag: '🇧🇫', name: 'Issa K.', amount: '+$305', plat: 'PREMIERBET' },
-    { flag: '🇹🇬', name: 'Kodjo E.', amount: '+$445', plat: 'SPORTYBET' },
-    { flag: '🇳🇬', name: 'Chidi O.', amount: '+$1,100', plat: 'BETWAY' },
-    { flag: '🇰🇪', name: 'Faith W.', amount: '+$290', plat: 'MSPORT' },
-    { flag: '🇿🇦', name: 'Zane vB.', amount: '+$750', plat: '1XBET' },
-    { flag: '🇬🇭', name: 'Efua B.', amount: '+$520', plat: '1WIN' },
-    { flag: '🇺🇬', name: 'Musa K.', amount: '+$135', plat: 'LINEBET' },
-    { flag: '🇹🇿', name: 'Fatuma S.', amount: '+$880', plat: 'BET9JA' }
-];
+                { flag: '🇳🇬', name: 'Tunde A.', amount: '+$420', plat: '1WIN' },
+                { flag: '🇬🇭', name: 'Kwame M.', amount: '+$310', plat: 'SPORTYBET' },
+                { flag: '🇿🇦', name: 'Sipho K.', amount: '+$890', plat: 'BETWAY' },
+                { flag: '🇰🇪', name: 'Brian O.', amount: '+$155', plat: '1XBET' },
+                { flag: '🇹🇿', name: 'Juma H.', amount: '+$620', plat: 'BET9JA' },
+                { flag: '🇺🇬', name: 'Dennis W.', amount: '+$275', plat: 'MSPORT' },
+                { flag: '🇨🇲', name: 'Paul N.', amount: '+$540', plat: 'MELBET' },
+                { flag: '🇸🇳', name: 'Amadou D.', amount: '+$380', plat: 'LINEBET' },
+                { flag: '🇿🇲', name: 'Moses C.', amount: '+$195', plat: '1WIN' },
+                { flag: '🇲🇿', name: 'Carlos S.', amount: '+$710', plat: 'SPORTYBET' },
+                { flag: '🇲🇦', name: 'Youssef B.', amount: '+$950', plat: '1XBET' },
+                { flag: '🇪🇬', name: 'Ahmed M.', amount: '+$1,200', plat: 'MELBET' },
+                { flag: '🇨🇮', name: 'Koffi A.', amount: '+$240', plat: 'PREMIERBET' },
+                { flag: '🇩🇿', name: 'Malik F.', amount: '+$580', plat: 'LINEBET' },
+                { flag: '🇦🇴', name: 'Joao P.', amount: '+$415', plat: '1WIN' },
+                { flag: '🇷🇼', name: 'Jean D.', amount: '+$180', plat: 'BETWAY' },
+                { flag: '🇿🇼', name: 'Tendai M.', amount: '+$330', plat: 'SPORTYBET' },
+                { flag: '🇲🇼', name: 'Chisomo T.', amount: '+$210', plat: 'MSPORT' },
+                { flag: '🇧🇯', name: 'Pascal L.', amount: '+$670', plat: 'BET9JA' },
+                { flag: '🇲🇱', name: 'Oumar S.', amount: '+$490', plat: 'MELBET' },
+                { flag: '🇪🇹', name: 'Abebe G.', amount: '+$150', plat: '1XBET' },
+                { flag: '🇬🇳', name: 'Alpha C.', amount: '+$820', plat: '1WIN' },
+                { flag: '🇧🇫', name: 'Issa K.', amount: '+$305', plat: 'PREMIERBET' },
+                { flag: '🇹🇬', name: 'Kodjo E.', amount: '+$445', plat: 'SPORTYBET' },
+                { flag: '🇳🇬', name: 'Chidi O.', amount: '+$1,100', plat: 'BETWAY' },
+                { flag: '🇰🇪', name: 'Faith W.', amount: '+$290', plat: 'MSPORT' },
+                { flag: '🇿🇦', name: 'Zane vB.', amount: '+$750', plat: '1XBET' },
+                { flag: '🇬🇭', name: 'Efua B.', amount: '+$520', plat: '1WIN' },
+                { flag: '🇺🇬', name: 'Musa K.', amount: '+$135', plat: 'LINEBET' },
+                { flag: '🇹🇿', name: 'Fatuma S.', amount: '+$880', plat: 'BET9JA' }
+            ];
+
             const track = document.getElementById('ticker-track');
             let html = '';
-            // Duplicate for seamless loop
             for (let r = 0; r < 2; r++) {
                 testimonials.forEach(t => {
                     html += `<div class="ticker-item">
@@ -1635,30 +1627,19 @@
         // ===== SOCIAL PROOF PURCHASE NOTIFICATIONS =====
         (function() {
             const countries = [
-    { flag: '🇳🇬', country: 'Nigeria' },
-    { flag: '🇬🇭', country: 'Ghana' },
-    { flag: '🇿🇦', country: 'South Africa' },
-    { flag: '🇰🇪', country: 'Kenya' },
-    { flag: '🇹🇿', country: 'Tanzania' },
-    { flag: '🇺🇬', country: 'Uganda' },
-    { flag: '🇨🇲', country: 'Cameroon' },
-    { flag: '🇸🇳', country: 'Senegal' },
-    { flag: '🇲🇦', country: 'Morocco' },
-    { flag: '🇪🇬', country: 'Egypt' },
-    { flag: '🇪🇹', country: 'Ethiopia' },
-    { flag: '🇿mb', country: 'Zambia' },
-    { flag: '🇨🇮', country: 'Ivory Coast' },
-    { flag: '🇩🇿', country: 'Algeria' },
-    { flag: '🇦🇴', country: 'Angola' },
-    { flag: '🇧寄', country: 'Benin' },
-    { flag: '🇧🇫', country: 'Burkina Faso' },
-    { flag: '🇲🇱', country: 'Mali' },
-    { flag: '🇲🇼', country: 'Malawi' },
-    { flag: '🇿🇼', country: 'Zimbabwe' },
-    { flag: '🇷🇼', country: 'Rwanda' },
-    { flag: '🇹🇬', country: 'Togo' },
-    { flag: '🇬🇳', country: 'Guinea' }
-];
+                { flag: '🇳🇬', country: 'Nigeria' }, { flag: '🇬🇭', country: 'Ghana' },
+                { flag: '🇿🇦', country: 'South Africa' }, { flag: '🇰🇪', country: 'Kenya' },
+                { flag: '🇹🇿', country: 'Tanzania' }, { flag: '🇺🇬', country: 'Uganda' },
+                { flag: '🇨🇲', country: 'Cameroon' }, { flag: '🇸🇳', country: 'Senegal' },
+                { flag: '🇲🇦', country: 'Morocco' }, { flag: '🇪🇬', country: 'Egypt' },
+                { flag: '🇪🇹', country: 'Ethiopia' }, { flag: '🇿🇲', country: 'Zambia' },
+                { flag: '🇨🇮', country: 'Ivory Coast' }, { flag: '🇩🇿', country: 'Algeria' },
+                { flag: '🇦🇴', country: 'Angola' }, { flag: '🇧🇯', country: 'Benin' },
+                { flag: '🇧🇫', country: 'Burkina Faso' }, { flag: '🇲🇱', country: 'Mali' },
+                { flag: '🇲🇼', country: 'Malawi' }, { flag: '🇿🇼', country: 'Zimbabwe' },
+                { flag: '🇷🇼', country: 'Rwanda' }, { flag: '🇹🇬', country: 'Togo' },
+                { flag: '🇬🇳', country: 'Guinea' }
+            ];
             const plans = ['24 HOURS', '72 HOURS', '1 WEEK', '1 MONTH', 'LIFETIME'];
             const times = ['2 min ago', '5 min ago', '8 min ago', '12 min ago', 'just now', '1 min ago'];
             const names = ['John', 'David', 'Emmanuel', 'Grace', 'Ibrahim', 'Fatima', 'Samuel', 'Blessing', 'Abdul', 'Sarah', 'Kojo', 'Amara', 'Chidi', 'Youssef', 'Zane', 'Thabo', 'Moussa', 'Kwesi', 'Oumar', 'Abebe'];
@@ -1684,7 +1665,6 @@
                 setTimeout(() => spEl.classList.remove('show'), 4500);
             }
 
-            // First one after 8 seconds, then every 15-25 seconds
             setTimeout(() => {
                 showProof();
                 setInterval(showProof, 15000 + Math.random() * 10000);
