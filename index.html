@@ -1587,18 +1587,37 @@
         // ===== TESTIMONIAL TICKER =====
         (function() {
             const testimonials = [
-                { flag: '🇳🇬', name: 'Tunde A.', amount: '+$420', plat: '1WIN' },
-                { flag: '🇬🇭', name: 'Kwame M.', amount: '+$310', plat: 'SPORTYBET' },
-                { flag: '🇿🇦', name: 'Sipho K.', amount: '+$890', plat: 'BETWAY' },
-                { flag: '🇰🇪', name: 'Brian O.', amount: '+$155', plat: '1XBET' },
-                { flag: '🇹🇿', name: 'Juma H.', amount: '+$620', plat: 'BET9JA' },
-                { flag: '🇺🇬', name: 'Dennis W.', amount: '+$275', plat: 'MSPORT' },
-                { flag: '🇨🇲', name: 'Paul N.', amount: '+$540', plat: 'MELBET' },
-                { flag: '🇸🇳', name: 'Amadou D.', amount: '+$380', plat: 'LINEBET' },
-                { flag: '🇿🇲', name: 'Moses C.', amount: '+$195', plat: '1WIN' },
-                { flag: '🇲🇿', name: 'Carlos S.', amount: '+$710', plat: 'SPORTYBET' },
-            ];
-
+    { flag: '🇳🇬', name: 'Tunde A.', amount: '+$420', plat: '1WIN' },
+    { flag: '🇬🇭', name: 'Kwame M.', amount: '+$310', plat: 'SPORTYBET' },
+    { flag: '🇿🇦', name: 'Sipho K.', amount: '+$890', plat: 'BETWAY' },
+    { flag: '🇰🇪', name: 'Brian O.', amount: '+$155', plat: '1XBET' },
+    { flag: '🇹🇿', name: 'Juma H.', amount: '+$620', plat: 'BET9JA' },
+    { flag: '🇺🇬', name: 'Dennis W.', amount: '+$275', plat: 'MSPORT' },
+    { flag: '🇨🇲', name: 'Paul N.', amount: '+$540', plat: 'MELBET' },
+    { flag: '🇸🇳', name: 'Amadou D.', amount: '+$380', plat: 'LINEBET' },
+    { flag: '🇿🇲', name: 'Moses C.', amount: '+$195', plat: '1WIN' },
+    { flag: '🇲🇿', name: 'Carlos S.', amount: '+$710', plat: 'SPORTYBET' },
+    { flag: '🇲🇦', name: 'Youssef B.', amount: '+$950', plat: '1XBET' },
+    { flag: '🇪🇬', name: 'Ahmed M.', amount: '+$1,200', plat: 'MELBET' },
+    { flag: '🇨🇮', name: 'Koffi A.', amount: '+$240', plat: 'PREMIERBET' },
+    { flag: '🇩🇿', name: 'Malik F.', amount: '+$580', plat: 'LINEBET' },
+    { flag: '🇦🇴', name: 'Joao P.', amount: '+$415', plat: '1WIN' },
+    { flag: '🇷🇼', name: 'Jean D.', amount: '+$180', plat: 'BETWAY' },
+    { flag: '🇿🇼', name: 'Tendai M.', amount: '+$330', plat: 'SPORTYBET' },
+    { flag: '🇲🇼', name: 'Chisomo T.', amount: '+$210', plat: 'MSPORT' },
+    { flag: '🇧🇯', name: 'Pascal L.', amount: '+$670', plat: 'BET9JA' },
+    { flag: '🇲🇱', name: 'Oumar S.', amount: '+$490', plat: 'MELBET' },
+    { flag: '🇪🇹', name: 'Abebe G.', amount: '+$150', plat: '1XBET' },
+    { flag: '🇬🇳', name: 'Alpha C.', amount: '+$820', plat: '1WIN' },
+    { flag: '🇧🇫', name: 'Issa K.', amount: '+$305', plat: 'PREMIERBET' },
+    { flag: '🇹🇬', name: 'Kodjo E.', amount: '+$445', plat: 'SPORTYBET' },
+    { flag: '🇳🇬', name: 'Chidi O.', amount: '+$1,100', plat: 'BETWAY' },
+    { flag: '🇰🇪', name: 'Faith W.', amount: '+$290', plat: 'MSPORT' },
+    { flag: '🇿🇦', name: 'Zane vB.', amount: '+$750', plat: '1XBET' },
+    { flag: '🇬🇭', name: 'Efua B.', amount: '+$520', plat: '1WIN' },
+    { flag: '🇺🇬', name: 'Musa K.', amount: '+$135', plat: 'LINEBET' },
+    { flag: '🇹🇿', name: 'Fatuma S.', amount: '+$880', plat: 'BET9JA' }
+];
             const track = document.getElementById('ticker-track');
             let html = '';
             // Duplicate for seamless loop
