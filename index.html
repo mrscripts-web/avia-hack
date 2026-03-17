@@ -85,7 +85,7 @@
         header, .viewport, .platform-section, .action-grid,
         .pricing-section, .payment-methods, .terminal, footer,
         .stats-strip, .anti-ban-badge, .guide-link, .testimonial-ticker,
-        .social-proof-toast, #toast-notification {
+        .social-proof-toast, #toast-notification, .audio-btn {
             position: relative;
             z-index: 1;
         }
@@ -111,20 +111,6 @@
             pointer-events: all;
         }
 
-        .glitch-map {
-            width: 250px;
-            filter: invert(1) brightness(2);
-            animation: map-glitch 0.15s infinite;
-        }
-
-        @keyframes map-glitch {
-            0% { transform: translate(0); clip-path: inset(10% 0 30% 0); }
-            25% { transform: translate(-10px, 5px); filter: hue-rotate(90deg); }
-            50% { transform: translate(-5px, -10px); clip-path: inset(40% 0 10% 0); }
-            75% { transform: translate(10px, 5px); filter: invert(0); }
-            100% { transform: translate(0); }
-        }
-
         .loading-text {
             margin-top: 25px;
             font-family: 'JetBrains Mono', monospace;
@@ -133,6 +119,7 @@
             font-size: 10px;
             text-transform: uppercase;
             font-weight: bold;
+            animation: blink 1.5s infinite;
         }
 
         .loading-bar-container {
@@ -233,6 +220,36 @@
             50% { opacity: 0.3; }
         }
 
+        /* --- Audio Button --- */
+        .audio-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 9991;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #333;
+            color: var(--text-dim);
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            cursor: pointer;
+            border-radius: 6px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .audio-btn:hover {
+            border-color: var(--glow-red);
+            color: white;
+        }
+
+        .audio-btn.playing {
+            border-color: var(--green);
+            color: var(--green);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.15);
+        }
+
         /* --- Predictor Viewport with Canvas Graph --- */
         .viewport {
             background-color: #080808;
@@ -289,7 +306,7 @@
             position: absolute;
             width: 55px;
             z-index: 5;
-            transform: rotate(65deg); /* This fixes the direction */
+            transform: rotate(65deg);
             transition: opacity 0.3s, transform 0.3s;
             filter: drop-shadow(0 0 10px var(--glow-red));
         }
@@ -992,9 +1009,8 @@
         .social-proof-toast {
             position: fixed;
             bottom: 20px;
-            left: 15px;
-            right: 15px;
-            max-width: 340px;
+            right: 15px; /* Moved to right side so it doesn't overlap audio btn */
+            max-width: 300px;
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 0, 51, 0.3);
@@ -1004,14 +1020,14 @@
             align-items: center;
             gap: 12px;
             z-index: 9990;
-            transform: translateY(120px);
+            transform: translateX(120%);
             opacity: 0;
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
         }
 
         .social-proof-toast.show {
-            transform: translateY(0);
+            transform: translateX(0);
             opacity: 1;
         }
 
@@ -1072,19 +1088,23 @@
 
 <body>
 
-    <!-- Particle Background -->
+    <audio id="bg-audio" loop>
+        <source src="your-audio-file.mp3" type="audio/mpeg">
+    </audio>
+
+    <button class="audio-btn" id="audio-toggle">
+        <span id="audio-status">🔈 SYSTEM_AUDIO: OFF</span>
+    </button>
+
     <canvas id="particle-canvas"></canvas>
 
-    <!-- Transition Overlay -->
     <div id="transition-layer">
-        <img src="logos/Africa.png" class="glitch-map" alt="AFRICA_NODE">
         <div class="loading-text">BYPASSING_SECURE_NODES...</div>
         <div class="loading-bar-container">
             <div class="loading-bar-fill"></div>
         </div>
     </div>
 
-    <!-- Header -->
     <header class="glow-header">
         <div class="logo">
             <img src="logos/Africa.png" alt="Logo" class="header-logo">
@@ -1096,7 +1116,6 @@
         </div>
     </header>
 
-    <!-- Predictor Viewport -->
     <div class="viewport" id="viewport">
         <canvas id="graph-canvas"></canvas>
         <div class="plane-box" id="plane-vis">
@@ -1114,7 +1133,6 @@
         </div>
     </div>
 
-    <!-- Stats Strip -->
     <div class="stats-strip reveal">
         <div class="stat-item">
             <div class="stat-value" id="stat-predictions">0</div>
@@ -1134,7 +1152,6 @@
         </div>
     </div>
 
-    <!-- Platform Logos -->
     <div class="platform-section reveal">
         <div class="section-tag">COMPATIBLE CRASH PLATFORMS</div>
         <div class="logo-wall">
@@ -1154,12 +1171,10 @@
         <div class="more-platforms-text">+ 16 MORE PLATFORMS AVAILABLE</div>
     </div>
 
-    <!-- Testimonial Ticker -->
     <div class="testimonial-ticker">
         <div class="ticker-track" id="ticker-track"></div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="action-grid reveal">
         <a href="proofs.html" class="btn btn-preview">📹 LIVE PROOF</a>
         <a href="https://wa.me/212772865239" class="btn btn-whatsapp">WHATSAPP</a>
@@ -1172,7 +1187,6 @@
         <a href="guide.html">📖 READ SAFE EXTRACTION GUIDE</a>
     </div>
 
-    <!-- Anti-Ban Badge -->
     <div class="anti-ban-badge reveal">
         <div class="anti-ban-icon">🛡️</div>
         <div>
@@ -1181,7 +1195,6 @@
         </div>
     </div>
 
-    <!-- Pricing -->
     <div class="pricing-section reveal" id="buy">
         <div class="pricing-header">
             <h2>SELECT YOUR LICENSE</h2>
@@ -1212,7 +1225,6 @@
         <a href="checkout.html" class="price-row"><span class="duration">RESELLER LICENSE</span><span class="amount">$6,000</span></a>
     </div>
 
-    <!-- Payment Methods -->
     <div class="payment-methods reveal">
         CLICK ICON TO COPY PAYMENT ADDRESS
         <div class="pay-icons">
@@ -1223,12 +1235,10 @@
         </div>
     </div>
 
-    <!-- Terminal -->
     <div class="terminal reveal">
         <div class="terminal-content" id="log-box"></div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="node-status-container">
             <div class="node"><div class="node-dot online"></div> NGN_NODE</div>
@@ -1246,11 +1256,29 @@
         <div class="footer-copy">&copy; 2022-2026 AFRICA HACKS GROUP</div>
     </footer>
 
-    <!-- Toasts -->
     <div id="toast-notification" class="toast">ADDRESS COPIED TO CLIPBOARD!</div>
     <div class="social-proof-toast" id="social-proof"></div>
 
     <script>
+        // ===== AUDIO LOGIC =====
+        const audio = document.getElementById('bg-audio');
+        const audioBtn = document.getElementById('audio-toggle');
+        const audioStatus = document.getElementById('audio-status');
+        
+        audio.volume = 0.4; // 40% volume
+
+        audioBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                audioBtn.classList.add('playing');
+                audioStatus.innerText = "🔊 SYSTEM_AUDIO: ON";
+            } else {
+                audio.pause();
+                audioBtn.classList.remove('playing');
+                audioStatus.innerText = "🔈 SYSTEM_AUDIO: OFF";
+            }
+        });
+
         // ===== PAGE LOAD =====
         window.addEventListener('load', () => document.body.classList.add('loaded'));
         window.addEventListener('pageshow', () => {
@@ -1263,7 +1291,8 @@
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(e) {
                 const dest = this.getAttribute('href');
-                if (dest && dest.includes('.html')) {
+                // Ensure we don't block external links like WA or TG
+                if (dest && dest.includes('.html') && !dest.startsWith('http')) {
                     e.preventDefault();
                     document.getElementById('transition-layer').classList.add('active');
                     setTimeout(() => window.location.href = dest, 1200);
