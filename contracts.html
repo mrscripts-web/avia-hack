@@ -12,6 +12,7 @@
             --text-dim: #888;
             --green: #00ff00;
             --blue: #00ddff;
+            --warning: #ffaa00;
         }
 
         body { 
@@ -44,6 +45,36 @@
         /* --- MAIN CONTENT --- */
         .container { max-width: 700px; margin: 0 auto; padding: 20px 15px 80px 15px; position: relative; z-index: 10; }
 
+        /* TOTAL CONTRACT VALUE BANNER */
+        .total-value-banner {
+            background: rgba(0, 221, 255, 0.05); border: 1px solid var(--blue);
+            padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center;
+            box-shadow: inset 0 0 15px rgba(0, 221, 255, 0.1);
+            animation: pulse-blue 3s infinite;
+        }
+        @keyframes pulse-blue {
+            0%, 100% { box-shadow: inset 0 0 15px rgba(0, 221, 255, 0.1); }
+            50% { box-shadow: inset 0 0 25px rgba(0, 221, 255, 0.2); }
+        }
+        .total-value-label { font-size: 10px; color: #aaa; letter-spacing: 2px; margin-bottom: 5px; }
+        .total-value-number { font-size: 28px; color: var(--blue); font-weight: 900; text-shadow: 0 0 10px var(--blue); }
+
+        /* RECENTLY RENEWED TICKER */
+        .renewed-ticker {
+            background: #0a0a0a; border: 1px solid #1a1a1a; border-left: 3px solid var(--green);
+            padding: 8px 15px; margin-bottom: 20px; font-size: 8px; color: #666;
+            white-space: nowrap; overflow: hidden;
+        }
+        .ticker-content {
+            display: inline-block;
+            animation: ticker-scroll 20s linear infinite;
+        }
+        .ticker-content span { color: var(--green); margin: 0 15px; }
+        @keyframes ticker-scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
         .auth-banner {
             background: rgba(0, 221, 255, 0.05); border: 1px solid var(--blue);
             padding: 15px; border-radius: 4px; margin-bottom: 25px; text-align: center;
@@ -57,7 +88,7 @@
             margin-bottom: 15px; letter-spacing: 2px; display: flex; justify-content: space-between; align-items: flex-end;
         }
 
-        /* --- CONTRACT GRIDS --- */
+        /* --- CONTRACT GRIDS (expanded) --- */
         .contract-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; }
         @media(min-width: 600px) { .contract-grid { grid-template-columns: 1fr 1fr; } }
 
@@ -67,7 +98,7 @@
         }
         .contract-card:hover { border-color: #444; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
         .contract-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--green); }
-        .contract-card.warning::before { background: var(--warning, #ffaa00); }
+        .contract-card.warning::before { background: var(--warning); }
 
         .c-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .c-title { font-size: 12px; font-weight: bold; color: #fff; }
@@ -81,8 +112,8 @@
         .c-val.blue { color: var(--blue); }
         .hash-code { font-family: monospace; font-size: 8px; color: #444; margin-top: 10px; text-align: right; }
 
-        /* --- TOOLCHAIN SECTION --- */
-        .tool-list { display: flex; flex-direction: column; gap: 10px; }
+        /* --- TOOLCHAIN SECTION (expanded) --- */
+        .tool-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
         .tool-item {
             background: #050505; border: 1px solid #111; padding: 12px; border-radius: 4px;
             display: flex; justify-content: space-between; align-items: center;
@@ -116,6 +147,17 @@
 
     <div class="container">
         
+        <!-- Total Contract Value Banner -->
+        <div class="total-value-banner">
+            <div class="total-value-label">TOTAL CONTRACT VALUE (LOCKED)</div>
+            <div class="total-value-number" id="total-value">$2,847,500</div>
+        </div>
+
+        <!-- Recently Renewed Ticker -->
+        <div class="renewed-ticker">
+            <div class="ticker-content" id="ticker"></div>
+        </div>
+
         <div class="auth-banner">
             <div class="auth-title">AUTHORIZATION CONFIRMED: GUEST_VIEW</div>
             <div class="auth-desc">Below is the live registry of all active Zero-Day exploits, API backdoors, and data-scraping contracts maintained by the AFRICA_HACKS group to keep the Predictor Tool functional.</div>
@@ -127,79 +169,18 @@
             <span style="font-size: 8px; color: #666;">AUTO-RENEWING</span>
         </div>
 
-        <div class="contract-grid">
-            <!-- 1XBET -->
-            <div class="contract-card">
-                <div class="c-top">
-                    <div class="c-title">1XBET_MAIN_NODE</div>
-                    <div class="c-badge">ACTIVE</div>
-                </div>
-                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">RNG_SEED_DECRYPTOR</span></div>
-                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">ROOT_READ_ONLY</span></div>
-                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$45,000 USD</span></div>
-                <div class="hash-code">SYNC_HASH: <span class="live-hash">0x8F...</span></div>
-            </div>
-
-            <!-- SPORTYBET -->
-            <div class="contract-card">
-                <div class="c-top">
-                    <div class="c-title">SPORTY_API_V4</div>
-                    <div class="c-badge">ACTIVE</div>
-                </div>
-                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">WEBSOCKET_SNIFFER</span></div>
-                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">PACKET_INTERCEPT</span></div>
-                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$38,500 USD</span></div>
-                <div class="hash-code">SYNC_HASH: <span class="live-hash">0x8F...</span></div>
-            </div>
-
-            <!-- BETWAY -->
-            <div class="contract-card warning">
-                <div class="c-top">
-                    <div class="c-title">BETWAY_AUTH_SYS</div>
-                    <div class="c-badge warning">ROUTING...</div>
-                </div>
-                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">TOKEN_CLONING</span></div>
-                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">BYPASS_AUTH</span></div>
-                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$22,000 USD</span></div>
-                <div class="hash-code">SYNC_HASH: <span class="live-hash" style="color:#ffaa00;">RECONNECTING...</span></div>
-            </div>
-
-            <!-- MSPORT -->
-            <div class="contract-card">
-                <div class="c-top">
-                    <div class="c-title">MSPORT_GATEWAY</div>
-                    <div class="c-badge">ACTIVE</div>
-                </div>
-                <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">LATENCY_SPOOFING</span></div>
-                <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">TIME_DELAY_MANIP</span></div>
-                <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">$18,000 USD</span></div>
-                <div class="hash-code">SYNC_HASH: <span class="live-hash">0x8F...</span></div>
-            </div>
+        <div class="contract-grid" id="contract-grid">
+            <!-- Contracts will be dynamically generated/updated via JS -->
         </div>
 
-        <!-- TOOLCHAIN -->
+        <!-- TOOLCHAIN (expanded) -->
         <div class="section-header">
             <span>INTEGRATED CYBER-TOOLCHAIN</span>
             <span style="font-size: 8px; color: #666;">PROPRIETARY</span>
         </div>
 
-        <div class="tool-list">
-            <div class="tool-item">
-                <div class="tool-name"><span class="tool-icon">⚡</span> QUANTUM_RNG_CRACKER v6.2</div>
-                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
-            </div>
-            <div class="tool-item">
-                <div class="tool-name"><span class="tool-icon">🛡️</span> CLOUDFLARE_ZERO_DAY_BYPASS</div>
-                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
-            </div>
-            <div class="tool-item">
-                <div class="tool-name"><span class="tool-icon">🕸️</span> DEEP_PACKET_INSPECTOR_PRO</div>
-                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
-            </div>
-            <div class="tool-item">
-                <div class="tool-name"><span class="tool-icon">👻</span> GHOST_FOOTPRINT_ERASER</div>
-                <div class="tool-status">STATUS: <span>OPERATIONAL</span></div>
-            </div>
+        <div class="tool-list" id="tool-list">
+            <!-- Tools will be dynamically updated -->
         </div>
 
     </div>
@@ -207,21 +188,163 @@
     <a href="index.html#buy" class="floating-cta">PURCHASE LICENSE KEY</a>
 
     <script>
-        // --- LIVE HASH GENERATOR ---
-        // Makes the cards look like they are constantly communicating with the casino servers
-        function generateHash() {
+        // ========== DATA ==========
+        const contracts = [
+            { name: "1XBET_MAIN_NODE", type: "RNG_SEED_DECRYPTOR", access: "ROOT_READ_ONLY", lease: 45000, status: "ACTIVE", color: "green" },
+            { name: "SPORTY_API_V4", type: "WEBSOCKET_SNIFFER", access: "PACKET_INTERCEPT", lease: 38500, status: "ACTIVE", color: "green" },
+            { name: "BETWAY_AUTH_SYS", type: "TOKEN_CLONING", access: "BYPASS_AUTH", lease: 22000, status: "ROUTING...", color: "warning" },
+            { name: "MSPORT_GATEWAY", type: "LATENCY_SPOOFING", access: "TIME_DELAY_MANIP", lease: 18000, status: "ACTIVE", color: "green" },
+            { name: "BET9JA_ODDS_INJECTOR", type: "ODDS_MANIPULATION", access: "READ_WRITE", lease: 29500, status: "ACTIVE", color: "green" },
+            { name: "MELBET_API_V2", type: "DATA_SCRAPER", access: "USER_DB", lease: 41000, status: "ACTIVE", color: "green" },
+            { name: "LINEBET_WEBSOCKET", type: "STREAM_HIJACK", access: "LIVE_DATA", lease: 27500, status: "SYNCING...", color: "warning" },
+            { name: "PREMIERBET_AUTH", type: "SESSION_CLONING", access: "ADMIN", lease: 52000, status: "ACTIVE", color: "green" },
+            { name: "BETIKA_MOBILE", type: "SSL_STRIP", access: "CREDENTIALS", lease: 19800, status: "ACTIVE", color: "green" },
+            { name: "GOOBET_RNG", type: "RNG_SEED_DECRYPTOR", access: "ROOT", lease: 33500, status: "ACTIVE", color: "green" }
+        ];
+
+        const tools = [
+            { name: "QUANTUM_RNG_CRACKER v6.2", status: "OPERATIONAL", icon: "⚡" },
+            { name: "CLOUDFLARE_ZERO_DAY_BYPASS", status: "OPERATIONAL", icon: "🛡️" },
+            { name: "DEEP_PACKET_INSPECTOR_PRO", status: "OPERATIONAL", icon: "🕸️" },
+            { name: "GHOST_FOOTPRINT_ERASER", status: "OPERATIONAL", icon: "👻" },
+            { name: "NEURAL_LINK_INJECTOR", status: "OPERATIONAL", icon: "🧠" },
+            { name: "API_RATE_LIMIT_BYPASS", status: "DEGRADED", icon: "⚙️", warn: true }
+        ];
+
+        // ========== GLOBALS ==========
+        const contractGrid = document.getElementById('contract-grid');
+        const toolList = document.getElementById('tool-list');
+        const totalValueSpan = document.getElementById('total-value');
+        const tickerDiv = document.getElementById('ticker');
+
+        // ========== RENDER CONTRACTS ==========
+        function renderContracts() {
+            let html = '';
+            contracts.forEach(c => {
+                const badgeClass = c.color === 'warning' ? 'c-badge warning' : 'c-badge';
+                const cardClass = c.color === 'warning' ? 'contract-card warning' : 'contract-card';
+                const leaseFormatted = '$' + c.lease.toLocaleString() + ' USD';
+                // Generate random hash placeholder
+                const hash = '0x' + Math.random().toString(16).substr(2, 6).toUpperCase() + '...';
+                html += `
+                    <div class="${cardClass}">
+                        <div class="c-top">
+                            <div class="c-title">${c.name}</div>
+                            <div class="${badgeClass}">${c.status}</div>
+                        </div>
+                        <div class="c-row"><span class="c-label">EXPLOIT TYPE:</span><span class="c-val blue">${c.type}</span></div>
+                        <div class="c-row"><span class="c-label">ACCESS LEVEL:</span><span class="c-val">${c.access}</span></div>
+                        <div class="c-row"><span class="c-label">MONTHLY LEASE:</span><span class="c-val red">${leaseFormatted}</span></div>
+                        <div class="hash-code">SYNC_HASH: <span class="live-hash" data-contract="${c.name}">${hash}</span></div>
+                    </div>
+                `;
+            });
+            contractGrid.innerHTML = html;
+        }
+
+        // ========== RENDER TOOLS ==========
+        function renderTools() {
+            let html = '';
+            tools.forEach(t => {
+                const statusColor = t.warn ? '#ffaa00' : 'var(--green)';
+                html += `
+                    <div class="tool-item">
+                        <div class="tool-name"><span class="tool-icon">${t.icon}</span> ${t.name}</div>
+                        <div class="tool-status">STATUS: <span style="color:${statusColor};">${t.status}</span></div>
+                    </div>
+                `;
+            });
+            toolList.innerHTML = html;
+        }
+
+        // ========== UPDATE TOTAL VALUE (random walk) ==========
+        let totalValue = 2847500;
+        function updateTotalValue() {
+            totalValue += Math.floor(Math.random() * 15000) - 5000; // -5k to +10k
+            if (totalValue < 2500000) totalValue = 2500000;
+            if (totalValue > 3200000) totalValue = 3200000;
+            totalValueSpan.innerText = '$' + totalValue.toLocaleString();
+            setTimeout(updateTotalValue, 8000);
+        }
+
+        // ========== UPDATE HASHES (live effect) ==========
+        function updateHashes() {
             const hashes = document.querySelectorAll('.live-hash');
             hashes.forEach(hash => {
-                if(hash.innerText === "RECONNECTING...") return; // Skip the warning one
-                
-                const randomStr = Math.random().toString(16).substr(2, 12).toUpperCase();
-                hash.innerText = "0x" + randomStr;
+                if (hash.innerText.includes("RECONNECTING")) {
+                    // Occasionally switch back to normal
+                    if (Math.random() > 0.7) {
+                        hash.innerText = '0x' + Math.random().toString(16).substr(2, 8).toUpperCase();
+                        hash.style.color = '';
+                    }
+                } else {
+                    // Randomly change hash
+                    if (Math.random() > 0.3) {
+                        hash.innerText = '0x' + Math.random().toString(16).substr(2, 8).toUpperCase();
+                    }
+                    // Occasionally show "RECONNECTING" on warning contracts
+                    const contractCard = hash.closest('.contract-card');
+                    if (contractCard && contractCard.classList.contains('warning')) {
+                        if (Math.random() > 0.8) {
+                            hash.innerText = 'RECONNECTING...';
+                            hash.style.color = '#ffaa00';
+                        }
+                    }
+                }
             });
+            setTimeout(updateHashes, 1800);
         }
-        
-        // Update hashes every 1.5 seconds
-        setInterval(generateHash, 1500);
-        generateHash();
+
+        // ========== UPDATE TICKER (recent renewals) ==========
+        function updateTicker() {
+            const platforms = ['1XBET', 'SPORTYBET', 'BETWAY', 'MSPORT', 'BET9JA', 'MELBET', 'LINEBET', 'PREMIERBET', 'BETIKA', 'GOOBET'];
+            const numItems = 8;
+            let items = [];
+            for (let i = 0; i < numItems; i++) {
+                const plat = platforms[Math.floor(Math.random() * platforms.length)];
+                const amount = Math.floor(Math.random() * 50000) + 15000;
+                items.push(`${plat} · $${amount.toLocaleString()}`);
+            }
+            tickerDiv.innerHTML = items.map(item => `<span>🔁 ${item}</span>`).join(' ');
+            setTimeout(updateTicker, 10000);
+        }
+
+        // ========== TOOL STATUS FLUCTUATION ==========
+        function updateToolStatus() {
+            const toolItems = document.querySelectorAll('.tool-item');
+            toolItems.forEach((item, index) => {
+                const statusSpan = item.querySelector('.tool-status span');
+                if (index === 5) { // the "DEGRADED" one
+                    if (Math.random() > 0.7) {
+                        statusSpan.innerText = 'OPERATIONAL';
+                        statusSpan.style.color = 'var(--green)';
+                    } else {
+                        statusSpan.innerText = 'DEGRADED';
+                        statusSpan.style.color = '#ffaa00';
+                    }
+                } else {
+                    // Occasionally show "RECONNECTING"
+                    if (Math.random() > 0.9) {
+                        statusSpan.innerText = 'RECONNECTING';
+                        statusSpan.style.color = '#ffaa00';
+                    } else {
+                        statusSpan.innerText = 'OPERATIONAL';
+                        statusSpan.style.color = 'var(--green)';
+                    }
+                }
+            });
+            setTimeout(updateToolStatus, 5000);
+        }
+
+        // ========== INIT ==========
+        window.onload = () => {
+            renderContracts();
+            renderTools();
+            updateTotalValue();
+            updateHashes();
+            updateTicker();
+            updateToolStatus();
+        };
     </script>
 </body>
 </html>
