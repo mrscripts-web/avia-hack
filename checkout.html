@@ -4,26 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AFRICA HACKS | Secure Checkout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Inter:wght@200;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --glow-red: #ff0033;
+            --glow-red-dim: rgba(255, 0, 51, 0.15);
             --bg-dark: #050505;
             --panel-bg: #0f0f0f;
             --text-dim: #888;
             --whatsapp: #25d366;
             --telegram: #0088cc;
             --warning: #ffaa00;
+            --green: #00ff00;
         }
 
-        body { 
-            margin: 0; padding: 0; 
-            background: var(--bg-dark); 
-            font-family: 'JetBrains Mono', monospace, sans-serif; 
-            color: white; 
-            overflow-x: hidden;
-        }
+        * { box-sizing: border-box; }
 
-        /* --- CRT EFFECT --- */
+        /* --- CRT Effect --- */
         body::after {
             content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
@@ -31,76 +29,307 @@
             z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
 
-        /* --- HEADER --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            overflow-x: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        body.loaded { opacity: 1; }
+
+        /* --- Header --- */
         .glow-header {
-            height: 60px; background: var(--panel-bg); border-bottom: 1px solid var(--glow-red);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; position: sticky; top: 0; z-index: 100;
+            height: 65px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 0, 51, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             box-shadow: 0 5px 20px rgba(255, 0, 51, 0.2);
         }
-        .header-link { color: var(--text-dim); text-decoration: none; font-size: 10px; font-weight: bold; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; transition: 0.3s;}
-        .header-link:hover { background: #222; color: #fff; border-color: var(--glow-red); }
-        .page-title { font-size: 12px; color: var(--glow-red); font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px var(--glow-red);}
 
-        /* --- MAIN CONTENT --- */
-        .container { max-width: 500px; margin: 0 auto; padding: 20px 15px; position: relative; z-index: 10; }
+        .header-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .header-link:hover {
+            background: #222;
+            color: #fff;
+            border-color: var(--glow-red);
+        }
 
-        /* SELECTION BOXES */
-        .config-box { background: #080808; border: 1px solid #1a1a1a; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-        .input-group { margin-bottom: 15px; }
+        .page-title {
+            font-size: 12px;
+            color: var(--glow-red);
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--glow-red);
+        }
+
+        /* --- Main Container --- */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px 15px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Selection Boxes --- */
+        .config-box {
+            background: #080808;
+            border: 1px solid #1a1a1a;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
         .input-group:last-child { margin-bottom: 0; }
-        label { display: block; font-size: 9px; color: var(--text-dim); margin-bottom: 5px; letter-spacing: 1px; }
-        select { 
-            width: 100%; padding: 12px; background: #000; border: 1px solid #333; 
-            color: white; font-family: monospace; font-size: 12px; font-weight: bold;
-            border-radius: 4px; outline: none; appearance: none; cursor: pointer;
+        label {
+            display: block;
+            font-size: 9px;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        select:focus { border-color: var(--glow-red); box-shadow: 0 0 10px rgba(255,0,51,0.2); }
+        select {
+            width: 100%;
+            padding: 14px;
+            background: #000;
+            border: 1px solid #333;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        select:focus {
+            border-color: var(--glow-red);
+            box-shadow: 0 0 15px rgba(255,0,51,0.3);
+        }
 
-        /* PAYMENT DETAILS BOX */
+        /* --- Payment Box --- */
         .payment-box {
-            background: #050505; border: 1px dashed var(--glow-red); padding: 25px 15px;
-            border-radius: 6px; text-align: center; margin-bottom: 20px;
-            box-shadow: inset 0 0 20px rgba(255,0,51,0.05);
+            background: #080808;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 25px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 20px rgba(255,0,51,0.1);
         }
-        .pay-amount-label { font-size: 10px; color: #aaa; letter-spacing: 1px; }
-        .pay-amount { font-size: 32px; color: white; font-weight: 900; margin: 5px 0 15px 0; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
-        
-        .qr-container { background: white; padding: 10px; display: inline-block; border-radius: 4px; margin-bottom: 15px; }
-        .qr-container img { width: 140px; height: 140px; display: block; }
-        
+        .pay-amount-label {
+            font-size: 10px;
+            color: #aaa;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .pay-amount {
+            font-size: 44px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            line-height: 1.2;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .qr-container {
+            background: white;
+            padding: 12px;
+            display: inline-block;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(255,0,51,0.2);
+        }
+        .qr-container img {
+            width: 160px;
+            height: 160px;
+            display: block;
+        }
+        .network-badge {
+            display: inline-block;
+            background: rgba(255,0,51,0.1);
+            border: 1px solid var(--glow-red);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--glow-red);
+            margin-bottom: 15px;
+        }
         .wallet-address-box {
-            background: #111; border: 1px solid #333; padding: 12px; border-radius: 4px;
-            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
         }
-        .wallet-string { font-size: 10px; color: var(--warning); word-break: break-all; text-align: left; }
+        .wallet-string {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--warning);
+            word-break: break-all;
+            text-align: left;
+        }
         .btn-copy {
-            background: var(--glow-red); color: white; border: none; padding: 8px 12px;
-            font-size: 9px; font-weight: bold; border-radius: 3px; cursor: pointer;
-            transition: 0.3s; font-family: monospace;
+            background: var(--glow-red);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 0 10px rgba(255,0,51,0.3);
         }
-        .btn-copy:hover { box-shadow: 0 0 15px var(--glow-red); }
+        .btn-copy:hover {
+            background: #ff1a4d;
+            box-shadow: 0 0 20px var(--glow-red);
+        }
 
-        /* TIMER & STATUS */
-        .timer-box { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-bottom: 20px; border-bottom: 1px solid #1a1a1a; padding-bottom: 10px; }
-        .timer-val { color: var(--glow-red); font-weight: bold; font-size: 12px; animation: pulse-text 1s infinite; }
-        
-        .status-box { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 10px; color: var(--warning); font-weight: bold; margin-bottom: 30px; }
-        .spinner { width: 14px; height: 14px; border: 2px solid transparent; border-top-color: var(--warning); border-right-color: var(--warning); border-radius: 50%; animation: spin 1s linear infinite; }
+        /* --- Status & Timer --- */
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 30px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+        }
+        .status-label {
+            font-size: 10px;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+        .timer-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--glow-red);
+            text-shadow: 0 0 10px var(--glow-red);
+        }
 
-        /* ACTION FOOTER */
-        .action-info { font-size: 9px; color: #888; text-align: center; margin-bottom: 10px; line-height: 1.5; }
-        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-contact { padding: 12px; border-radius: 4px; text-align: center; font-weight: bold; font-size: 11px; color: white; text-transform: uppercase; text-decoration: none; }
-        .btn-wa { background: var(--whatsapp); box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); }
-        .btn-tg { background: var(--telegram); box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2); }
+        .payment-progress {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 30px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,0,51,0.2);
+            border-top-color: var(--glow-red);
+            border-right-color: var(--glow-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .progress-text {
+            font-size: 11px;
+            color: #aaa;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .progress-text span {
+            color: var(--green);
+            font-weight: bold;
+        }
 
-        /* TOAST */
-        .toast { position: fixed; bottom: -50px; left: 50%; transform: translateX(-50%); background: var(--whatsapp); color: black; padding: 10px 20px; border-radius: 5px; font-family: monospace; font-weight: bold; font-size: 11px; z-index: 10000; opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); pointer-events: none; }
+        /* --- Action Footer --- */
+        .action-info {
+            font-size: 10px;
+            color: #777;
+            text-align: center;
+            margin: 25px 0 15px;
+            line-height: 1.6;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn-contact {
+            padding: 16px 10px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 11px;
+            color: white;
+            text-transform: uppercase;
+            text-decoration: none;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+        .btn-contact:hover { transform: translateY(-2px); }
+        .btn-wa {
+            background: var(--whatsapp);
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+        }
+        .btn-tg {
+            background: var(--telegram);
+            box-shadow: 0 4px 20px rgba(0, 136, 204, 0.3);
+        }
+
+        /* --- Toast --- */
+        .toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--whatsapp);
+            color: black;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            font-size: 11px;
+            z-index: 10000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
         .toast.show { bottom: 30px; opacity: 1; }
 
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulse-text { 50% { opacity: 0.5; } }
+        /* Responsive */
+        @media (max-width: 380px) {
+            .pay-amount { font-size: 36px; }
+            .qr-container img { width: 130px; height: 130px; }
+        }
     </style>
 </head>
 <body>
@@ -108,20 +337,21 @@
     <header class="glow-header">
         <a href="index.html#buy" class="header-link">◄ CANCEL</a>
         <div class="page-title">SECURE_CHECKOUT</div>
-        <div style="width: 50px;"></div> <!-- Spacer -->
+        <div style="width: 50px;"></div>
     </header>
 
     <div class="container">
         
+        <!-- Configuration Panel -->
         <div class="config-box">
             <div class="input-group">
                 <label>1. SELECT LICENSE TIER</label>
                 <select id="plan-select" onchange="updateCheckout()">
                     <option value="30">24 HOURS ACCESS ($30)</option>
                     <option value="65">72 HOURS ACCESS ($65)</option>
-                    <option value="200">1 WEEK ACCESS ($200)</option>
+                    <option value="200" selected>1 WEEK ACCESS ($200)</option>
                     <option value="600">1 MONTH ACCESS ($600)</option>
-                    <option value="2500" selected>LIFETIME LICENSE ($2,500)</option>
+                    <option value="2500">LIFETIME LICENSE ($2,500)</option>
                     <option value="6000">RESELLER LICENSE ($6,000)</option>
                 </select>
             </div>
@@ -131,52 +361,58 @@
                     <option value="USDT_TRC20">USDT (TRC20 Network)</option>
                     <option value="BTC">Bitcoin (BTC)</option>
                     <option value="TRX">Tron (TRX)</option>
-                    <option value="BNB">Binance Coin (BNB Smart Chain)</option>
+                    <option value="BNB">Binance Coin (BSC)</option>
                 </select>
             </div>
         </div>
 
+        <!-- Payment Details -->
         <div class="payment-box">
-            <div class="pay-amount-label">AMOUNT TO SEND:</div>
-            <div class="pay-amount" id="display-amount">$2,500.00</div>
+            <div class="network-badge" id="network-badge">USDT TRC20</div>
+            <div class="pay-amount-label">AMOUNT TO SEND</div>
+            <div class="pay-amount" id="display-amount">$200.00</div>
             
             <div class="qr-container">
-                <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WAITING" alt="QR Code">
+                <img id="qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=WAITING" alt="QR Code">
             </div>
 
-            <label style="text-align: left; color: #fff;">SEND EXACTLY TO THIS <span id="display-network">USDT_TRC20</span> ADDRESS:</label>
+            <div style="text-align: left; margin-bottom: 5px; font-size: 9px; color: #aaa;">WALLET ADDRESS:</div>
             <div class="wallet-address-box">
-                <div class="wallet-string" id="display-address">LOADING...</div>
+                <div class="wallet-string" id="display-address">TPxqFV78sdsP72eCYXcuYjzswrAVA6ShHB</div>
                 <button class="btn-copy" onclick="copyAddress()">COPY</button>
             </div>
         </div>
 
-        <div class="timer-box">
-            <span>SESSION EXPIRES IN:</span>
+        <!-- Timer & Status -->
+        <div class="status-row">
+            <span class="status-label">⏳ SESSION EXPIRES IN</span>
             <span class="timer-val" id="countdown">14:59</span>
         </div>
 
-        <div class="status-box">
+        <div class="payment-progress" id="payment-progress">
             <div class="spinner"></div>
-            AWAITING BLOCKCHAIN CONFIRMATION...
+            <div class="progress-text">AWAITING PAYMENT <span>(0/3 confirmations)</span></div>
         </div>
 
+        <!-- Instructions -->
         <div class="action-info">
-            <strong>IMPORTANT:</strong> Once you have sent the payment, take a screenshot of the successful transaction. Click one of the buttons below to send the screenshot to our automated system to receive your License Key instantly.
+            <strong>⚠️ AFTER SENDING:</strong> Take a screenshot of the successful transaction and send it via WhatsApp or Telegram. Your license key will be delivered instantly by our bot.
         </div>
 
+        <!-- Contact Buttons -->
         <div class="contact-grid">
-            <a href="https://wa.me/212772865239" class="btn-contact btn-wa" target="_blank">SEND VIA WHATSAPP</a>
-            <a href="https://t.me/enh_os" class="btn-contact btn-tg" target="_blank">SEND VIA TELEGRAM</a>
+            <a href="https://wa.me/212772865239" class="btn-contact btn-wa" target="_blank">WHATSAPP</a>
+            <a href="https://t.me/enh_os" class="btn-contact btn-tg" target="_blank">TELEGRAM</a>
         </div>
 
+        <!-- Note: No fake confirmations – just waiting. -->
     </div>
 
-    <!-- TOAST NOTIFICATION -->
+    <!-- Toast for copy -->
     <div id="toast-notification" class="toast">ADDRESS COPIED TO CLIPBOARD!</div>
 
     <script>
-        // --- 1. CONFIGURE YOUR WALLET ADDRESSES HERE ---
+        // Wallet addresses
         const wallets = {
             "USDT_TRC20": "TPxqFV78sdsP72eCYXcuYjzswrAVA6ShHB",
             "BTC": "33c3eLYc6Vy7d9dnbAi9n2yVKb7ed5KJMF",
@@ -184,54 +420,64 @@
             "BNB": "0xDb3107e0429cd4B6cee446b4418d852CeC5aac75"
         };
 
-        // --- 2. UPDATE CHECKOUT LOGIC ---
+        // Update checkout info
         function updateCheckout() {
-            const planPrice = document.getElementById('plan-select').value;
-            const cryptoType = document.getElementById('crypto-select').value;
+            const planSelect = document.getElementById('plan-select');
+            const cryptoSelect = document.getElementById('crypto-select');
+            const planPrice = planSelect.value;
+            const cryptoType = cryptoSelect.value;
             
-            // Format Price
+            // Format price
             document.getElementById('display-amount').innerText = "$" + Number(planPrice).toLocaleString() + ".00";
             
-            // Update Network Label
-            document.getElementById('display-network').innerText = cryptoType.replace('_', ' ');
+            // Update network badge
+            const networkMap = {
+                "USDT_TRC20": "USDT TRC20",
+                "BTC": "BITCOIN",
+                "TRX": "TRON",
+                "BNB": "BSC"
+            };
+            document.getElementById('network-badge').innerText = networkMap[cryptoType] || cryptoType;
 
-            // Update Wallet Address
+            // Update wallet address
             const address = wallets[cryptoType];
             document.getElementById('display-address').innerText = address;
 
-            // Generate QR Code dynamically using a public API
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${address}&bgcolor=ffffff`;
+            // Update QR code
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${address}&bgcolor=ffffff`;
             document.getElementById('qr-image').src = qrUrl;
         }
 
-        // --- 3. COPY TO CLIPBOARD ---
+        // Copy address to clipboard
         function copyAddress() {
             const address = document.getElementById('display-address').innerText;
             navigator.clipboard.writeText(address).then(() => {
                 const toast = document.getElementById('toast-notification');
                 toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
+                setTimeout(() => toast.classList.remove('show'), 2000);
             });
         }
 
-        // --- 4. COUNTDOWN TIMER (15 Minutes) ---
-        let timeRemaining = 15 * 60; // 15 mins in seconds
+        // Countdown timer (15 minutes)
+        let timeLeft = 15 * 60; // seconds
         const timerDisplay = document.getElementById('countdown');
-
         setInterval(() => {
-            if(timeRemaining <= 0) {
+            if (timeLeft <= 0) {
                 timerDisplay.innerText = "EXPIRED";
-                timerDisplay.style.color = "red";
+                timerDisplay.style.color = "#ff4444";
                 return;
             }
-            timeRemaining--;
-            let m = Math.floor(timeRemaining / 60);
-            let s = timeRemaining % 60;
+            timeLeft--;
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
             timerDisplay.innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }, 1000);
 
-        // Run once on load to populate fields
-        updateCheckout();
+        // Run on load
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            updateCheckout();
+        });
     </script>
 </body>
 </html>
