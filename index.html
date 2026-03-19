@@ -35,7 +35,86 @@
         }
 
         * { box-sizing: border-box; }
-
+/* FAQ SECTION */
+.faq-section {
+    margin: 40px 0 20px;
+    padding: 0 12px;
+}
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0 15px;
+}
+.faq-item {
+    background: #080808;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    transition: 0.2s;
+    overflow: hidden;
+}
+.faq-item:hover {
+    border-color: var(--glow-red);
+    box-shadow: 0 0 15px rgba(255,0,51,0.1);
+}
+.faq-question {
+    padding: 15px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ddd;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0a0a0a;
+    border-bottom: 1px solid transparent;
+}
+.faq-question::-webkit-details-marker {
+    display: none; /* Remove default marker */
+}
+.faq-question::before {
+    content: '▶';
+    color: var(--glow-red);
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+details[open] .faq-question::before {
+    transform: rotate(90deg);
+}
+.faq-answer {
+    padding: 0 15px 15px 35px;
+    font-size: 9px;
+    color: #aaa;
+    line-height: 1.6;
+    border-top: 1px dashed #222;
+}
+.faq-answer .highlight {
+    color: var(--glow-red);
+    font-weight: bold;
+}
+.faq-answer .highlight-green {
+    color: var(--green);
+    font-weight: bold;
+}
+.faq-footer {
+    text-align: center;
+    font-size: 10px;
+    color: #666;
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 1px solid #1a1a1a;
+}
+.faq-contact {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 1px dotted var(--green);
+}
+.faq-contact:hover {
+    color: #fff;
+    border-bottom-color: #fff;
+}
         /* --- CRT Scanline Overlay --- */
         body::before {
             content: '';
@@ -1207,7 +1286,45 @@
         </a>
         <a href="checkout.html" class="price-row"><span class="duration">RESELLER LICENSE</span><span class="amount">$6,000</span></a>
     </div>
+<!-- FAQ SECTION -->
+<div class="faq-section reveal">
+    <div class="section-header">
+        <span>FREQUENTLY ASKED QUESTIONS</span>
+        <span style="font-size: 8px; color: #666;">TRUSTED BY 12,000+ USERS</span>
+    </div>
 
+    <div class="faq-container">
+        <details class="faq-item">
+            <summary class="faq-question">🔒 Is my betting account safe?</summary>
+            <div class="faq-answer">Absolutely. Our Neural Link technology routes your connection through encrypted African proxy nodes, masking your IP and device fingerprint. We have a <span class="highlight-green">0% ban rate</span> since 2022.</div>
+        </details>
+
+        <details class="faq-item">
+            <summary class="faq-question">⚡ How fast do I get my license after payment?</summary>
+            <div class="faq-answer">Delivery is <span class="highlight-green">instant</span>! Our automated system detects the transaction and sends your unique license key via WhatsApp or Telegram immediately. No delays.</div>
+        </details>
+
+        <details class="faq-item">
+            <summary class="faq-question">💳 What payment methods do you accept?</summary>
+            <div class="faq-answer">We accept major cryptocurrencies: <span class="highlight">Bitcoin (BTC), USDT (TRC20), Tron (TRX), and Binance Coin (BNB)</span>. This ensures your privacy and our operational security.</div>
+        </details>
+
+        <details class="faq-item">
+            <summary class="faq-question">🔄 Can I get a refund if the tool doesn't work?</summary>
+            <div class="faq-answer">We offer a <span class="highlight-green">7-day money-back guarantee</span>. If you follow the extraction guide and the predictor fails to deliver accurate results, contact us for a full refund – no questions asked.</div>
+        </details>
+
+        <details class="faq-item">
+            <summary class="faq-question">📱 Does it work on mobile?</summary>
+            <div class="faq-answer">Yes, the predictor tool is fully responsive and works on all mobile browsers (Android/iOS). The interface adapts perfectly to your screen.</div>
+        </details>
+    </div>
+
+    <div class="faq-footer">
+        <span>Still have questions? </span>
+        <a href="https://wa.me/212772865239" class="faq-contact" target="_blank">💬 Chat on WhatsApp</a>
+    </div>
+</div>
     <div class="payment-methods reveal">
         CLICK ICON TO COPY PAYMENT ADDRESS
         <div class="pay-icons">
