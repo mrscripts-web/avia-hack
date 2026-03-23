@@ -1,1805 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA_HACKS | Institutional Flight Predictor</title>
-    <meta name="title" content="AFRICA_HACKS | Institutional Flight Predictor">
-    <meta name="description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
-    <meta property="og:title" content="AFRICA_HACKS | Institutional Flight Predictor">
-    <meta property="og:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
-    <meta property="og:image" content="logos/link.png">
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://africa-hack.ossmtik83-367.workers.dev/">
-    <meta property="twitter:title" content="AFRICA_HACKS | Institutional Flight Predictor">
-    <meta property="twitter:description" content="Access the most advanced institutional flight predictor. Real-time sync and neural bypass active.">
-    <meta property="twitter:image" content="logos/link.png">
-    <link rel="icon" type="image/png" href="logos/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Inter:wght@200;400;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFRICA_HACKS | Neural Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700;800&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --glow-red: #ff0033;
-            --glow-red-dim: rgba(255, 0, 51, 0.15);
-            --bg-dark: #050505;
-            --panel-bg: #0a0a0a;
+            --bg-dark: #030303;
+            --card-bg: rgba(15, 15, 15, 0.7);
+            --crash-red: #ff0033;
+            --apple-gold: #ffcc00;
             --text-dim: #888;
-            --whatsapp: #25d366;
-            --telegram: #0088cc;
-            --green: #00ff00;
-            --gold: #ffaa00;
-            --cyan: #00ddff;
         }
 
         * { box-sizing: border-box; }
-/* FAQ SECTION */
-.faq-section {
-    margin: 40px 0 20px;
-    padding: 0 12px;
-}
-.faq-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 20px 0 15px;
-}
-.faq-item {
-    background: #080808;
-    border: 1px solid #1a1a1a;
-    border-radius: 8px;
-    transition: 0.2s;
-    overflow: hidden;
-}
-.faq-item:hover {
-    border-color: var(--glow-red);
-    box-shadow: 0 0 15px rgba(255,0,51,0.1);
-}
-.faq-question {
-    padding: 15px;
-    font-size: 11px;
-    font-weight: bold;
-    color: #ddd;
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #0a0a0a;
-    border-bottom: 1px solid transparent;
-}
-.faq-question::-webkit-details-marker {
-    display: none; /* Remove default marker */
-}
-.faq-question::before {
-    content: '▶';
-    color: var(--glow-red);
-    font-size: 10px;
-    transition: transform 0.2s;
-}
-details[open] .faq-question::before {
-    transform: rotate(90deg);
-}
-.faq-answer {
-    padding: 0 15px 15px 35px;
-    font-size: 9px;
-    color: #aaa;
-    line-height: 1.6;
-    border-top: 1px dashed #222;
-}
-.faq-answer .highlight {
-    color: var(--glow-red);
-    font-weight: bold;
-}
-.faq-answer .highlight-green {
-    color: var(--green);
-    font-weight: bold;
-}
-.faq-footer {
-    text-align: center;
-    font-size: 10px;
-    color: #666;
-    margin-top: 20px;
-    padding: 10px;
-    border-top: 1px solid #1a1a1a;
-}
-.faq-contact {
-    color: var(--green);
-    text-decoration: none;
-    font-weight: bold;
-    border-bottom: 1px dotted var(--green);
-}
-.faq-contact:hover {
-    color: #fff;
-    border-bottom-color: #fff;
-}
-        /* --- CRT Scanline Overlay --- */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.03) 0px,
-                rgba(0, 0, 0, 0.03) 1px,
-                transparent 1px,
-                transparent 3px
-            );
-            pointer-events: none;
-            z-index: 9998;
-        }
-
-        /* --- Global Reset & Entrance Fade --- */
-        body {
-            margin: 0;
-            padding: 0;
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
             background: var(--bg-dark);
-            font-family: 'Inter', -apple-system, sans-serif;
-            color: white;
-            overflow-x: hidden;
-            opacity: 0;
-            transition: opacity 0.6s ease-in;
-        }
-
-        body.loaded { opacity: 1; }
-
-        a {
-            text-decoration: none;
-            transition: 0.3s ease;
-        }
-
-        /* --- Particle Canvas Background --- */
-        #particle-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* Ensure all content is above particles */
-        header, .viewport, .platform-section, .action-grid,
-        .pricing-section, .payment-methods, .terminal, footer,
-        .stats-strip, .anti-ban-badge, .guide-link, .testimonial-ticker,
-        .social-proof-toast, #toast-notification {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* --- Clean Transition Overlay --- */
-        #transition-layer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease-in-out;
-        }
-
-        #transition-layer.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .glitch-text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: -2px;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .glitch-text span {
-            color: var(--glow-red);
-            text-shadow: 0 0 10px var(--glow-red);
-        }
-
-        .loading-text {
-            margin-top: 15px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--glow-red);
-            letter-spacing: 4px;
-            font-size: 10px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        .loading-bar-container {
-            width: 200px;
-            height: 3px;
-            background: #222;
-            border-radius: 2px;
-            margin-top: 15px;
-            overflow: hidden;
-        }
-
-        .loading-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--glow-red);
-            box-shadow: 0 0 10px var(--glow-red);
-            border-radius: 2px;
-            animation: load-fill 1.2s ease-in-out forwards;
-        }
-
-        @keyframes load-fill {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        /* --- Header Styles --- */
-        .glow-header {
-            height: 65px;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 0, 51, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 5px 30px rgba(255, 0, 51, 0.15), 0 1px 0 rgba(255,0,51,0.3);
-        }
-
-        .logo {
-            font-weight: 900;
-            letter-spacing: 1px;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .logo-text {
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .logo-text span {
-            color: var(--glow-red);
-            text-shadow: 0 0 10px var(--glow-red);
-        }
-
-        .header-logo {
-            height: 32px;
-            width: auto;
-            filter: drop-shadow(0 0 8px var(--glow-red));
-            animation: logo-pulse 3s infinite ease-in-out;
-        }
-
-        @keyframes logo-pulse {
-            0%, 100% { filter: drop-shadow(0 0 5px var(--glow-red)); }
-            50% { filter: drop-shadow(0 0 15px var(--glow-red)) drop-shadow(0 0 30px rgba(255,0,51,0.3)); }
-        }
-
-        .live-users-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 0, 51, 0.08);
-            padding: 5px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 0, 51, 0.2);
-        }
-
-        .live-users-text {
-            font-size: 9px;
-            color: #ccc;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: bold;
-        }
-
-        .status-dot {
-            height: 7px;
-            width: 7px;
-            background: var(--glow-red);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--glow-red);
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        /* --- Predictor Viewport with Canvas Graph --- */
-        .viewport {
-            background-color: #080808;
-            background-image:
-                linear-gradient(rgba(255, 0, 51, 0.07) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 51, 0.07) 1px, transparent 1px);
-            background-size: 25px 25px;
-            border: 1px solid rgba(255, 0, 51, 0.25);
-            border-radius: 16px;
-            height: 340px;
-            margin: 15px 12px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow:
-                inset 0 0 60px rgba(0, 0, 0, 0.9),
-                0 0 40px rgba(255, 0, 51, 0.08);
-        }
-
-        /* Radar sweep inside viewport */
-        .viewport::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 300%; height: 300%;
-            transform: translate(-50%, -50%);
-            background: conic-gradient(
-                from 0deg,
-                transparent 0deg,
-                rgba(255, 0, 51, 0.06) 30deg,
-                transparent 60deg
-            );
-            animation: radar-sweep 4s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes radar-sweep {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        #graph-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-        }
-
-        .plane-box {
-            position: absolute;
-            width: 55px;
-            z-index: 5;
-            transform: rotate(65deg); /* This fixes the direction */
-            transition: opacity 0.3s, transform 0.3s;
-            filter: drop-shadow(0 0 10px var(--glow-red));
-        }
-
-        .explosion {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, #fff 0%, #ff0 30%, #f00 60%, transparent 80%);
-            border-radius: 50%;
-            z-index: 6;
-            opacity: 0;
-            transform: scale(0);
-            pointer-events: none;
-        }
-
-        .explosion.active {
-            animation: explode 0.6s ease-out forwards;
-        }
-
-        @keyframes explode {
-            0% { transform: scale(0); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.8; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-
-        .disclaimer-text {
-            position: absolute;
-            bottom: 10px;
-            width: 90%;
-            text-align: center;
-            font-size: 8px;
-            color: rgba(255,255,255,0.5);
-            font-weight: bold;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .multiplier-text {
-            z-index: 10;
-            text-align: center;
-            position: relative;
-        }
-
-        .multiplier-text h1 {
-            font-size: 72px;
-            margin: 0;
-            font-weight: 200;
-            font-family: 'JetBrains Mono', monospace;
-            text-shadow: 0 0 40px var(--glow-red), 0 0 80px rgba(255,0,51,0.3);
-            line-height: 1;
-        }
-
-        .target-label {
-            color: var(--glow-red);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 3px;
-            margin-bottom: 8px;
-            opacity: 0.8;
-        }
-
-        #status-msg {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Crash Text Glitch Animation */
-        @keyframes text-glitch {
-            0% { text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff; transform: translate(1px, 1px); }
-            20% { text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff; transform: translate(-1px, -1px); }
-            40% { text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff; transform: translate(1px, -1px); }
-            60% { text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff; transform: translate(-1px, 1px); }
-            80% { text-shadow: 2px 0 var(--glow-red), -2px 0 #0ff; transform: translate(2px, 0); }
-            100% { text-shadow: -2px 0 var(--glow-red), 2px 0 #0ff; transform: translate(0, 0); }
-        }
-
-        .is-crashed {
-            animation: text-glitch 0.3s infinite;
-            color: #fff !important;
-        }
-
-        /* Screen shake on crash */
-        @keyframes screen-shake {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-3px, 2px); }
-            20% { transform: translate(3px, -2px); }
-            30% { transform: translate(-2px, 3px); }
-            40% { transform: translate(2px, -1px); }
-            50% { transform: translate(-1px, 2px); }
-        }
-
-        .viewport.shake {
-            animation: screen-shake 0.4s ease-out;
-        }
-
-        /* --- Stats Strip --- */
-        .stats-strip {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            margin: 0 12px 15px 12px;
-            background: #111;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #1a1a1a;
-        }
-
-        .stat-item {
-            background: var(--panel-bg);
-            padding: 14px 8px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--glow-red);
-            text-shadow: 0 0 10px rgba(255,0,51,0.4);
-        }
-
-        .stat-label {
-            font-size: 7px;
-            color: #555;
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 1px;
-            margin-top: 4px;
-            text-transform: uppercase;
-        }
-
-        /* --- Platform Section --- */
-        .platform-section {
-            padding: 30px 15px;
-            background: #000;
-            border-top: 1px solid #111;
-            border-bottom: 1px solid #111;
-        }
-
-        .section-tag {
-            font-size: 8px;
-            color: var(--glow-red);
-            letter-spacing: 4px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 900;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .logo-wall {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            align-items: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .logo-wall img {
-            width: 100%;
-            max-width: 80px;
-            height: auto;
-            margin: 0 auto;
-            display: block;
-            filter: grayscale(1) brightness(2);
-            opacity: 0.4;
-            transition: 0.4s;
-        }
-
-        .logo-wall img:hover {
-            filter: none;
-            opacity: 1;
-            transform: scale(1.15);
-        }
-
-        .more-platforms-text {
-            text-align: center;
-            font-size: 9px;
-            color: var(--text-dim);
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 2px;
-            margin-top: 20px;
-            text-transform: uppercase;
-        }
-
-        /* --- Testimonial Ticker --- */
-        .testimonial-ticker {
-            overflow: hidden;
-            background: rgba(255, 0, 51, 0.05);
-            border-top: 1px solid rgba(255, 0, 51, 0.15);
-            border-bottom: 1px solid rgba(255, 0, 51, 0.15);
-            padding: 10px 0;
-            white-space: nowrap;
-        }
-
-        .ticker-track {
-            display: inline-flex;
-            animation: ticker-scroll 65s linear infinite;
-            gap: 50px;
-        }
-
-        .ticker-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            color: #666;
-            white-space: nowrap;
-        }
-
-        .ticker-item .flag { font-size: 14px; }
-        .ticker-item .amount-won { color: var(--whatsapp); font-weight: bold; }
-        .ticker-item .plat { color: var(--glow-red); }
-
-        @keyframes ticker-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* --- Buttons & Action Grid --- */
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            padding: 0 12px;
-            margin-top: 15px;
-        }
-
-        .btn {
-            padding: 14px 2px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 10px;
-            color: white;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover { transform: translateY(-2px); }
-
-        .btn-preview {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid #333;
-            grid-column: span 3;
-            color: #888;
-            font-size: 11px;
-            gap: 6px;
-        }
-
-        .btn-preview:hover {
-            border-color: var(--glow-red);
-            color: #fff;
-            background: rgba(255,0,51,0.05);
-        }
-
-        .btn-whatsapp {
-            background: var(--whatsapp);
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.25);
-        }
-        .btn-whatsapp:hover { box-shadow: 0 6px 30px rgba(37, 211, 102, 0.4); }
-
-        .btn-checkout {
-            background: linear-gradient(135deg, #ffaa00, #ff7700);
-            color: #000;
-            box-shadow: 0 4px 20px rgba(255, 170, 0, 0.25);
-        }
-        .btn-checkout:hover { box-shadow: 0 6px 30px rgba(255, 170, 0, 0.4); }
-
-        .btn-telegram {
-            background: var(--telegram);
-            box-shadow: 0 4px 20px rgba(0, 136, 204, 0.25);
-        }
-        .btn-telegram:hover { box-shadow: 0 6px 30px rgba(0, 136, 204, 0.4); }
-
-        .btn-play {
-            grid-column: span 3;
-            background: linear-gradient(135deg, #ff0033, #cc0028);
-            margin-top: 5px;
-            font-size: 16px;
-            letter-spacing: 5px;
-            box-shadow: 0 0 30px rgba(255, 0, 51, 0.4);
-            animation: pulse-red 2s infinite;
-            border: none;
-            padding: 18px 2px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-play::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255,255,255,0.1) 50%,
-                transparent 70%
-            );
-            animation: btn-shine 3s infinite;
-        }
-
-        @keyframes btn-shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        @keyframes pulse-red {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 51, 0.4); }
-            50% { box-shadow: 0 0 40px rgba(255, 0, 51, 0.7), 0 0 60px rgba(255,0,51,0.2); }
-        }
-
-        /* --- Guide Link --- */
-        .guide-link {
-            text-align: center;
-            margin-top: 15px;
-            padding: 0 12px;
-        }
-
-        .guide-link a {
-            color: var(--text-dim);
-            font-size: 9px;
-            font-family: 'JetBrains Mono', monospace;
-            text-decoration: underline;
-            letter-spacing: 1px;
-            transition: color 0.3s;
-        }
-
-        .guide-link a:hover { color: var(--glow-red); }
-
-        /* --- Anti-Ban Badge --- */
-        .anti-ban-badge {
-            background: rgba(37, 211, 102, 0.06);
-            border: 1px solid rgba(37, 211, 102, 0.3);
-            margin: 20px 12px 15px 12px;
-            padding: 16px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s;
-        }
-
-        .anti-ban-badge:hover {
-            background: rgba(37, 211, 102, 0.1);
-            border-color: var(--whatsapp);
-            transform: translateY(-1px);
-        }
-
-        .anti-ban-icon { font-size: 28px; }
-
-        .anti-ban-title {
-            color: var(--whatsapp);
-            font-size: 11px;
-            font-weight: bold;
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 1px;
-        }
-
-        .anti-ban-desc {
-            color: #777;
-            font-size: 9px;
-            margin-top: 4px;
-            line-height: 1.5;
-        }
-
-        /* --- Pricing Section --- */
-        .pricing-section {
-            padding: 10px 12px 30px 12px;
-        }
-
-        .pricing-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .pricing-header h2 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: #fff;
-            letter-spacing: 4px;
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
-        }
-
-        .pricing-header p {
-            font-size: 9px;
-            color: #555;
-            margin: 0;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        @keyframes border-pulse {
-            0% { border-color: #1a1a1a; }
-            50% { border-color: rgba(255, 0, 51, 0.3); }
-            100% { border-color: #1a1a1a; }
-        }
-
-        .price-row {
-            background: var(--panel-bg);
-            border: 1px solid #1a1a1a;
-            margin-bottom: 8px;
-            padding: 16px 18px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            animation: border-pulse 3s infinite;
-            color: white;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .price-row::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, transparent 0%, rgba(255,0,51,0.03) 100%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .price-row:hover::before { opacity: 1; }
-
-        .price-row:hover {
-            border-color: var(--glow-red);
-            box-shadow: 0 0 25px rgba(255, 0, 51, 0.3);
-            transform: translateY(-2px);
-            animation: none;
-        }
-
-        .price-row.popular {
-            border-color: var(--glow-red);
-            background: rgba(255, 0, 51, 0.05);
-            animation: none;
-        }
-
-        .popular-badge {
-            position: absolute;
-            top: 0; right: 0;
-            background: var(--glow-red);
-            color: white;
-            font-size: 7px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 0 12px 0 8px;
-            letter-spacing: 1px;
-        }
-
-        .duration {
-            font-weight: 700;
-            font-size: 13px;
             font-family: 'Inter', sans-serif;
-        }
-
-        .amount {
-            color: var(--glow-red);
-            font-weight: 900;
-            font-size: 20px;
-            font-family: 'JetBrains Mono', monospace;
-            text-shadow: 0 0 10px rgba(255,0,51,0.3);
-        }
-
-        /* --- Scarcity --- */
-        .scarcity-container {
-            margin-bottom: 20px;
-            background: var(--panel-bg);
-            border: 1px solid #1a1a1a;
-            border-radius: 12px;
-            padding: 16px;
-        }
-
-        .scarcity-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 9px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--glow-red);
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .scarcity-bar-bg {
-            width: 100%;
-            background: #1a1a1a;
-            height: 6px;
-            border-radius: 3px;
+            color: white;
             overflow: hidden;
         }
 
-        .scarcity-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--glow-red), #ff6644);
-            box-shadow: 0 0 10px var(--glow-red);
-            border-radius: 3px;
-            transition: width 1s ease;
+        /* Animated Background Particles */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
         }
 
-        .scarcity-footer {
-            font-size: 8px;
-            color: #444;
-            text-align: right;
-            margin-top: 6px;
-            font-family: 'JetBrains Mono', monospace;
+        /* CRT Scanline Overlay */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+            pointer-events: none; z-index: 100;
         }
 
-        /* --- Payment & Footer --- */
-        .payment-methods {
+        .main-wrapper {
+            position: relative; z-index: 10;
+            height: 100vh; width: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             padding: 20px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.02);
-            margin: 0 12px;
-            border-radius: 12px;
-            font-size: 10px;
-            color: #555;
-            font-weight: bold;
+        }
+
+        /* Header Logo Section */
+        header {
+            text-align: center; margin-bottom: 50px;
+        }
+        .main-logo {
+            height: 80px; margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+            animation: float 4s infinite ease-in-out;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .brand-name {
             font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 1px;
-            border: 1px solid #1a1a1a;
+            font-weight: 900; font-size: 1.8rem; letter-spacing: 5px;
+        }
+        .brand-name span { color: var(--crash-red); text-shadow: 0 0 15px var(--crash-red); }
+
+        /* Portal Grid */
+        .portal-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 30px; width: 100%; max-width: 900px;
         }
 
-        .pay-icons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .pay-icons img {
-            height: 24px !important;
-            width: auto !important;
-            filter: grayscale(1) brightness(1.5);
-            opacity: 0.5;
-            transition: 0.4s;
-            cursor: pointer;
-        }
-
-        .pay-icons img:hover {
-            filter: none;
-            opacity: 1;
-            transform: scale(1.3);
-        }
-
-        /* --- Terminal --- */
-        .terminal {
-            background: #000;
-            height: 110px;
-            border: 1px solid #1a1a1a;
-            margin: 20px 12px;
-            padding: 14px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            color: #444;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .terminal::before {
-            content: 'TERMINAL — LIVE FEED';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%;
-            background: #0a0a0a;
-            padding: 4px 14px;
-            font-size: 7px;
-            color: #333;
-            letter-spacing: 2px;
-            border-bottom: 1px solid #1a1a1a;
-        }
-
-        .terminal-content {
-            margin-top: 16px;
-        }
-
-        .terminal .cursor-blink {
-            display: inline-block;
-            width: 6px;
-            height: 12px;
-            background: var(--glow-red);
-            animation: cursor-blink-anim 0.8s step-end infinite;
-            vertical-align: middle;
-            margin-left: 2px;
-        }
-
-        @keyframes cursor-blink-anim {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Footer & Status Button */
-        footer {
-            padding: 30px 15px 40px;
-            text-align: center;
-            font-size: 9px;
-            line-height: 2;
-        }
-
-        .btn-status {
-            background: rgba(10, 10, 10, 0.8);
-            color: var(--green);
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            padding: 10px 18px;
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: bold;
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: inline-block;
-            transition: 0.3s;
-            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.05);
+        .engine-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
             text-decoration: none;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; align-items: center;
+            position: relative; overflow: hidden;
         }
 
-        .btn-status:hover {
-            background: var(--green);
-            color: #000;
-            box-shadow: 0 0 20px var(--green);
+        .engine-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: rgba(25, 25, 25, 0.8);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
-        .node-status-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        .engine-icon {
+            font-size: 50px; margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
         }
 
-        .node {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .engine-name {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
-            color: #555;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #111;
+            font-size: 11px; font-weight: 800; letter-spacing: 4px;
+            margin-bottom: 10px; color: var(--text-dim);
         }
 
-        .node-dot { width: 6px; height: 6px; border-radius: 50%; }
-        .node-dot.online { background: var(--whatsapp); box-shadow: 0 0 8px var(--whatsapp); }
-        .node-dot.syncing { background: var(--gold); box-shadow: 0 0 8px var(--gold); animation: blink 1s infinite; }
-
-        .footer-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+        .engine-title {
+            font-size: 24px; font-weight: 900; margin-bottom: 25px;
+            text-transform: uppercase; letter-spacing: 1px;
         }
 
-        .footer-copy {
-            color: #333;
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 2px;
+        .btn-enter {
+            padding: 14px 35px; border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 12px;
+            transition: 0.3s; width: 100%; text-align: center;
         }
 
-        /* --- Toasts --- */
-        .toast {
-            position: fixed;
-            bottom: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--whatsapp);
-            color: black;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: bold;
-            font-size: 11px;
-            z-index: 10000;
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            pointer-events: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .toast.show { bottom: 30px; opacity: 1; }
+        /* Crash Card Styles */
+        .card-crash:hover { box-shadow: 0 20px 50px rgba(255, 0, 51, 0.15); border-color: var(--crash-red); }
+        .card-crash .btn-enter { background: var(--crash-red); color: white; box-shadow: 0 5px 15px rgba(255, 0, 51, 0.3); }
+        .card-crash:hover .engine-title { color: var(--crash-red); }
 
-        /* --- Social Proof Purchase Notification --- */
-        .social-proof-toast {
-            position: fixed;
-            bottom: 20px;
-            left: 15px;
-            right: 15px;
-            max-width: 340px;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 0, 51, 0.3);
-            border-radius: 12px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 9990;
-            transform: translateY(120px);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        /* Apple Card Styles */
+        .card-apple:hover { box-shadow: 0 20px 50px rgba(255, 204, 0, 0.15); border-color: var(--apple-gold); }
+        .card-apple .btn-enter { background: var(--apple-gold); color: black; box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3); }
+        .card-apple:hover .engine-title { color: var(--apple-gold); }
+
+        /* Footer Status */
+        footer {
+            position: absolute; bottom: 30px; width: 100%;
+            text-align: center; font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; color: #333; letter-spacing: 3px;
         }
 
-        .social-proof-toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .sp-avatar {
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 0, 51, 0.15);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .sp-text {
-            font-size: 10px;
-            color: #aaa;
-            font-family: 'JetBrains Mono', monospace;
-            line-height: 1.6;
-        }
-
-        .sp-text strong {
-            color: #fff;
-            font-weight: 700;
-        }
-
-        .sp-text .sp-plan {
-            color: var(--glow-red);
-            font-weight: bold;
-        }
-
-        .sp-time {
-            font-size: 8px;
-            color: #444;
-        }
-
-        /* --- Scroll Reveal --- */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* --- Responsive --- */
-        @media (max-width: 360px) {
-            .multiplier-text h1 { font-size: 56px; }
-            .stats-strip { grid-template-columns: repeat(2, 1fr); }
-            .logo-wall { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 768px) {
+            .portal-grid { grid-template-columns: 1fr; gap: 15px; }
+            .engine-card { padding: 30px; }
+            .main-logo { height: 60px; }
         }
     </style>
 </head>
-
 <body>
 
-    <canvas id="particle-canvas"></canvas>
+<canvas id="bg-canvas"></canvas>
 
-    <div id="transition-layer">
-        <div class="glitch-text">AFRICA<span>_HACKS</span></div>
-        <div class="loading-bar-container">
-            <div class="loading-bar-fill"></div>
-        </div>
-        <div class="loading-text">BYPASSING_SECURE_NODES...</div>
-    </div>
-
-    <header class="glow-header">
-        <div class="logo">
-            <img src="logos/Africa.png" alt="Logo" class="header-logo">
-            <span class="logo-text">AFRICA<span>_HACKS</span></span>
-        </div>
-        <div class="live-users-container">
-            <div class="live-users-text"><span id="live-users">12,500</span> ONLINE</div>
-            <div class="status-dot"></div>
-        </div>
+<div class="main-wrapper">
+    <header>
+        <img src="logos/Africa.png" alt="AFRICA_HACKS" class="main-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2111/2111646.png'">
+        <div class="brand-name">AFRICA<span>_HACKS</span></div>
+        <div style="font-size: 10px; color: #555; font-family: 'JetBrains Mono'; margin-top: 10px;">NEURAL_GATEWAY_V4.01</div>
     </header>
 
-    <div class="viewport" id="viewport">
-        <canvas id="graph-canvas"></canvas>
-        <div class="plane-box" id="plane-vis">
-            <svg viewBox="0 0 24 24" fill="var(--glow-red)" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 16V14L13 9V3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5V9L2 14V16L10 13.5V19L8 20.5V22L11.5 21L15 22V20.5L13 19V13.5L21 16Z" />
-            </svg>
-        </div>
-        <div class="explosion" id="explosion-vis"></div>
-        <div class="disclaimer-text">THIS ISN'T THE REAL PREDICTIONS — BUY THE LICENCE KEY FOR ACCURATE PREDICTIONS</div>
-
-        <div class="multiplier-text">
-            <div class="target-label">BYPASSING_AFRICA_NODES...</div>
-            <h1 id="count">1.00x</h1>
-            <div id="status-msg" style="font-size:9px; color:var(--text-dim); margin-top:5px;">REAL_TIME_ENCRYPTION_SYNC</div>
-        </div>
-    </div>
-
-    <div class="stats-strip reveal">
-        <div class="stat-item">
-            <div class="stat-value" id="stat-predictions">0</div>
-            <div class="stat-label">PREDICTIONS</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value">100%</div>
-            <div class="stat-label">ACCURACY</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="stat-active">0</div>
-            <div class="stat-label">ACTIVE USERS</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value">0%</div>
-            <div class="stat-label">BAN RATE</div>
-        </div>
-    </div>
-
-    <div class="platform-section reveal">
-        <div class="section-tag">COMPATIBLE CRASH PLATFORMS</div>
-        <div class="logo-wall">
-            <img src="logos/1win.png" alt="1win">
-            <img src="logos/1xbet.png" alt="1xbet">
-            <img src="logos/msport.png" alt="msport">
-            <img src="logos/bet9ja.png" alt="bet9ja">
-            <img src="logos/betway.png" alt="betway">
-            <img src="logos/linebet.png" alt="linebet">
-            <img src="logos/melbet.png" alt="melbet">
-            <img src="logos/mozzart.png" alt="mozzartbet">
-            <img src="logos/premierbet.png" alt="premierbet">
-            <img src="logos/sportybet.png" alt="sportybet">
-            <img src="logos/goobet.png" alt="goobet">
-            <img src="logos/betika.png" alt="betika">
-        </div>
-        <div class="more-platforms-text">+ 16 MORE PLATFORMS AVAILABLE</div>
-    </div>
-
-    <div class="testimonial-ticker">
-        <div class="ticker-track" id="ticker-track"></div>
-    </div>
-
-    <div class="action-grid reveal">
-        <a href="proofs.html" class="btn btn-preview">📹 LIVE PROOF</a>
-        <a href="https://wa.me/212772865239" class="btn btn-whatsapp">WHATSAPP</a>
-        <a href="checkout.html" class="btn btn-checkout">CHECKOUT</a>
-        <a href="https://t.me/enh_os" class="btn btn-telegram">TELEGRAM</a>
-        <a href="predictor.html" class="btn btn-play">▶ PLAY NOW</a>
-    </div>
-
-    <div class="guide-link">
-        <a href="guide.html">📖 READ SAFE EXTRACTION GUIDE</a>
-    </div>
-
-    <div class="anti-ban-badge reveal">
-        <div class="anti-ban-icon">🛡️</div>
-        <div>
-            <div class="anti-ban-title">100% ANTI-BAN PROTECTION</div>
-            <div class="anti-ban-desc">Our Node-Bypass technology spoofs your IP and clears cache automatically. 0% account ban rate in 2024.</div>
-        </div>
-    </div>
-
-    <div class="pricing-section reveal" id="buy">
-        <div class="pricing-header">
-            <h2>SELECT YOUR LICENSE</h2>
-            <p>INSTANT ACTIVATION AFTER PAYMENT</p>
-        </div>
-
-        <div class="scarcity-container">
-            <div class="scarcity-header">
-                <span>DAILY LICENSE LIMIT</span>
-                <span><span id="licenses-sold">0</span> / 500 SOLD</span>
-            </div>
-            <div class="scarcity-bar-bg">
-                <div class="scarcity-bar-fill" id="license-bar" style="width: 0%;"></div>
-            </div>
-            <div class="scarcity-footer">RESETS IN <span id="scarcity-timer">00:00:00</span></div>
-        </div>
-
-        <a href="checkout.html" class="price-row"><span class="duration">24 HOURS ACCESS</span><span class="amount">$30</span></a>
-        <a href="checkout.html" class="price-row"><span class="duration">72 HOURS ACCESS</span><span class="amount">$65</span></a>
-        <a href="checkout.html" class="price-row popular">
-            <span class="popular-badge">MOST POPULAR</span>
-            <span class="duration">1 WEEK ACCESS</span><span class="amount">$200</span>
+    <div class="portal-grid">
+        <a href="crash.html" class="engine-card card-crash">
+            <div class="engine-icon">🚀</div>
+            <div class="engine-name">CORE_ENGINE_01</div>
+            <div class="engine-title">Crash Predictor</div>
+            <div class="btn-enter">INITIALIZE SYNC</div>
         </a>
-        <a href="checkout.html" class="price-row"><span class="duration">1 MONTH ACCESS</span><span class="amount">$600</span></a>
-        <a href="checkout.html" class="price-row" style="border-color: var(--glow-red); background: rgba(255,0,51,0.05);">
-            <span class="duration">LIFETIME LICENSE</span><span class="amount">$2,500</span>
+
+        <a href="appleoffortune.html" class="engine-card card-apple">
+            <div class="engine-icon">🍎</div>
+            <div class="engine-name">CORE_ENGINE_02</div>
+            <div class="engine-title">Apple Fortune</div>
+            <div class="btn-enter">INITIALIZE SYNC</div>
         </a>
-        <a href="checkout.html" class="price-row"><span class="duration">RESELLER LICENSE</span><span class="amount">$6,000</span></a>
-    </div>
-<!-- FAQ SECTION -->
-<div class="faq-section reveal">
-    <div class="section-header">
-        <span>FREQUENTLY ASKED QUESTIONS</span>
-        <span style="font-size: 8px; color: #666;">TRUSTED BY 12,000+ USERS</span>
-    </div>
-
-    <div class="faq-container">
-        <details class="faq-item">
-            <summary class="faq-question">🔒 Is my betting account safe?</summary>
-            <div class="faq-answer">Absolutely. Our Neural Link technology routes your connection through encrypted African proxy nodes, masking your IP and device fingerprint. We have a <span class="highlight-green">0% ban rate</span> since 2022.</div>
-        </details>
-
-        <details class="faq-item">
-            <summary class="faq-question">⚡ How fast do I get my license after payment?</summary>
-            <div class="faq-answer">Delivery is <span class="highlight-green">instant</span>! Our automated system detects the transaction and sends your unique license key via WhatsApp or Telegram immediately. No delays.</div>
-        </details>
-
-        <details class="faq-item">
-            <summary class="faq-question">💳 What payment methods do you accept?</summary>
-            <div class="faq-answer">We accept major cryptocurrencies: <span class="highlight">Bitcoin (BTC), USDT (TRC20), Tron (TRX), and Binance Coin (BNB)</span>. This ensures your privacy and our operational security.</div>
-        </details>
-
-        <details class="faq-item">
-            <summary class="faq-question">🔄 Can I get a refund if the tool doesn't work?</summary>
-            <div class="faq-answer">We offer a <span class="highlight-green">7-day money-back guarantee</span>. If you follow the extraction guide and the predictor fails to deliver accurate results, contact us for a full refund – no questions asked.</div>
-        </details>
-
-        <details class="faq-item">
-            <summary class="faq-question">📱 Does it work on mobile?</summary>
-            <div class="faq-answer">Yes, the predictor tool is fully responsive and works on all mobile browsers (Android/iOS). The interface adapts perfectly to your screen.</div>
-        </details>
-    </div>
-
-    <div class="faq-footer">
-        <span>Still have questions? </span>
-        <a href="https://wa.me/212772865239" class="faq-contact" target="_blank">💬 Chat on WhatsApp</a>
-    </div>
-</div>
-    <div class="payment-methods reveal">
-        CLICK ICON TO COPY PAYMENT ADDRESS
-        <div class="pay-icons">
-            <img src="logos/bitcoin-btc-logo.png" alt="BTC" data-address="33c3eLYc6Vy7d9dnbAi9n2yVKb7ed5KJMF">
-            <img src="logos/usdt.png" alt="USDT" data-address="TPxqFV78sdsP72eCYXcuYjzswrAVA6ShHB">
-            <img src="logos/tron-trx-logo.png" alt="TRX" data-address="TPxqFV78sdsP72eCYXcuYjzswrAVA6ShHB">
-            <img src="logos/binance-coin-bnb-logo.png" alt="BNB" data-address="0xDb3107e0429cd4B6cee446b4418d852CeC5aac75">
-        </div>
-    </div>
-
-    <div class="terminal reveal">
-        <div class="terminal-content" id="log-box"></div>
     </div>
 
     <footer>
-        <div class="node-status-container">
-            <div class="node"><div class="node-dot online"></div> NGN_NODE</div>
-            <div class="node"><div class="node-dot online"></div> GHS_NODE</div>
-            <div class="node"><div class="node-dot online"></div> ZAR_NODE</div>
-            <div class="node"><div class="node-dot syncing"></div> KES_NODE</div>
-            <div class="node"><div class="node-dot online"></div> TZS_NODE</div>
-        </div>
-
-        <div class="footer-buttons">
-            <a href="status.html" class="btn-status">🔴 LIVE NETWORK STATUS</a>
-            <a href="contracts.html" class="btn-status" style="border-color: var(--cyan); color: var(--cyan); box-shadow: inset 0 0 10px rgba(0, 221, 255, 0.08);">📜 EXPLOIT CONTRACTS</a>
-        </div>
-
-        <div class="footer-copy">&copy; 2022-2026 AFRICA HACKS GROUP</div>
+        SECURED BY AFRICA HACKS QUANTUM ENCRYPTION // 2026
     </footer>
+</div>
 
-    <div id="toast-notification" class="toast">ADDRESS COPIED TO CLIPBOARD!</div>
-    <div class="social-proof-toast" id="social-proof"></div>
+<script>
+    // Simple Particle Background
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
 
-    <script>
-        // ===== PAGE LOAD =====
-        window.addEventListener('load', () => document.body.classList.add('loaded'));
-        window.addEventListener('pageshow', () => {
-            const loader = document.getElementById('transition-layer');
-            if (loader) loader.classList.remove('active');
-            document.body.classList.add('loaded');
-        });
-
-        // ===== LINK HANDLER =====
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                const dest = this.getAttribute('href');
-                if (dest && dest.includes('.html')) {
-                    e.preventDefault();
-                    document.getElementById('transition-layer').classList.add('active');
-                    setTimeout(() => window.location.href = dest, 1200);
-                }
+    function init() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = [];
+        for(let i=0; i<60; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                v: 0.2 + Math.random() * 0.5,
+                size: 1 + Math.random() * 2
             });
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        particles.forEach(p => {
+            p.y -= p.v;
+            if(p.y < 0) p.y = canvas.height;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
         });
+        requestAnimationFrame(animate);
+    }
 
-        // ===== PARTICLE BACKGROUND =====
-        (function() {
-            const canvas = document.getElementById('particle-canvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
+    window.addEventListener('resize', init);
+    init();
+    animate();
+</script>
 
-            function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
-            resize();
-            window.addEventListener('resize', resize);
-
-            for (let i = 0; i < 40; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3,
-                    size: Math.random() * 1.5 + 0.5,
-                    alpha: Math.random() * 0.3 + 0.05
-                });
-            }
-
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    if (p.x < 0) p.x = canvas.width;
-                    if (p.x > canvas.width) p.x = 0;
-                    if (p.y < 0) p.y = canvas.height;
-                    if (p.y > canvas.height) p.y = 0;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 0, 51, ${p.alpha})`;
-                    ctx.fill();
-                });
-
-                // Draw connections
-                for (let i = 0; i < particles.length; i++) {
-                    for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 120) {
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.strokeStyle = `rgba(255, 0, 51, ${0.06 * (1 - dist / 120)})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.stroke();
-                        }
-                    }
-                }
-                requestAnimationFrame(animateParticles);
-            }
-            animateParticles();
-        })();
-
-        // ===== GRAPH CANVAS =====
-        const graphCanvas = document.getElementById('graph-canvas');
-        const gCtx = graphCanvas.getContext('2d');
-        let graphPoints = [];
-
-        function resizeGraph() {
-            const vp = document.getElementById('viewport');
-            graphCanvas.width = vp.offsetWidth;
-            graphCanvas.height = vp.offsetHeight;
-        }
-        resizeGraph();
-        window.addEventListener('resize', resizeGraph);
-
-        function drawGraph(progress, crashed) {
-            const w = graphCanvas.width;
-            const h = graphCanvas.height;
-            gCtx.clearRect(0, 0, w, h);
-
-            if (crashed) return;
-
-            const startX = w * 0.08;
-            const startY = h * 0.85;
-            const endX = startX + (w * 0.84) * progress;
-            const endY = startY - (h * 0.65) * Math.pow(progress, 0.7);
-
-            // Build curve
-            gCtx.beginPath();
-            gCtx.moveTo(startX, startY);
-
-            const steps = 60;
-            for (let i = 0; i <= steps * progress; i++) {
-                const t = i / steps;
-                const x = startX + (w * 0.84) * t;
-                const y = startY - (h * 0.65) * Math.pow(t, 0.7);
-                gCtx.lineTo(x, y);
-            }
-
-            // Gradient fill under curve
-            const grad = gCtx.createLinearGradient(0, 0, 0, h);
-            grad.addColorStop(0, 'rgba(255, 0, 51, 0.15)');
-            grad.addColorStop(1, 'rgba(255, 0, 51, 0)');
-
-            gCtx.lineTo(endX, h);
-            gCtx.lineTo(startX, h);
-            gCtx.closePath();
-            gCtx.fillStyle = grad;
-            gCtx.fill();
-
-            // Draw line
-            gCtx.beginPath();
-            gCtx.moveTo(startX, startY);
-            for (let i = 0; i <= steps * progress; i++) {
-                const t = i / steps;
-                const x = startX + (w * 0.84) * t;
-                const y = startY - (h * 0.65) * Math.pow(t, 0.7);
-                gCtx.lineTo(x, y);
-            }
-            gCtx.strokeStyle = '#ff0033';
-            gCtx.lineWidth = 2.5;
-            gCtx.shadowColor = '#ff0033';
-            gCtx.shadowBlur = 15;
-            gCtx.stroke();
-            gCtx.shadowBlur = 0;
-
-            // Dot at tip
-            gCtx.beginPath();
-            gCtx.arc(endX, endY, 4, 0, Math.PI * 2);
-            gCtx.fillStyle = '#fff';
-            gCtx.shadowColor = '#ff0033';
-            gCtx.shadowBlur = 20;
-            gCtx.fill();
-            gCtx.shadowBlur = 0;
-
-            // Move plane to tip
-            const plane = document.getElementById('plane-vis');
-            const vpRect = document.getElementById('viewport');
-            plane.style.left = (endX / w * 100 - 5) + '%';
-            plane.style.top = (endY / h * 100 - 10) + '%';
-        }
-
-        // ===== GLOBAL GAME SYNC =====
-        const countDisplay = document.getElementById('count');
-        const statusMsg = document.getElementById('status-msg');
-        const plane = document.getElementById('plane-vis');
-        const explosion = document.getElementById('explosion-vis');
-        const viewport = document.getElementById('viewport');
-        let wasCrashed = false;
-
-        function getGlobalTarget(seed) {
-            let x = Math.sin(seed) * 10000;
-            let fraction = x - Math.floor(x);
-            return (fraction * 5 + 1.5).toFixed(2);
-        }
-
-        function syncGlobalGame() {
-            const now = Date.now();
-            const cycleDuration = 10000;
-            const flyingDuration = 7000;
-            const gameId = Math.floor(now / cycleDuration);
-            const timeInCycle = now % cycleDuration;
-            const target = getGlobalTarget(gameId);
-
-            if (timeInCycle < flyingDuration) {
-                const progress = timeInCycle / flyingDuration;
-                let currentCount = 1.00 + ((target - 1.00) * progress);
-                countDisplay.innerText = currentCount.toFixed(2) + 'x';
-                countDisplay.classList.remove('is-crashed');
-                plane.style.opacity = "1";
-                explosion.classList.remove('active');
-                statusMsg.innerText = "BYPASSING_AFRICA_NODES...";
-                statusMsg.style.color = "#666";
-                viewport.classList.remove('shake');
-                wasCrashed = false;
-
-                drawGraph(progress, false);
-            } else {
-                countDisplay.innerText = target + 'x';
-                countDisplay.classList.add('is-crashed');
-                plane.style.opacity = "0";
-
-                if (!wasCrashed) {
-                    explosion.classList.add('active');
-                    viewport.classList.add('shake');
-                    // Position explosion at plane's last position
-                    const planeLeft = plane.style.left;
-                    const planeTop = plane.style.top;
-                    explosion.style.left = planeLeft;
-                    explosion.style.top = planeTop;
-                    wasCrashed = true;
-                }
-
-                statusMsg.innerText = "CRASH_IDENTIFIED: " + target + "x";
-                statusMsg.style.color = "#ff4444";
-
-                drawGraph(1, true);
-            }
-            requestAnimationFrame(syncGlobalGame);
-        }
-        syncGlobalGame();
-
-        // ===== LIVE USERS =====
-        const usersDisplay = document.getElementById('live-users');
-        const statActive = document.getElementById('stat-active');
-
-        function syncGlobalUsers() {
-            const now = Date.now();
-            const wave1 = Math.sin(now / 7200000);
-            const wave2 = Math.sin(now / 300000);
-            const wave3 = Math.sin(now / 10000);
-            const combinedWave = (wave1 * 0.6) + (wave2 * 0.3) + (wave3 * 0.1);
-            const syncedUserCount = Math.floor(12500 + (combinedWave * 4500));
-            usersDisplay.innerText = syncedUserCount.toLocaleString();
-            statActive.innerText = syncedUserCount.toLocaleString();
-            setTimeout(syncGlobalUsers, 2000);
-        }
-        syncGlobalUsers();
-
-        // ===== ANIMATED STAT COUNTER =====
-        (function() {
-            const target = 1847293;
-            const el = document.getElementById('stat-predictions');
-            let current = 0;
-            const step = Math.ceil(target / 60);
-            function countUp() {
-                current += step;
-                if (current >= target) { current = target; el.innerText = current.toLocaleString(); return; }
-                el.innerText = current.toLocaleString();
-                requestAnimationFrame(countUp);
-            }
-            setTimeout(countUp, 800);
-        })();
-
-        // ===== TERMINAL LOGS =====
-        const platformsList = ['1WIN', '1XBET', 'SPORTYBET', 'BET9JA', 'MSPORT', 'BETWAY', 'MELBET', 'LINEBET'];
-        setInterval(() => {
-            const logBox = document.getElementById('log-box');
-            const plat = platformsList[Math.floor(Math.random() * platformsList.length)];
-            const hex = Math.random().toString(16).substring(2, 10).toUpperCase();
-            const ping = Math.floor(Math.random() * 40) + 8;
-            const seed = Math.random().toString(36).substring(2, 14);
-
-            const logs = [
-                { text: `> [SYS] Injecting payload into ${plat}_NODE...`, color: '#555' },
-                { text: `> [SEC] Hash: 0x${hex}`, color: '#ff0033' },
-                { text: `> [NET] SSL bypass on ${plat} — ${ping}ms`, color: '#555' },
-                { text: `> [OK!] Connection to ${plat} secured`, color: '#25d366' },
-                { text: `> [API] Seed extracted: ${seed}`, color: '#ffaa00' },
-                { text: `> [CRASH] Next target computed for ${plat}`, color: '#ff0033' },
-            ];
-
-            const chosen = logs[Math.floor(Math.random() * logs.length)];
-            const div = document.createElement('div');
-            div.style.color = chosen.color;
-            div.style.marginBottom = '2px';
-            div.innerText = chosen.text;
-            logBox.prepend(div);
-            if (logBox.children.length > 6) logBox.removeChild(logBox.lastChild);
-        }, 2200);
-
-        // ===== COPY TO CLIPBOARD =====
-        document.querySelectorAll('.pay-icons img').forEach(icon => {
-            icon.addEventListener('click', function() {
-                const address = this.getAttribute('data-address');
-                if (!address) return;
-                navigator.clipboard.writeText(address).then(() => {
-                    const toast = document.getElementById('toast-notification');
-                    toast.innerText = `✅ ${this.alt} ADDRESS COPIED!`;
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 3000);
-                });
-            });
-        });
-
-        // ===== SCARCITY TIMER & LICENSE =====
-        function updateScarcityAndLicenses() {
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setUTCHours(24, 0, 0, 0);
-            const diff = tomorrow - now;
-
-            const h = Math.floor((diff % (86400000)) / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-
-            document.getElementById('scarcity-timer').innerText =
-                String(h).padStart(2, '0') + ':' +
-                String(m).padStart(2, '0') + ':' +
-                String(s).padStart(2, '0');
-
-            const startOfDay = new Date(now);
-            startOfDay.setUTCHours(0, 0, 0, 0);
-            const hoursElapsed = Math.floor((now - startOfDay) / 3600000);
-            const minutesElapsed = now.getUTCMinutes();
-
-            let sold = 0;
-            for (let i = 0; i < hoursElapsed; i++) {
-                let seed = startOfDay.getTime() + i;
-                let pseudoRandom = Math.abs(Math.sin(seed)) * 17;
-                sold += Math.floor(12 + pseudoRandom);
-            }
-
-            let currentHourSeed = startOfDay.getTime() + hoursElapsed;
-            let currentHourTotal = 12 + Math.abs(Math.sin(currentHourSeed)) * 17;
-            sold += Math.floor((minutesElapsed / 60) * currentHourTotal);
-            sold = Math.min(sold, 500);
-
-            document.getElementById('licenses-sold').innerText = sold;
-            document.getElementById('license-bar').style.width = (sold / 500) * 100 + "%";
-        }
-
-        setInterval(updateScarcityAndLicenses, 1000);
-        updateScarcityAndLicenses();
-
-        // ===== TESTIMONIAL TICKER =====
-        (function() {
-            const testimonials = [
-                { flag: '🇳🇬', name: 'Tunde A.', amount: '+$420', plat: '1WIN' },
-                { flag: '🇬🇭', name: 'Kwame M.', amount: '+$310', plat: 'SPORTYBET' },
-                { flag: '🇿🇦', name: 'Sipho K.', amount: '+$890', plat: 'BETWAY' },
-                { flag: '🇰🇪', name: 'Brian O.', amount: '+$155', plat: '1XBET' },
-                { flag: '🇹🇿', name: 'Juma H.', amount: '+$620', plat: 'BET9JA' },
-                { flag: '🇺🇬', name: 'Dennis W.', amount: '+$275', plat: 'MSPORT' },
-                { flag: '🇨🇲', name: 'Paul N.', amount: '+$540', plat: 'MELBET' },
-                { flag: '🇸🇳', name: 'Amadou D.', amount: '+$380', plat: 'LINEBET' },
-                { flag: '🇿🇲', name: 'Moses C.', amount: '+$195', plat: '1WIN' },
-                { flag: '🇲🇿', name: 'Carlos S.', amount: '+$710', plat: 'SPORTYBET' },
-                { flag: '🇲🇦', name: 'Youssef B.', amount: '+$950', plat: '1XBET' },
-                { flag: '🇪🇬', name: 'Ahmed M.', amount: '+$1,200', plat: 'MELBET' },
-                { flag: '🇨🇮', name: 'Koffi A.', amount: '+$240', plat: 'PREMIERBET' },
-                { flag: '🇩🇿', name: 'Malik F.', amount: '+$580', plat: 'LINEBET' },
-                { flag: '🇦🇴', name: 'Joao P.', amount: '+$415', plat: '1WIN' },
-                { flag: '🇷🇼', name: 'Jean D.', amount: '+$180', plat: 'BETWAY' },
-                { flag: '🇿🇼', name: 'Tendai M.', amount: '+$330', plat: 'SPORTYBET' },
-                { flag: '🇲🇼', name: 'Chisomo T.', amount: '+$210', plat: 'MSPORT' },
-                { flag: '🇧🇯', name: 'Pascal L.', amount: '+$670', plat: 'BET9JA' },
-                { flag: '🇲🇱', name: 'Oumar S.', amount: '+$490', plat: 'MELBET' },
-                { flag: '🇪🇹', name: 'Abebe G.', amount: '+$150', plat: '1XBET' },
-                { flag: '🇬🇳', name: 'Alpha C.', amount: '+$820', plat: '1WIN' },
-                { flag: '🇧🇫', name: 'Issa K.', amount: '+$305', plat: 'PREMIERBET' },
-                { flag: '🇹🇬', name: 'Kodjo E.', amount: '+$445', plat: 'SPORTYBET' },
-                { flag: '🇳🇬', name: 'Chidi O.', amount: '+$1,100', plat: 'BETWAY' },
-                { flag: '🇰🇪', name: 'Faith W.', amount: '+$290', plat: 'MSPORT' },
-                { flag: '🇿🇦', name: 'Zane vB.', amount: '+$750', plat: '1XBET' },
-                { flag: '🇬🇭', name: 'Efua B.', amount: '+$520', plat: '1WIN' },
-                { flag: '🇺🇬', name: 'Musa K.', amount: '+$135', plat: 'LINEBET' },
-                { flag: '🇹🇿', name: 'Fatuma S.', amount: '+$880', plat: 'BET9JA' }
-            ];
-
-            const track = document.getElementById('ticker-track');
-            let html = '';
-            for (let r = 0; r < 2; r++) {
-                testimonials.forEach(t => {
-                    html += `<div class="ticker-item">
-                        <span class="flag">${t.flag}</span>
-                        <span>${t.name} won <span class="amount-won">${t.amount}</span> on <span class="plat">${t.plat}</span></span>
-                    </div>`;
-                });
-            }
-            track.innerHTML = html;
-        })();
-
-        // ===== SOCIAL PROOF PURCHASE NOTIFICATIONS =====
-        (function() {
-            const countries = [
-                { flag: '🇳🇬', country: 'Nigeria' }, { flag: '🇬🇭', country: 'Ghana' },
-                { flag: '🇿🇦', country: 'South Africa' }, { flag: '🇰🇪', country: 'Kenya' },
-                { flag: '🇹🇿', country: 'Tanzania' }, { flag: '🇺🇬', country: 'Uganda' },
-                { flag: '🇨🇲', country: 'Cameroon' }, { flag: '🇸🇳', country: 'Senegal' },
-                { flag: '🇲🇦', country: 'Morocco' }, { flag: '🇪🇬', country: 'Egypt' },
-                { flag: '🇪🇹', country: 'Ethiopia' }, { flag: '🇿🇲', country: 'Zambia' },
-                { flag: '🇨🇮', country: 'Ivory Coast' }, { flag: '🇩🇿', country: 'Algeria' },
-                { flag: '🇦🇴', country: 'Angola' }, { flag: '🇧🇯', country: 'Benin' },
-                { flag: '🇧🇫', country: 'Burkina Faso' }, { flag: '🇲🇱', country: 'Mali' },
-                { flag: '🇲🇼', country: 'Malawi' }, { flag: '🇿🇼', country: 'Zimbabwe' },
-                { flag: '🇷🇼', country: 'Rwanda' }, { flag: '🇹🇬', country: 'Togo' },
-                { flag: '🇬🇳', country: 'Guinea' }
-            ];
-            const plans = ['24 HOURS', '72 HOURS', '1 WEEK', '1 MONTH', 'LIFETIME'];
-            const times = ['2 min ago', '5 min ago', '8 min ago', '12 min ago', 'just now', '1 min ago'];
-            const names = ['John', 'David', 'Emmanuel', 'Grace', 'Ibrahim', 'Fatima', 'Samuel', 'Blessing', 'Abdul', 'Sarah', 'Kojo', 'Amara', 'Chidi', 'Youssef', 'Zane', 'Thabo', 'Moussa', 'Kwesi', 'Oumar', 'Abebe'];
-
-            const spEl = document.getElementById('social-proof');
-
-            function showProof() {
-                const c = countries[Math.floor(Math.random() * countries.length)];
-                const plan = plans[Math.floor(Math.random() * plans.length)];
-                const time = times[Math.floor(Math.random() * times.length)];
-                const name = names[Math.floor(Math.random() * names.length)];
-
-                spEl.innerHTML = `
-                    <div class="sp-avatar">${c.flag}</div>
-                    <div class="sp-text">
-                        <strong>${name}</strong> from ${c.country}<br>
-                        purchased <span class="sp-plan">${plan}</span> access
-                        <span class="sp-time">· ${time}</span>
-                    </div>
-                `;
-
-                spEl.classList.add('show');
-                setTimeout(() => spEl.classList.remove('show'), 4500);
-            }
-
-            setTimeout(() => {
-                showProof();
-                setInterval(showProof, 15000 + Math.random() * 10000);
-            }, 8000);
-        })();
-
-        // ===== SCROLL REVEAL =====
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
-
-        revealElements.forEach(el => revealObserver.observe(el));
-    </script>
 </body>
-
 </html>
