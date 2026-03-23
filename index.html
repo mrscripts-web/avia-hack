@@ -2,42 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AFRICA_HACKS | Neural Gateway</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700;800&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logos/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #020202;
-            --card-bg: rgba(8, 8, 8, 0.95);
+            --bg-dark: #030303;
+            --panel-bg: rgba(12, 12, 12, 0.85);
+            --border-dim: rgba(255, 255, 255, 0.08);
             --glow-red: #ff0033;
-            --glow-red-alpha: rgba(255, 0, 51, 0.15);
+            --glow-gold: #ffcc00;
             --text-main: #ffffff;
-            --text-dim: #444;
+            --text-dim: #777777;
             --whatsapp: #25d366;
             --telegram: #0088cc;
         }
 
-        * { box-sizing: border-box; outline: none; transition: all 0.3s ease; }
+        * { box-sizing: border-box; outline: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        
         body, html {
             margin: 0; padding: 0;
             background: var(--bg-dark);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             color: var(--text-main);
             overflow-x: hidden;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* --- CRT Scanline Overlay --- */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 9998;
         }
 
         /* Neural Background Canvas */
         #neural-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none;
+            z-index: 0; pointer-events: none;
         }
 
-        .overlay {
+        .radial-vignette {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px),
-                radial-gradient(circle, transparent 20%, black 160%);
-            pointer-events: none; z-index: 100;
+            background: radial-gradient(circle at center, transparent 0%, #000 120%);
+            pointer-events: none; z-index: 1;
         }
 
         .container {
@@ -47,123 +69,227 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
+        /* --- HEADER --- */
         header { text-align: center; margin-bottom: 50px; }
         .main-logo {
             height: 90px; margin-bottom: 20px;
-            filter: drop-shadow(0 0 25px var(--glow-red));
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
             animation: float 5s infinite ease-in-out;
         }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         .glitch-text {
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 900; font-size: 2rem; letter-spacing: 8px;
+            font-weight: 900; font-size: 2.2rem; letter-spacing: 6px;
             text-transform: uppercase;
         }
-        .glitch-text span { color: var(--glow-red); text-shadow: 2px 0 var(--text-main); }
+        .glitch-text span { color: var(--glow-red); text-shadow: 0 0 15px var(--glow-red); }
 
-        /* Support Buttons */
+        .system-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--text-dim);
+            letter-spacing: 3px; margin-top: 15px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .status-dot { width: 6px; height: 6px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* --- SUPPORT BUTTONS --- */
         .social-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
             width: 100%; max-width: 450px; margin-bottom: 60px;
         }
         .social-link {
-            padding: 15px; border-radius: 12px; font-family: 'JetBrains Mono', monospace;
+            padding: 16px; border-radius: 12px; font-family: 'JetBrains Mono', monospace;
             font-size: 11px; font-weight: 800; text-decoration: none; color: white;
-            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+            text-align: center; border: 1px solid var(--border-dim);
+            background: rgba(255,255,255,0.02); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .wa { background: var(--whatsapp); box-shadow: 0 0 20px rgba(37, 211, 102, 0.1); }
-        .tg { background: var(--telegram); box-shadow: 0 0 20px rgba(0, 136, 204, 0.1); }
-        .social-link:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .social-link:hover { transform: translateY(-3px); }
+        .wa:hover { border-color: var(--whatsapp); background: rgba(37, 211, 102, 0.1); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.15); }
+        .tg:hover { border-color: var(--telegram); background: rgba(0, 136, 204, 0.1); box-shadow: 0 10px 20px rgba(0, 136, 204, 0.15); }
 
-        /* Game Access Cards */
+        /* --- DUAL-TONE PORTAL CARDS --- */
         .portal-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 25px; width: 100%; margin-bottom: 80px;
         }
         .card {
-            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
-            padding: 40px 20px; border-radius: 25px; text-decoration: none;
+            background: var(--panel-bg); border: 1px solid var(--border-dim);
+            padding: 40px 25px; border-radius: 20px; text-decoration: none;
             color: white; text-align: center; backdrop-filter: blur(10px);
+            position: relative; overflow: hidden;
         }
-        .card:hover { border-color: var(--glow-red); transform: translateY(-8px); box-shadow: 0 15px 30px var(--glow-red-alpha); }
-        .card-icon { font-size: 40px; display: block; margin-bottom: 15px; }
-        .card-title { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
+        
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; transition: opacity 0.4s ease; z-index: 0;
+        }
+        .card > * { position: relative; z-index: 1; }
+        .card-icon { font-size: 45px; display: block; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
+        .card-title { font-size: 22px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
+        .card-desc { font-size: 11px; color: var(--text-dim); margin-bottom: 25px; line-height: 1.5; font-family: 'JetBrains Mono', monospace; }
         .card-btn {
-            display: inline-block; padding: 10px 30px; background: var(--glow-red);
-            border-radius: 50px; font-size: 10px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+            display: inline-block; padding: 12px 35px; border-radius: 8px;
+            font-size: 11px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
         }
 
-        /* --- ALL 12 PLATFORMS --- */
+        /* Crash Card (Red) */
+        .card-crash { border-bottom: 2px solid rgba(255, 0, 51, 0.3); }
+        .card-crash::before { background: radial-gradient(circle at top, rgba(255,0,51,0.1) 0%, transparent 70%); }
+        .card-crash:hover { border-color: var(--glow-red); transform: translateY(-8px); box-shadow: 0 15px 40px rgba(255,0,51,0.15); }
+        .card-crash:hover::before { opacity: 1; }
+        .card-crash .card-btn { background: rgba(255,0,51,0.1); border: 1px solid var(--glow-red); color: var(--glow-red); }
+        .card-crash:hover .card-btn { background: var(--glow-red); color: #fff; box-shadow: 0 0 20px rgba(255,0,51,0.4); }
+
+        /* Apple Card (Gold) */
+        .card-apple { border-bottom: 2px solid rgba(255, 204, 0, 0.3); }
+        .card-apple::before { background: radial-gradient(circle at top, rgba(255,204,0,0.1) 0%, transparent 70%); }
+        .card-apple:hover { border-color: var(--glow-gold); transform: translateY(-8px); box-shadow: 0 15px 40px rgba(255,204,0,0.12); }
+        .card-apple:hover::before { opacity: 1; }
+        .card-apple .card-btn { background: rgba(255,204,0,0.1); border: 1px solid var(--glow-gold); color: var(--glow-gold); }
+        .card-apple:hover .card-btn { background: var(--glow-gold); color: #000; box-shadow: 0 0 20px rgba(255,204,0,0.4); }
+
+        /* --- PLATFORM WALL --- */
         .platform-section { width: 100%; text-align: center; margin-bottom: 80px; }
-        .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 5px; margin-bottom: 40px; text-transform: uppercase; }
+        .section-tag { 
+            font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--glow-red); 
+            letter-spacing: 5px; margin-bottom: 40px; text-transform: uppercase; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .section-tag::before, .section-tag::after { content: ''; height: 1px; width: 40px; background: rgba(255, 0, 51, 0.3); margin: 0 15px; }
+        
         .logo-wall {
             display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 30px 40px;
         }
         .logo-wall img {
             height: 25px; max-width: 100px; object-fit: contain;
-            filter: grayscale(1) brightness(1.5);
-            opacity: 0.3;
+            filter: grayscale(1) brightness(1.2) opacity(0.4);
         }
-        .logo-wall img:hover { filter: drop-shadow(0 0 8px var(--glow-red)) brightness(2); opacity: 1; transform: scale(1.1); }
+        .logo-wall img:hover { filter: grayscale(0) brightness(1) opacity(1); transform: scale(1.15) translateY(-2px); }
 
-        /* --- ALL 6 PRICING TIERS --- */
-        .pricing-list { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 80px; }
+        /* --- PRICING TIERS (GLOW RED REWORK) --- */
+        .pricing-list { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-bottom: 80px; }
+        
         .tier {
             display: grid; grid-template-columns: 1fr auto auto;
-            align-items: center; background: rgba(10, 10, 10, 0.6); padding: 18px 30px;
-            border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); text-decoration: none; color: white;
+            align-items: center; background: rgba(10, 5, 5, 0.6); padding: 18px 30px;
+            border-radius: 12px; border: 1px solid rgba(255, 0, 51, 0.15); text-decoration: none; color: white;
+            backdrop-filter: blur(5px); position: relative; overflow: hidden;
         }
-        .tier:hover { background: #0a0000; border-color: var(--glow-red); padding-left: 40px; }
-        .tier-name { font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
-        .tier-price { color: var(--glow-red); font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 16px; margin-left: 30px; }
-        .tier-duration { font-size: 9px; color: #444; font-family: 'JetBrains Mono', monospace; margin-left: 15px; text-align: right; width: 80px; }
+        
+        .tier::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--glow-red); opacity: 0; transition: opacity 0.3s ease;
+            box-shadow: 0 0 15px var(--glow-red);
+        }
 
-        /* --- PROFESSIONAL FOOTER --- */
+        .tier:hover { 
+            background: rgba(255, 0, 51, 0.05); border-color: var(--glow-red); 
+            padding-left: 40px; box-shadow: 0 10px 30px rgba(255, 0, 51, 0.15); 
+        }
+        .tier:hover::before { opacity: 1; }
+
+        .tier-name { font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; z-index: 2; }
+        .tier-price { 
+            font-family: 'JetBrains Mono', monospace; font-weight: 900; font-size: 18px; 
+            margin-left: 30px; z-index: 2; color: var(--glow-red);
+            text-shadow: 0 0 10px rgba(255, 0, 51, 0.4);
+        }
+        .tier-duration { font-size: 9px; color: #888; font-family: 'JetBrains Mono', monospace; margin-left: 15px; text-align: right; width: 80px; z-index: 2; }
+
+        /* Highlight Popular Tier */
+        .tier.popular { border-color: rgba(255, 0, 51, 0.5); background: rgba(255, 0, 51, 0.04); }
+        .tier.popular .tier-name { color: #fff; }
+        .popular-badge {
+            position: absolute; top: 0; right: 0; background: var(--glow-red); color: #fff;
+            font-size: 7px; font-family: 'JetBrains Mono', monospace; font-weight: 900;
+            padding: 4px 12px; border-radius: 0 12px 0 8px; letter-spacing: 2px; z-index: 3;
+            box-shadow: 0 0 10px rgba(255, 0, 51, 0.5);
+        }
+
+        /* --- PROFESSIONAL FOOTER REWORK --- */
         footer {
-            width: 100%; background: #050505; border-top: 1px solid #111;
-            padding: 60px 20px 40px; position: relative; z-index: 10;
+            width: 100%; background: #020202; border-top: 1px solid rgba(255, 0, 51, 0.2);
+            padding: 60px 20px 30px; position: relative; z-index: 10;
+            background-image: radial-gradient(circle at bottom center, rgba(255,0,51,0.05) 0%, transparent 60%);
         }
         .footer-content {
             max-width: 1000px; margin: 0 auto;
-            display: grid; grid-template-columns: 1.5fr 1fr 1.2fr; gap: 40px;
+            display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 50px;
         }
-        .f-brand img { height: 35px; filter: grayscale(1); margin-bottom: 15px; opacity: 0.5; }
-        .f-brand p { color: #333; font-size: 11px; line-height: 1.6; max-width: 250px; }
+        .f-brand { display: flex; flex-direction: column; gap: 15px; }
+        .f-brand img { height: 35px; width: auto; filter: drop-shadow(0 0 8px var(--glow-red)); align-self: flex-start; }
+        .f-brand p { color: #666; font-size: 10px; line-height: 1.8; max-width: 320px; font-family: 'JetBrains Mono', monospace; margin: 0; }
+        .f-brand .enc-text { color: var(--glow-red); font-size: 8px; letter-spacing: 2px; opacity: 0.7; font-family: 'JetBrains Mono', monospace; margin-top: 5px; }
         
-        .f-links h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--glow-red); margin-bottom: 15px; }
-        .f-links ul { list-style: none; padding: 0; }
-        .f-links a { color: #555; text-decoration: none; font-size: 12px; display: block; margin-bottom: 8px; }
+        .f-links h4 { 
+            font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #fff; 
+            letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; 
+        }
+        .f-links h4::before { content: ''; width: 6px; height: 6px; background: var(--glow-red); display: block; box-shadow: 0 0 8px var(--glow-red); }
+        .f-links ul { list-style: none; padding: 0; margin: 0; }
+        .f-links a { 
+            color: #777; text-decoration: none; font-size: 11px; display: flex; align-items: center; 
+            margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; transition: 0.3s; 
+        }
+        .f-links a::before { content: '>'; color: var(--glow-red); margin-right: 8px; opacity: 0; transform: translateX(-5px); transition: 0.3s; font-weight: bold; }
         .f-links a:hover { color: white; transform: translateX(5px); }
+        .f-links a:hover::before { opacity: 1; transform: translateX(0); }
 
-        .status-box { background: #080808; padding: 15px; border-radius: 10px; border: 1px solid #111; }
-        .status-line { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #25d366; margin-bottom: 5px; }
-        .dot { height: 6px; width: 6px; background: #25d366; border-radius: 50%; box-shadow: 0 0 10px #25d366; }
+        .status-box { 
+            background: #050505; padding: 20px; border-radius: 8px; 
+            border: 1px solid rgba(255, 0, 51, 0.15); box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative; overflow: hidden;
+        }
+        .status-box::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glow-red), transparent);
+            animation: scanline 3s linear infinite;
+        }
+        @keyframes scanline { 100% { left: 200%; } }
+        
+        .status-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #222; padding-bottom: 10px; margin-bottom: 15px; }
+        .status-line { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #25d366; font-weight: bold; }
+        .status-ping { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #555; }
+        
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #888; }
+        .status-grid div { display: flex; flex-direction: column; gap: 4px; }
+        .status-grid span { color: #fff; font-size: 10px; font-weight: bold; }
 
         .f-bottom {
-            max-width: 1000px; margin: 40px auto 0; padding-top: 25px;
-            border-top: 1px solid #111; display: flex; justify-content: space-between;
-            font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #222;
+            max-width: 1000px; margin: 50px auto 0; padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;
+            font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #444;
         }
+        .f-bottom .eth-hash { color: var(--glow-red); opacity: 0.5; letter-spacing: 1px; }
 
         @media (max-width: 768px) {
             .portal-grid, .footer-content { grid-template-columns: 1fr; }
             .tier { grid-template-columns: 1fr auto; padding: 15px 20px; }
             .tier-duration { display: none; }
-            .footer-content { text-align: center; }
-            .f-brand p { margin: 0 auto; }
+            .footer-content { text-align: center; gap: 40px; }
+            .f-brand p, .f-brand .enc-text { margin: 0 auto; text-align: center; }
+            .f-brand img { align-self: center; }
+            .f-links h4 { justify-content: center; }
+            .f-links a { justify-content: center; }
+            .status-box { max-width: 320px; margin: 0 auto; text-align: left; }
+            .f-bottom { flex-direction: column; gap: 10px; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-<div class="overlay"></div>
 <canvas id="neural-canvas"></canvas>
+<div class="radial-vignette"></div>
 
 <div class="container">
     <header>
         <img src="logos/Africa.png" alt="AFRICA_HACKS" class="main-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2111/2111646.png'">
         <div class="glitch-text">AFRICA<span>_HACKS</span></div>
+        <div class="system-status"><div class="status-dot"></div> GLOBAL_NETWORK_SECURE</div>
     </header>
 
     <div class="social-grid">
@@ -172,20 +298,22 @@
     </div>
 
     <div class="portal-grid">
-        <a href="crash.html" class="card">
+        <a href="crash.html" class="card card-crash">
             <span class="card-icon">🚀</span>
             <div class="card-title">Crash Neural</div>
-            <div class="card-btn">ACCESS_ENGINE</div>
+            <div class="card-desc">Institutional flight node sync.<br>Hash bypass active.</div>
+            <div class="card-btn">INITIALIZE_ENGINE</div>
         </a>
-        <a href="appleoffortune.html" class="card">
+        <a href="appleoffortune.html" class="card card-apple">
             <span class="card-icon">🍎</span>
             <div class="card-title">Apple Fortune</div>
-            <div class="card-btn">ACCESS_ENGINE</div>
+            <div class="card-desc">Orchard grid predictive logic.<br>Cell mapping active.</div>
+            <div class="card-btn">INITIALIZE_ENGINE</div>
         </a>
     </div>
 
     <div class="platform-section">
-        <div class="section-tag">COMPATIBLE_CRASH_PLATFORMS</div>
+        <div class="section-tag">COMPATIBLE_PLATFORMS</div>
         <div class="logo-wall">
             <img src="logos/1win.png" alt="1win">
             <img src="logos/1xbet.png" alt="1xbet">
@@ -203,13 +331,44 @@
     </div>
 
     <div class="pricing-list">
-        <div class="section-tag" style="text-align: center; margin-bottom: 20px;">LICENSE_AUTHENTICATION</div>
-        <a href="checkout.html" class="tier"><div class="tier-name">Trial Node</div><div class="tier-duration">24 HOURS</div><div class="tier-price">$30</div></a>
-        <a href="checkout.html" class="tier"><div class="tier-name">Core Network</div><div class="tier-duration">72 HOURS</div><div class="tier-price">$65</div></a>
-        <a href="checkout.html" class="tier" style="border-color: var(--glow-red); background: #080000;"><div class="tier-name">Advanced Pulse ★</div><div class="tier-duration">1 WEEK</div><div class="tier-price">$200</div></a>
-        <a href="checkout.html" class="tier"><div class="tier-name">Extended Node</div><div class="tier-duration">1 MONTH</div><div class="tier-price">$600</div></a>
-        <a href="checkout.html" class="tier"><div class="tier-name">Ultimate Neural</div><div class="tier-duration">LIFETIME</div><div class="tier-price">$2,500</div></a>
-        <a href="checkout.html" class="tier"><div class="tier-name">Reseller Node</div><div class="tier-duration">UNLIMITED</div><div class="tier-price">$6,000</div></a>
+        <div class="section-tag">LICENSE_AUTHENTICATION</div>
+        
+        <a href="checkout.html" class="tier">
+            <div class="tier-name">Trial Node</div>
+            <div class="tier-duration">24 HOURS</div>
+            <div class="tier-price">$30</div>
+        </a>
+        
+        <a href="checkout.html" class="tier">
+            <div class="tier-name">Core Network</div>
+            <div class="tier-duration">72 HOURS</div>
+            <div class="tier-price">$65</div>
+        </a>
+        
+        <a href="checkout.html" class="tier popular">
+            <span class="popular-badge">MOST POPULAR</span>
+            <div class="tier-name">Advanced Pulse</div>
+            <div class="tier-duration">1 WEEK</div>
+            <div class="tier-price">$200</div>
+        </a>
+        
+        <a href="checkout.html" class="tier">
+            <div class="tier-name">Extended Node</div>
+            <div class="tier-duration">1 MONTH</div>
+            <div class="tier-price">$600</div>
+        </a>
+        
+        <a href="checkout.html" class="tier">
+            <div class="tier-name">Ultimate Neural</div>
+            <div class="tier-duration">LIFETIME</div>
+            <div class="tier-price">$2,500</div>
+        </a>
+        
+        <a href="checkout.html" class="tier">
+            <div class="tier-name">Reseller Node</div>
+            <div class="tier-duration">UNLIMITED</div>
+            <div class="tier-price">$6,000</div>
+        </a>
     </div>
 </div>
 
@@ -218,75 +377,130 @@
         <div class="f-brand">
             <img src="logos/Africa.png" alt="AFRICA_HACKS" onerror="this.style.display='none'">
             <p>Institutional-grade neural synchronization for flight and grid-based logic prediction. Secured by Africa Hacks Group.</p>
+            <div class="enc-text">HASH: 0x9F4A2B88...</div>
         </div>
+        
         <div class="f-links">
             <h4>RESOURCES</h4>
             <ul>
-                <li><a href="index.html">Command Gateway</a></li>
-                <li><a href="checkout.html">Licensing</a></li>
-                <li><a href="https://wa.me/212772865239">Direct Contact</a></li>
+                <li><a href="guide.html">Extraction Guide</a></li>
+                <li><a href="proofs.html">Live Network Proofs</a></li>
+                <li><a href="checkout.html">Licensing Portal</a></li>
+                <li><a href="https://wa.me/212772865239">Direct Comms</a></li>
             </ul>
         </div>
+        
         <div class="f-status">
             <div class="status-box">
-                <div class="status-line"><div class="dot"></div> SYSTEMS_ACTIVE</div>
-                <div style="font-size: 9px; color: #222; font-family: 'JetBrains Mono'; margin-top: 10px;">
-                    LOAD: 12.4% | NODES: 8/8<br>REGION: GLOBAL_SYNC
+                <div class="status-header">
+                    <div class="status-line"><div class="status-dot"></div> UPLINK_ESTABLISHED</div>
+                    <div class="status-ping"><span id="ping-ms">18</span>ms</div>
+                </div>
+                <div class="status-grid">
+                    <div>SERVER_LOAD <span id="load-pct">12.4%</span></div>
+                    <div>ACTIVE_NODES <span>8 / 8</span></div>
+                    <div>ENCRYPTION <span>AES-256</span></div>
+                    <div>REGION <span>GLOBAL</span></div>
                 </div>
             </div>
         </div>
     </div>
     <div class="f-bottom">
-        <div>&copy; 2026 AFRICA HACKS. ALL RIGHTS RESERVED.</div>
-        <div>AES-256_ENCRYPTED</div>
+        <div>&copy; 2022-2026 AFRICA HACKS GROUP. ALL RIGHTS RESERVED.</div>
+        <div class="eth-hash">SYSTEM_VER: 4.1.0_STABLE</div>
     </div>
 </footer>
 
 <script>
+    // --- Interactive Neural Canvas ---
     const canvas = document.getElementById('neural-canvas');
     const ctx = canvas.getContext('2d');
     let points = [];
+    let mouse = { x: -1000, y: -1000 };
 
-    function init() {
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    // Reset mouse off-screen when leaving window
+    window.addEventListener('mouseout', () => {
+        mouse.x = -1000;
+        mouse.y = -1000;
+    });
+
+    function initCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         points = [];
-        for(let i=0; i<60; i++) {
+        const numPoints = window.innerWidth < 768 ? 40 : 80; 
+        
+        for(let i=0; i < numPoints; i++) {
             points.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.4,
-                vy: (Math.random() - 0.5) * 0.4
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                baseVx: (Math.random() - 0.5) * 0.5,
+                baseVy: (Math.random() - 0.5) * 0.5
             });
         }
     }
 
-    function draw() {
+    function drawCanvas() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = 'rgba(255, 0, 51, 0.08)';
-        ctx.fillStyle = 'rgba(255, 0, 51, 0.4)';
-
+        
         points.forEach((p, i) => {
-            p.x += p.vx; p.y += p.vy;
-            if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-            if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            // Mouse Repel Physics
+            let dx = p.x - mouse.x;
+            let dy = p.y - mouse.y;
+            let distToMouse = Math.hypot(dx, dy);
+            
+            if (distToMouse < 150) {
+                let force = (150 - distToMouse) / 150;
+                p.vx += (dx / distToMouse) * force * 0.5;
+                p.vy += (dy / distToMouse) * force * 0.5;
+            } else {
+                p.vx += (p.baseVx - p.vx) * 0.05;
+                p.vy += (p.baseVy - p.vy) * 0.05;
+            }
 
-            ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+            p.x += p.vx; 
+            p.y += p.vy;
+
+            if(p.x < 0 || p.x > canvas.width) { p.vx *= -1; p.baseVx *= -1; }
+            if(p.y < 0 || p.y > canvas.height) { p.vy *= -1; p.baseVy *= -1; }
+
+            ctx.fillStyle = 'rgba(255, 0, 51, 0.3)';
+            ctx.beginPath(); 
+            ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); 
+            ctx.fill();
 
             for(let j=i+1; j<points.length; j++) {
                 let p2 = points[j];
                 let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                if(dist < 180) {
-                    ctx.lineWidth = 0.8 * (1 - dist/180);
-                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                if(dist < 140) {
+                    ctx.strokeStyle = `rgba(255, 0, 51, ${0.1 * (1 - dist/140)})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath(); 
+                    ctx.moveTo(p.x, p.y); 
+                    ctx.lineTo(p2.x, p2.y); 
+                    ctx.stroke();
                 }
             }
         });
-        requestAnimationFrame(draw);
+        requestAnimationFrame(drawCanvas);
     }
 
-    window.addEventListener('resize', init);
-    init(); draw();
+    window.addEventListener('resize', initCanvas);
+    initCanvas(); 
+    drawCanvas();
+
+    // --- Fake Server Stats Updates (Footer) ---
+    setInterval(() => {
+        document.getElementById('load-pct').innerText = (12 + Math.random() * 4).toFixed(1) + '%';
+        document.getElementById('ping-ms').innerText = Math.floor(15 + Math.random() * 12);
+    }, 2500);
 </script>
 
 </body>
