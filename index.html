@@ -7,200 +7,286 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700;800&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #030303;
-            --card-bg: rgba(15, 15, 15, 0.7);
-            --crash-red: #ff0033;
-            --apple-gold: #ffcc00;
-            --text-dim: #888;
+            --bg-dark: #020202;
+            --card-bg: rgba(8, 8, 8, 0.95);
+            --glow-red: #ff0033;
+            --glow-red-alpha: rgba(255, 0, 51, 0.15);
+            --text-main: #ffffff;
+            --text-dim: #444;
+            --whatsapp: #25d366;
+            --telegram: #0088cc;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; outline: none; transition: all 0.3s ease; }
         body, html {
             margin: 0; padding: 0;
-            height: 100%; width: 100%;
             background: var(--bg-dark);
             font-family: 'Inter', sans-serif;
-            color: white;
-            overflow: hidden;
+            color: var(--text-main);
+            overflow-x: hidden;
         }
 
-        /* Animated Background Particles */
-        #bg-canvas {
+        /* Neural Background Canvas */
+        #neural-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; pointer-events: none;
         }
 
-        /* CRT Scanline Overlay */
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px),
+                radial-gradient(circle, transparent 20%, black 160%);
             pointer-events: none; z-index: 100;
         }
 
-        .main-wrapper {
+        .container {
             position: relative; z-index: 10;
-            height: 100vh; width: 100%;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 20px;
+            max-width: 1000px; margin: 0 auto;
+            padding: 60px 20px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* Header Logo Section */
-        header {
-            text-align: center; margin-bottom: 50px;
-        }
+        header { text-align: center; margin-bottom: 50px; }
         .main-logo {
-            height: 80px; margin-bottom: 15px;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
-            animation: float 4s infinite ease-in-out;
+            height: 90px; margin-bottom: 20px;
+            filter: drop-shadow(0 0 25px var(--glow-red));
+            animation: float 5s infinite ease-in-out;
         }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
-        .brand-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 900; font-size: 1.8rem; letter-spacing: 5px;
-        }
-        .brand-name span { color: var(--crash-red); text-shadow: 0 0 15px var(--crash-red); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
-        /* Portal Grid */
+        .glitch-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 900; font-size: 2rem; letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+        .glitch-text span { color: var(--glow-red); text-shadow: 2px 0 var(--text-main); }
+
+        /* Support Buttons */
+        .social-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            width: 100%; max-width: 450px; margin-bottom: 60px;
+        }
+        .social-link {
+            padding: 15px; border-radius: 12px; font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; font-weight: 800; text-decoration: none; color: white;
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .wa { background: var(--whatsapp); box-shadow: 0 0 20px rgba(37, 211, 102, 0.1); }
+        .tg { background: var(--telegram); box-shadow: 0 0 20px rgba(0, 136, 204, 0.1); }
+        .social-link:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+        /* Game Access Cards */
         .portal-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 30px; width: 100%; max-width: 900px;
+            gap: 25px; width: 100%; margin-bottom: 80px;
+        }
+        .card {
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
+            padding: 40px 20px; border-radius: 25px; text-decoration: none;
+            color: white; text-align: center; backdrop-filter: blur(10px);
+        }
+        .card:hover { border-color: var(--glow-red); transform: translateY(-8px); box-shadow: 0 15px 30px var(--glow-red-alpha); }
+        .card-icon { font-size: 40px; display: block; margin-bottom: 15px; }
+        .card-title { font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; }
+        .card-btn {
+            display: inline-block; padding: 10px 30px; background: var(--glow-red);
+            border-radius: 50px; font-size: 10px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
         }
 
-        .engine-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            padding: 40px;
-            text-decoration: none;
-            color: white;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; align-items: center;
-            position: relative; overflow: hidden;
+        /* --- ALL 12 PLATFORMS --- */
+        .platform-section { width: 100%; text-align: center; margin-bottom: 80px; }
+        .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 5px; margin-bottom: 40px; text-transform: uppercase; }
+        .logo-wall {
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 30px 40px;
         }
-
-        .engine-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            background: rgba(25, 25, 25, 0.8);
-            border-color: rgba(255, 255, 255, 0.15);
+        .logo-wall img {
+            height: 25px; max-width: 100px; object-fit: contain;
+            filter: grayscale(1) brightness(1.5);
+            opacity: 0.3;
         }
+        .logo-wall img:hover { filter: drop-shadow(0 0 8px var(--glow-red)) brightness(2); opacity: 1; transform: scale(1.1); }
 
-        .engine-icon {
-            font-size: 50px; margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+        /* --- ALL 6 PRICING TIERS --- */
+        .pricing-list { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 80px; }
+        .tier {
+            display: grid; grid-template-columns: 1fr auto auto;
+            align-items: center; background: rgba(10, 10, 10, 0.6); padding: 18px 30px;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); text-decoration: none; color: white;
         }
+        .tier:hover { background: #0a0000; border-color: var(--glow-red); padding-left: 40px; }
+        .tier-name { font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+        .tier-price { color: var(--glow-red); font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 16px; margin-left: 30px; }
+        .tier-duration { font-size: 9px; color: #444; font-family: 'JetBrains Mono', monospace; margin-left: 15px; text-align: right; width: 80px; }
 
-        .engine-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px; font-weight: 800; letter-spacing: 4px;
-            margin-bottom: 10px; color: var(--text-dim);
-        }
-
-        .engine-title {
-            font-size: 24px; font-weight: 900; margin-bottom: 25px;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        .btn-enter {
-            padding: 14px 35px; border-radius: 12px;
-            font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 12px;
-            transition: 0.3s; width: 100%; text-align: center;
-        }
-
-        /* Crash Card Styles */
-        .card-crash:hover { box-shadow: 0 20px 50px rgba(255, 0, 51, 0.15); border-color: var(--crash-red); }
-        .card-crash .btn-enter { background: var(--crash-red); color: white; box-shadow: 0 5px 15px rgba(255, 0, 51, 0.3); }
-        .card-crash:hover .engine-title { color: var(--crash-red); }
-
-        /* Apple Card Styles */
-        .card-apple:hover { box-shadow: 0 20px 50px rgba(255, 204, 0, 0.15); border-color: var(--apple-gold); }
-        .card-apple .btn-enter { background: var(--apple-gold); color: black; box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3); }
-        .card-apple:hover .engine-title { color: var(--apple-gold); }
-
-        /* Footer Status */
+        /* --- PROFESSIONAL FOOTER --- */
         footer {
-            position: absolute; bottom: 30px; width: 100%;
-            text-align: center; font-family: 'JetBrains Mono', monospace;
-            font-size: 9px; color: #333; letter-spacing: 3px;
+            width: 100%; background: #050505; border-top: 1px solid #111;
+            padding: 60px 20px 40px; position: relative; z-index: 10;
+        }
+        .footer-content {
+            max-width: 1000px; margin: 0 auto;
+            display: grid; grid-template-columns: 1.5fr 1fr 1.2fr; gap: 40px;
+        }
+        .f-brand img { height: 35px; filter: grayscale(1); margin-bottom: 15px; opacity: 0.5; }
+        .f-brand p { color: #333; font-size: 11px; line-height: 1.6; max-width: 250px; }
+        
+        .f-links h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--glow-red); margin-bottom: 15px; }
+        .f-links ul { list-style: none; padding: 0; }
+        .f-links a { color: #555; text-decoration: none; font-size: 12px; display: block; margin-bottom: 8px; }
+        .f-links a:hover { color: white; transform: translateX(5px); }
+
+        .status-box { background: #080808; padding: 15px; border-radius: 10px; border: 1px solid #111; }
+        .status-line { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #25d366; margin-bottom: 5px; }
+        .dot { height: 6px; width: 6px; background: #25d366; border-radius: 50%; box-shadow: 0 0 10px #25d366; }
+
+        .f-bottom {
+            max-width: 1000px; margin: 40px auto 0; padding-top: 25px;
+            border-top: 1px solid #111; display: flex; justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #222;
         }
 
         @media (max-width: 768px) {
-            .portal-grid { grid-template-columns: 1fr; gap: 15px; }
-            .engine-card { padding: 30px; }
-            .main-logo { height: 60px; }
+            .portal-grid, .footer-content { grid-template-columns: 1fr; }
+            .tier { grid-template-columns: 1fr auto; padding: 15px 20px; }
+            .tier-duration { display: none; }
+            .footer-content { text-align: center; }
+            .f-brand p { margin: 0 auto; }
         }
     </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<div class="overlay"></div>
+<canvas id="neural-canvas"></canvas>
 
-<div class="main-wrapper">
+<div class="container">
     <header>
         <img src="logos/Africa.png" alt="AFRICA_HACKS" class="main-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2111/2111646.png'">
-        <div class="brand-name">AFRICA<span>_HACKS</span></div>
-        <div style="font-size: 10px; color: #555; font-family: 'JetBrains Mono'; margin-top: 10px;">NEURAL_GATEWAY_V4.01</div>
+        <div class="glitch-text">AFRICA<span>_HACKS</span></div>
     </header>
 
-    <div class="portal-grid">
-        <a href="crash.html" class="engine-card card-crash">
-            <div class="engine-icon">🚀</div>
-            <div class="engine-name">CORE_ENGINE_01</div>
-            <div class="engine-title">Crash Predictor</div>
-            <div class="btn-enter">INITIALIZE SYNC</div>
-        </a>
+    <div class="social-grid">
+        <a href="https://wa.me/212772865239" class="social-link wa">WHATSAPP_SUPPORT</a>
+        <a href="https://t.me/enh_os" class="social-link tg">TELEGRAM_CHANNEL</a>
+    </div>
 
-        <a href="appleoffortune.html" class="engine-card card-apple">
-            <div class="engine-icon">🍎</div>
-            <div class="engine-name">CORE_ENGINE_02</div>
-            <div class="engine-title">Apple Fortune</div>
-            <div class="btn-enter">INITIALIZE SYNC</div>
+    <div class="portal-grid">
+        <a href="crash.html" class="card">
+            <span class="card-icon">🚀</span>
+            <div class="card-title">Crash Neural</div>
+            <div class="card-btn">ACCESS_ENGINE</div>
+        </a>
+        <a href="appleoffortune.html" class="card">
+            <span class="card-icon">🍎</span>
+            <div class="card-title">Apple Fortune</div>
+            <div class="card-btn">ACCESS_ENGINE</div>
         </a>
     </div>
 
-    <footer>
-        SECURED BY AFRICA HACKS QUANTUM ENCRYPTION // 2026
-    </footer>
+    <div class="platform-section">
+        <div class="section-tag">COMPATIBLE_CRASH_PLATFORMS</div>
+        <div class="logo-wall">
+            <img src="logos/1win.png" alt="1win">
+            <img src="logos/1xbet.png" alt="1xbet">
+            <img src="logos/msport.png" alt="msport">
+            <img src="logos/bet9ja.png" alt="bet9ja">
+            <img src="logos/betway.png" alt="betway">
+            <img src="logos/linebet.png" alt="linebet">
+            <img src="logos/melbet.png" alt="melbet">
+            <img src="logos/mozzart.png" alt="mozzartbet">
+            <img src="logos/premierbet.png" alt="premierbet">
+            <img src="logos/sportybet.png" alt="sportybet">
+            <img src="logos/goobet.png" alt="goobet">
+            <img src="logos/betika.png" alt="betika">
+        </div>
+    </div>
+
+    <div class="pricing-list">
+        <div class="section-tag" style="text-align: center; margin-bottom: 20px;">LICENSE_AUTHENTICATION</div>
+        <a href="checkout.html" class="tier"><div class="tier-name">Trial Node</div><div class="tier-duration">24 HOURS</div><div class="tier-price">$30</div></a>
+        <a href="checkout.html" class="tier"><div class="tier-name">Core Network</div><div class="tier-duration">72 HOURS</div><div class="tier-price">$65</div></a>
+        <a href="checkout.html" class="tier" style="border-color: var(--glow-red); background: #080000;"><div class="tier-name">Advanced Pulse ★</div><div class="tier-duration">1 WEEK</div><div class="tier-price">$200</div></a>
+        <a href="checkout.html" class="tier"><div class="tier-name">Extended Node</div><div class="tier-duration">1 MONTH</div><div class="tier-price">$600</div></a>
+        <a href="checkout.html" class="tier"><div class="tier-name">Ultimate Neural</div><div class="tier-duration">LIFETIME</div><div class="tier-price">$2,500</div></a>
+        <a href="checkout.html" class="tier"><div class="tier-name">Reseller Node</div><div class="tier-duration">UNLIMITED</div><div class="tier-price">$6,000</div></a>
+    </div>
 </div>
 
+<footer>
+    <div class="footer-content">
+        <div class="f-brand">
+            <img src="logos/Africa.png" alt="AFRICA_HACKS" onerror="this.style.display='none'">
+            <p>Institutional-grade neural synchronization for flight and grid-based logic prediction. Secured by Africa Hacks Group.</p>
+        </div>
+        <div class="f-links">
+            <h4>RESOURCES</h4>
+            <ul>
+                <li><a href="index.html">Command Gateway</a></li>
+                <li><a href="checkout.html">Licensing</a></li>
+                <li><a href="https://wa.me/212772865239">Direct Contact</a></li>
+            </ul>
+        </div>
+        <div class="f-status">
+            <div class="status-box">
+                <div class="status-line"><div class="dot"></div> SYSTEMS_ACTIVE</div>
+                <div style="font-size: 9px; color: #222; font-family: 'JetBrains Mono'; margin-top: 10px;">
+                    LOAD: 12.4% | NODES: 8/8<br>REGION: GLOBAL_SYNC
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="f-bottom">
+        <div>&copy; 2026 AFRICA HACKS. ALL RIGHTS RESERVED.</div>
+        <div>AES-256_ENCRYPTED</div>
+    </div>
+</footer>
+
 <script>
-    // Simple Particle Background
-    const canvas = document.getElementById('bg-canvas');
+    const canvas = document.getElementById('neural-canvas');
     const ctx = canvas.getContext('2d');
-    let particles = [];
+    let points = [];
 
     function init() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        particles = [];
+        points = [];
         for(let i=0; i<60; i++) {
-            particles.push({
+            points.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                v: 0.2 + Math.random() * 0.5,
-                size: 1 + Math.random() * 2
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4
             });
         }
     }
 
-    function animate() {
+    function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        particles.forEach(p => {
-            p.y -= p.v;
-            if(p.y < 0) p.y = canvas.height;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 0, 51, 0.08)';
+        ctx.fillStyle = 'rgba(255, 0, 51, 0.4)';
+
+        points.forEach((p, i) => {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+            ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+
+            for(let j=i+1; j<points.length; j++) {
+                let p2 = points[j];
+                let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if(dist < 180) {
+                    ctx.lineWidth = 0.8 * (1 - dist/180);
+                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                }
+            }
         });
-        requestAnimationFrame(animate);
+        requestAnimationFrame(draw);
     }
 
     window.addEventListener('resize', init);
-    init();
-    animate();
+    init(); draw();
 </script>
 
 </body>
