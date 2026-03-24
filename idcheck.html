@@ -14,7 +14,8 @@
             --bg: #050000; 
             --panel: rgba(15, 5, 5, 0.95);
             --border: #330000;
-            --success: #ff3366;
+            --success: #00ff66;
+            --cyan: #00ffff;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -34,10 +35,7 @@
             animation: scanline 10s linear infinite;
         }
 
-        @keyframes scanline {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100vh; }
-        }
+        @keyframes scanline { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
 
         /* --- CONTAINER & ENTRANCE ANIMATION --- */
         .container {
@@ -63,8 +61,8 @@
         
         @keyframes glitch {
             0%, 96%, 98%, 100% { text-shadow: none; transform: translate(0); }
-            97% { text-shadow: -2px 0 #0ff, 2px 0 var(--red); transform: translate(-2px, 1px); }
-            99% { text-shadow: 2px 0 #0ff, -2px 0 var(--red); transform: translate(2px, -1px); }
+            97% { text-shadow: -2px 0 var(--cyan), 2px 0 var(--red); transform: translate(-2px, 1px); }
+            99% { text-shadow: 2px 0 var(--cyan), -2px 0 var(--red); transform: translate(2px, -1px); }
         }
 
         .header p { font-size: 9px; color: #777; text-transform: uppercase; margin-top: 8px; letter-spacing: 2px; }
@@ -81,60 +79,22 @@
         input::placeholder { color: #444; letter-spacing: 1px; }
 
         /* --- PLATFORM GRID WITH LOGOS --- */
-        .platform-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+        .platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
 
         .plat-card {
-            background: #080202;
-            border: 1px solid #1a0505;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 5px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 50px;
+            background: #080202; border: 1px solid #1a0505; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; padding: 8px 5px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); height: 50px;
         }
-        .plat-card img {
-            max-width: 80%;
-            max-height: 30px;
-            filter: grayscale(1) opacity(0.4);
-            transition: 0.2s;
-            object-fit: contain;
-        }
-        .plat-card:hover {
-            border-color: #550011;
-            transform: translateY(-2px);
-        }
-        .plat-card.active {
-            border-color: var(--red);
-            background: var(--red-dim);
-            box-shadow: 0 0 15px var(--red-glow);
-            transform: scale(1.02);
-        }
-        .plat-card.active img {
-            filter: none;
-            opacity: 1;
-        }
+        .plat-card img { max-width: 80%; max-height: 30px; filter: grayscale(1) opacity(0.4); transition: 0.2s; object-fit: contain; }
+        
+        .plat-card:active { transform: scale(0.95); } /* Touch feedback */
+        .plat-card:hover { border-color: #550011; transform: translateY(-2px); }
+        .plat-card.active { border-color: var(--red); background: var(--red-dim); box-shadow: 0 0 15px var(--red-glow); transform: scale(1.02); }
+        .plat-card.active img { filter: none; opacity: 1; }
 
-        /* Special style for the "OTHER" text card */
-        .plat-card.other-card {
-            font-size: 10px;
-            font-weight: bold;
-            color: #555;
-            letter-spacing: 1px;
-        }
-        .plat-card.other-card.active {
-            color: var(--red);
-        }
-        .plat-card.other-card img {
-            display: none;
-        }
+        .plat-card.other-card { font-size: 10px; font-weight: bold; color: #555; letter-spacing: 1px; border-style: dashed; }
+        .plat-card.other-card.active { color: var(--red); border-style: solid; }
 
         .script-selector { display: flex; gap: 10px; margin-bottom: 25px; }
         .script-opt { 
@@ -142,7 +102,7 @@
             border-radius: 8px; cursor: pointer; color: #555; transition: 0.3s; 
             font-weight: bold; font-size: 10px; letter-spacing: 1px;
         }
-        .script-opt:hover { border-color: #550011; }
+        .script-opt:active { transform: scale(0.95); }
         .script-opt.active { border-color: var(--red); color: var(--red); background: var(--red-dim); box-shadow: 0 0 15px var(--red-dim); }
 
         #custom-plat-box { display: none; animation: slideUpFade 0.3s ease forwards; }
@@ -153,48 +113,34 @@
             border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
             text-transform: uppercase; letter-spacing: 4px; transition: all 0.3s ease;
             box-shadow: 0 0 20px rgba(255, 0, 51, 0.3); position: relative; overflow: hidden;
-            animation: btnPulse 2s infinite;
         }
         .btn-check:hover { box-shadow: 0 0 30px rgba(255, 0, 51, 0.6); transform: translateY(-2px); }
         .btn-check:active { transform: scale(0.96); }
-        .btn-check:disabled { background: #1a0505; color: #444; box-shadow: none; cursor: not-allowed; animation: none; border: 1px solid #330000; }
+        .btn-check:disabled { background: #1a0505; color: #444; box-shadow: none; cursor: not-allowed; border: 1px solid #330000; }
 
-        @keyframes btnPulse {
-            0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.3); }
-            50% { box-shadow: 0 0 35px rgba(255, 0, 51, 0.6); }
-        }
-
-        /* --- LOADING OVERLAY --- */
-        #loader { display: none; text-align: center; margin-top: 20px; animation: slideUpFade 0.5s ease; }
+        /* --- LOADING OVERLAY & NEURAL CANVAS --- */
+        #loader { display: none; text-align: center; margin-top: 15px; animation: slideUpFade 0.5s ease; width: 100%; }
         
-        .spinner-container { position: relative; width: 40px; height: 40px; margin: 0 auto 15px; }
-        .spinner-ring {
-            width: 100%; height: 100%; border: 2px solid #220000; border-top-color: var(--red);
-            border-radius: 50%; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-        }
-        .spinner-core {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 10px; height: 10px; background: var(--red); border-radius: 50%;
-            box-shadow: 0 0 15px var(--red); animation: pulseGlow 1s ease-in-out infinite alternate;
-        }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes pulseGlow { from { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } }
+        #neural-loader { width: 100%; height: 120px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); margin-bottom: 15px; }
 
         #loader-text { font-size: 10px; color: var(--red); letter-spacing: 2px; font-weight: bold; margin-bottom: 8px; text-shadow: 0 0 8px var(--red); }
         .progress-bar-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; margin: 10px 0; }
         .progress-bar-fill { height: 100%; width: 0%; background: var(--red); box-shadow: 0 0 10px var(--red); transition: width 0.3s ease; }
         #timer-text { font-size: 9px; color: #666; font-family: monospace; }
 
-        /* --- SUCCESS MESSAGE --- */
+        /* --- SUCCESS MESSAGE & REDIRECT --- */
         #status-msg { margin-top: 20px; text-align: center; font-weight: 700; display: none; line-height: 1.6; animation: slideUpFade 0.5s ease; }
-        .success { color: white; text-shadow: 0 0 15px var(--red); padding: 15px; border: 1px solid var(--red); background: rgba(255,0,51,0.1); border-radius: 8px; display: inline-block; width: 100%; letter-spacing: 1px; }
+        .success { color: white; text-shadow: 0 0 15px var(--red); padding: 15px; border: 1px solid var(--success); background: rgba(0,255,102,0.05); border-radius: 8px; display: inline-block; width: 100%; letter-spacing: 1px; }
+
+        .redirecting { margin-top: 15px; font-size: 10px; color: var(--cyan); animation: pulseGlow 1s infinite alternate; letter-spacing: 2px; }
+
+        @keyframes pulseGlow { from { opacity: 0.5; } to { opacity: 1; text-shadow: 0 0 10px var(--cyan); } }
 
         @media (max-width: 500px) {
             .container { padding: 20px 15px; }
             .platform-grid { gap: 8px; }
             .plat-card { height: 45px; }
-            .plat-card img { max-height: 24px; }
+            .plat-card img { max-height: 20px; }
         }
     </style>
 </head>
@@ -209,19 +155,17 @@
     </div>
 
     <label>Target User ID</label>
-    <input type="text" id="user-id" placeholder="ENTER ACCOUNT ID">
+    <input type="text" id="user-id" placeholder="ENTER ACCOUNT ID" autocomplete="off">
 
     <label>Select Target Node</label>
     <div class="platform-grid" id="platform-grid">
-        <!-- Logo cards will be generated dynamically to avoid hardcoding each image path,
-             but we'll embed them manually for clarity. Using the exact logos from your example. -->
+        <div class="plat-card active" data-plat="1XBET"><img src="logos/1xbet.png" alt="1xbet"></div>
         <div class="plat-card" data-plat="1WIN"><img src="logos/1win.png" alt="1win"></div>
-        <div class="plat-card" data-plat="1XBET"><img src="logos/1xbet.png" alt="1xbet"></div>
+        <div class="plat-card" data-plat="MELBET"><img src="logos/melbet.png" alt="melbet"></div>
         <div class="plat-card" data-plat="MSPORT"><img src="logos/msport.png" alt="msport"></div>
         <div class="plat-card" data-plat="BET9JA"><img src="logos/bet9ja.png" alt="bet9ja"></div>
         <div class="plat-card" data-plat="BETWAY"><img src="logos/betway.png" alt="betway"></div>
         <div class="plat-card" data-plat="LINEBET"><img src="logos/linebet.png" alt="linebet"></div>
-        <div class="plat-card" data-plat="MELBET"><img src="logos/melbet.png" alt="melbet"></div>
         <div class="plat-card" data-plat="MOZZART"><img src="logos/mozzart.png" alt="mozzartbet"></div>
         <div class="plat-card" data-plat="PREMIER"><img src="logos/premierbet.png" alt="premierbet"></div>
         <div class="plat-card" data-plat="SPORTY"><img src="logos/sportybet.png" alt="sportybet"></div>
@@ -232,7 +176,7 @@
 
     <div id="custom-plat-box">
         <label>Manual Node Name</label>
-        <input type="text" id="custom-name" placeholder="TYPE PLATFORM NAME...">
+        <input type="text" id="custom-name" placeholder="TYPE PLATFORM NAME..." autocomplete="off">
     </div>
 
     <label>Select Payload Script</label>
@@ -244,10 +188,7 @@
     <button class="btn-check" onclick="startCheck()" id="check-btn">INITIALIZE BYPASS</button>
 
     <div id="loader">
-        <div class="spinner-container">
-            <div class="spinner-ring"></div>
-            <div class="spinner-core"></div>
-        </div>
+        <canvas id="neural-loader"></canvas>
         <div id="loader-text">CONNECTING TO DATABASE...</div>
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
         <div id="timer-text">EST. TIME: CALCULATING...</div>
@@ -257,6 +198,11 @@
 </div>
 
 <script>
+    // --- HAPTIC FEEDBACK (MOBILE) ---
+    function triggerHaptic(pattern) {
+        if (navigator.vibrate) navigator.vibrate(pattern);
+    }
+
     // --- WEB AUDIO API (SOUND EFFECTS) ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
@@ -272,10 +218,8 @@
         const gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        
         gain.gain.setValueAtTime(vol, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
@@ -283,27 +227,28 @@
     }
 
     const sfx = {
-        click: () => playSound('square', 800, 0.05, 0.05),
-        scan: () => playSound('sawtooth', 300, 0.1, 0.02),
+        click: () => { playSound('square', 800, 0.05, 0.05); triggerHaptic(10); },
+        dataTick: () => playSound('sawtooth', 300 + Math.random()*200, 0.05, 0.01), // Fast processing sound
         success: () => {
-            playSound('sine', 523.25, 0.2, 0.1); // C5
-            setTimeout(() => playSound('sine', 659.25, 0.2, 0.1), 150); // E5
-            setTimeout(() => playSound('sine', 783.99, 0.4, 0.1), 300); // G5
+            playSound('sine', 523.25, 0.2, 0.1); 
+            setTimeout(() => playSound('sine', 659.25, 0.2, 0.1), 150); 
+            setTimeout(() => playSound('sine', 783.99, 0.5, 0.1), 300); 
+            triggerHaptic([100, 50, 100, 50, 200]); // Triumphant buzz
         },
-        error: () => playSound('sawtooth', 150, 0.3, 0.1)
+        error: () => { playSound('sawtooth', 150, 0.3, 0.1); triggerHaptic([50, 50, 50]); },
+        redirect: () => playSound('sine', 800, 0.6, 0.1) // Whoosh sound before page load
     };
 
-    // --- LOGIC & UI ---
-    let selectedPlatform = "1XBET"; // default active is first card (1XBET)
-    let selectedScript = "CRASH INTERCEPT";
+    // --- STATE LOGIC ---
+    let selectedPlatform = "1XBET";
+    let selectedScript = "Crash";
 
     function setPlat(el, name) {
         sfx.click();
         document.querySelectorAll('.plat-card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         selectedPlatform = name;
-        const customBox = document.getElementById('custom-plat-box');
-        customBox.style.display = (name === 'OTHER') ? 'block' : 'none';
+        document.getElementById('custom-plat-box').style.display = (name === 'OTHER') ? 'block' : 'none';
     }
 
     function setScript(el, name) {
@@ -313,7 +258,15 @@
         selectedScript = name;
     }
 
-    // Scramble effect
+    // Attach click handlers to platform cards
+    document.querySelectorAll('.plat-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setPlat(card, card.getAttribute('data-plat'));
+        });
+    });
+
+    // --- TEXT SCRAMBLE ALGORITHM ---
     function scrambleText(element, newText) {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
         let iterations = 0;
@@ -327,10 +280,64 @@
         }, 30);
     }
 
-    function startCheck() {
-        initAudio(); // Required to unlock audio on first button press
+    // --- NEURAL NETWORK CANVAS ANIMATION ---
+    const nlCanvas = document.getElementById('neural-loader');
+    const nlCtx = nlCanvas.getContext('2d');
+    let nlParticles = [];
+    let nlAnimFrame;
+
+    function startNeuralLoader() {
+        nlCanvas.width = nlCanvas.clientWidth;
+        nlCanvas.height = nlCanvas.clientHeight;
+        nlParticles = [];
+        for(let i=0; i<35; i++) {
+            nlParticles.push({
+                x: Math.random() * nlCanvas.width,
+                y: Math.random() * nlCanvas.height,
+                vx: (Math.random()-0.5) * 2,
+                vy: (Math.random()-0.5) * 2,
+                radius: Math.random() * 2 + 1,
+                flashTimer: Math.random() * 100
+            });
+        }
+        animateNeuralLoader();
+    }
+
+    function animateNeuralLoader() {
+        nlCtx.clearRect(0, 0, nlCanvas.width, nlCanvas.height);
         
+        nlParticles.forEach((p, i) => {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x < 0 || p.x > nlCanvas.width) p.vx *= -1;
+            if(p.y < 0 || p.y > nlCanvas.height) p.vy *= -1;
+            
+            // Random neuron firing (flash)
+            p.flashTimer--;
+            let isFiring = p.flashTimer <= 0;
+            if (isFiring) p.flashTimer = Math.random() * 100 + 50;
+
+            nlCtx.fillStyle = isFiring ? "#00ffff" : "rgba(255,0,51,0.6)";
+            nlCtx.beginPath(); nlCtx.arc(p.x, p.y, isFiring ? p.radius*2 : p.radius, 0, Math.PI*2); nlCtx.fill();
+            
+            // Draw connections
+            for(let j=i+1; j<nlParticles.length; j++) {
+                let p2 = nlParticles[j];
+                let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if(dist < 60) {
+                    nlCtx.strokeStyle = isFiring ? `rgba(0,255,255,${0.5 - dist/60*0.5})` : `rgba(255,0,51,${0.3 - dist/60*0.3})`;
+                    nlCtx.lineWidth = isFiring ? 1 : 0.5;
+                    nlCtx.beginPath(); nlCtx.moveTo(p.x, p.y); nlCtx.lineTo(p2.x, p2.y); nlCtx.stroke();
+                }
+            }
+        });
+        nlAnimFrame = requestAnimationFrame(animateNeuralLoader);
+    }
+
+    // --- VERIFICATION PROCESS ---
+    function startCheck() {
+        initAudio(); 
         const id = document.getElementById('user-id').value;
+        
         if(!id) { 
             sfx.error();
             const input = document.getElementById('user-id');
@@ -340,6 +347,7 @@
         }
 
         sfx.click();
+        triggerHaptic([20, 30, 20]); // Sequence for starting
 
         const btn = document.getElementById('check-btn');
         const loader = document.getElementById('loader');
@@ -348,26 +356,37 @@
         const progressBar = document.getElementById('progress-bar');
         const status = document.getElementById('status-msg');
 
-        // Reset UI
-        btn.disabled = true;
-        btn.innerText = "PROCESSING...";
+        // Hide UI, Show Loader
+        document.querySelector('.platform-grid').style.display = 'none';
+        document.querySelector('.script-selector').style.display = 'none';
+        document.querySelectorAll('label').forEach(l => l.style.display = 'none');
+        document.getElementById('custom-plat-box').style.display = 'none';
+        document.getElementById('user-id').style.display = 'none';
+        
+        btn.style.display = 'none';
         loader.style.display = 'block';
         status.style.display = 'none';
         progressBar.style.width = '0%';
 
-        // Dynamic Wait Time (15-25s)
-        const waitTime = Math.floor(Math.random() * (25 - 15 + 1)) + 15; 
+        // Start Neural Animation
+        startNeuralLoader();
+
+        // Dynamic Wait Time (25-45s)
+        const waitTime = Math.floor(Math.random() * (45 - 25 + 1)) + 25; 
         let elapsed = 0;
 
-        // Sound loop
-        const scanSoundLoop = setInterval(() => { sfx.scan(); }, 800);
+        // Data Processing Sound Loop
+        const dataSoundLoop = setInterval(() => { sfx.dataTick(); }, 150);
+
+        let targetPlat = selectedPlatform === 'OTHER' ? (document.getElementById('custom-name').value || 'UNKNOWN_NODE') : selectedPlatform;
 
         const phases = [
             { time: 0, text: "INITIATING CORE LINK..." },
-            { time: Math.floor(waitTime * 0.2), text: "BYPASSING SECURITY FIREWALL..." },
-            { time: Math.floor(waitTime * 0.4), text: `LOCATING ID [ ${id} ] IN DATABASE...` },
-            { time: Math.floor(waitTime * 0.6), text: `INJECTING ${selectedScript} PAYLOAD...` },
-            { time: Math.floor(waitTime * 0.8), text: "FINALIZING HANDSHAKE PROTOCOL..." }
+            { time: Math.floor(waitTime * 0.15), text: `LOCATING ID [ ${id} ] ON ${targetPlat} SERVERS...` },
+            { time: Math.floor(waitTime * 0.35), text: "BYPASSING SECURITY FIREWALL..." },
+            { time: Math.floor(waitTime * 0.55), text: `SYNCING ${selectedScript.toUpperCase()} NEURAL WEIGHTS...` },
+            { time: Math.floor(waitTime * 0.80), text: "EXTRACTING EXPLOIT SEED..." },
+            { time: Math.floor(waitTime * 0.90), text: "FINALIZING HANDSHAKE PROTOCOL..." }
         ];
 
         const interval = setInterval(() => {
@@ -383,45 +402,42 @@
 
             if (elapsed >= waitTime) {
                 clearInterval(interval);
-                clearInterval(scanSoundLoop);
+                clearInterval(dataSoundLoop);
+                cancelAnimationFrame(nlAnimFrame); // Stop neural canvas
+                
                 sfx.success();
                 
                 loader.style.display = 'none';
                 status.style.display = 'block';
                 
-                let targetPlat = selectedPlatform === 'OTHER' ? (document.getElementById('custom-name').value || 'UNKNOWN') : selectedPlatform;
-                
                 status.innerHTML = `<div class="success">
-                    <span style="font-size:16px; color:#fff;">VERIFICATION COMPLETE</span><br><br>
-                    <span style="color:#aaa; font-size:10px;">ID: <span style="color:var(--red)">${id}</span> | PLATFORM: <span style="color:var(--red)">${targetPlat}</span></span><br><br>
-                    THE <strong style="color:var(--red);">${selectedScript}</strong> ALGORITHM IS NOW SYNCED AND READY FOR EXTRACTION.
-                </div>`;
-                btn.style.display = 'none';
+                    <span style="font-size:16px; color:#00ff66; font-weight:900;">VERIFICATION COMPLETE</span><br><br>
+                    <span style="color:#aaa; font-size:10px;">ID: <span style="color:white">${id}</span> | PLATFORM: <span style="color:white">${targetPlat}</span></span><br><br>
+                    THE <strong style="color:var(--cyan);">${selectedScript.toUpperCase()}</strong> ALGORITHM IS SECURED FOR YOUR ACCOUNT.
+                </div>
+                <div class="redirecting" id="redirect-text">INITIALIZING SECURE TUNNEL...</div>`;
+                
+                // === SEAMLESS REDIRECTION LOGIC ===
+                setTimeout(() => {
+                    sfx.redirect();
+                    scrambleText(document.getElementById('redirect-text'), "REDIRECTING TO DASHBOARD...");
+                    triggerHaptic([50, 50, 100]); 
+                    
+                    setTimeout(() => {
+                        // Store the selected node to auto-load in the next page
+                        localStorage.setItem('selected_node', targetPlat);
+                        
+                        // Redirect based on script choice
+                        if (selectedScript === 'Crash') {
+                            window.location.href = 'crash.html';
+                        } else {
+                            window.location.href = 'aofpredictor.html';
+                        }
+                    }, 1200);
+                }, 2500); // Give user 2.5 seconds to read success message
             }
         }, 1000);
     }
-
-    // Attach click handlers to all platform cards (including the "OTHER" card)
-    function initPlatforms() {
-        const cards = document.querySelectorAll('.plat-card');
-        cards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const platName = card.getAttribute('data-plat');
-                if (platName) {
-                    setPlat(card, platName);
-                }
-            });
-        });
-        // Set initial active (1XBET is the first card with data-plat="1XBET")
-        const defaultActive = document.querySelector('.plat-card[data-plat="1XBET"]');
-        if (defaultActive) setPlat(defaultActive, '1XBET');
-    }
-
-    // Run after DOM load
-    window.addEventListener('DOMContentLoaded', () => {
-        initPlatforms();
-    });
 </script>
 </body>
 </html>
