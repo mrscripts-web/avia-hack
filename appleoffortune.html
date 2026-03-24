@@ -438,6 +438,7 @@
             justify-content: center;
             z-index: 2;
             min-height: 0;
+            position: relative;
         }
 
         .orchard-grid {
@@ -448,6 +449,8 @@
             width: 100%;
             height: 100%;
             max-height: 380px;
+            position: relative;
+            z-index: 3;
         }
 
         .row-label {
@@ -510,6 +513,46 @@
         .row-label.medium { color: var(--glow-gold); }
         .row-label.hard { color: #ff8800; }
         .row-label.extreme { color: var(--apple-red); }
+
+        /* --- LOCK OVERLAY --- */
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            pointer-events: none;
+            border: 1px solid var(--glow-gold);
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+            text-align: center;
+            padding: 15px;
+        }
+        .lock-overlay .lock-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+            filter: drop-shadow(0 0 8px var(--glow-gold));
+        }
+        .lock-overlay .lock-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--glow-gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .lock-overlay .lock-sub {
+            font-size: 9px;
+            color: #aaa;
+        }
 
         /* --- Stats Strip --- */
         .stats-strip {
@@ -1193,6 +1236,8 @@
             .orchard-cell { font-size: 12px; }
             .orchard-grid { gap: 2px; }
             .viewport { height: 460px; }
+            .lock-overlay .lock-icon { font-size: 36px; }
+            .lock-overlay .lock-text { font-size: 11px; }
         }
     </style>
 </head>
@@ -1227,6 +1272,12 @@
         </div>
         <div class="orchard-wrapper">
             <div class="orchard-grid" id="orchard-grid"></div>
+            <!-- LOCK OVERLAY (added) -->
+            <div class="lock-overlay">
+                <span class="lock-icon">🔒</span>
+                <div class="lock-text">LICENSE REQUIRED</div>
+                <div class="lock-sub">Purchase to unlock live predictions</div>
+            </div>
         </div>
         <div id="status-msg" class="apple-status">NEURAL_SYNC_ACTIVE</div>
         <div class="disclaimer-text">THIS ISN'T THE REAL PREDICTIONS — BUY THE LICENCE KEY FOR ACCURATE PREDICTIONS</div>
