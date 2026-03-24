@@ -8,13 +8,13 @@
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
 
         :root { 
-            --gold: #ffcc00; 
-            --gold-glow: rgba(255, 204, 0, 0.4);
-            --gold-dim: rgba(255, 204, 0, 0.05);
-            --bg: #0b0f07; 
-            --panel: rgba(20, 24, 15, 0.95);
-            --border: #2a1f0a;
-            --success: #00ff66;
+            --red: #ff0033; 
+            --red-glow: rgba(255, 0, 51, 0.5);
+            --red-dim: rgba(255, 0, 51, 0.08);
+            --bg: #050000; 
+            --panel: rgba(15, 5, 5, 0.95);
+            --border: #330000;
+            --success: #ff3366;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -22,73 +22,180 @@
         body { 
             background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; 
             margin: 0; display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; font-size: 12px; user-select: none;
+            min-height: 100vh; font-size: 12px; user-select: none; overflow: hidden;
         }
 
+        /* --- BACKGROUND EFFECTS --- */
         .crt-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 204, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background: linear-gradient(rgba(18, 0, 0, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 51, 0.04), rgba(0, 0, 0, 0.01), rgba(255, 0, 51, 0.02));
             z-index: 1000; background-size: 100% 4px, 3px 100%;
+            animation: scanline 10s linear infinite;
         }
 
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100vh; }
+        }
+
+        /* --- CONTAINER & ENTRANCE ANIMATION --- */
         .container {
-            width: 100%; max-width: 450px; padding: 25px;
+            width: 100%; max-width: 500px; padding: 30px 25px;
             background: var(--panel); border: 1px solid var(--border); border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10;
+            box-shadow: 0 15px 50px rgba(255,0,51,0.05), inset 0 0 20px rgba(255,0,51,0.02); z-index: 10;
+            animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            position: relative;
         }
 
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { font-size: 18px; color: var(--gold); letter-spacing: 4px; margin: 0; }
-        .header p { font-size: 8px; color: #555; text-transform: uppercase; margin-top: 5px; }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
 
-        label { display: block; margin-bottom: 8px; color: #888; font-size: 10px; text-transform: uppercase; }
+        /* --- HEADER & GLITCH --- */
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { 
+            font-size: 22px; color: var(--red); letter-spacing: 6px; margin: 0; 
+            text-transform: uppercase; font-weight: 900;
+            animation: glitch 3s infinite; position: relative; display: inline-block;
+        }
+        
+        @keyframes glitch {
+            0%, 96%, 98%, 100% { text-shadow: none; transform: translate(0); }
+            97% { text-shadow: -2px 0 #0ff, 2px 0 var(--red); transform: translate(-2px, 1px); }
+            99% { text-shadow: 2px 0 #0ff, -2px 0 var(--red); transform: translate(2px, -1px); }
+        }
+
+        .header p { font-size: 9px; color: #777; text-transform: uppercase; margin-top: 8px; letter-spacing: 2px; }
+
+        label { display: block; margin-bottom: 8px; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
 
         input, select {
-            width: 100%; padding: 14px; background: #000; border: 1px solid #222; 
-            color: var(--gold); border-radius: 8px; margin-bottom: 20px; outline: none;
-            font-family: inherit; transition: 0.3s;
+            width: 100%; padding: 14px; background: rgba(0,0,0,0.8); border: 1px solid #222; 
+            color: var(--red); border-radius: 8px; margin-bottom: 20px; outline: none;
+            font-family: inherit; transition: all 0.3s ease; font-weight: bold; text-align: center; letter-spacing: 2px;
         }
 
-        input:focus { border-color: var(--gold); box-shadow: 0 0 10px var(--gold-dim); }
+        input:focus { border-color: var(--red); box-shadow: 0 0 15px var(--red-dim), inset 0 0 10px var(--red-dim); background: #000; }
+        input::placeholder { color: #444; letter-spacing: 1px; }
 
+        /* --- PLATFORM GRID WITH LOGOS --- */
         .platform-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .plat-card {
-            background: #050505; border: 1px solid #111; padding: 8px; border-radius: 6px; 
-            cursor: pointer; height: 40px; display: flex; align-items: center; justify-content: center;
-            font-size: 9px; font-weight: 700; color: #444; transition: 0.2s;
+            background: #080202;
+            border: 1px solid #1a0505;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 5px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 50px;
         }
-        .plat-card.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+        .plat-card img {
+            max-width: 80%;
+            max-height: 30px;
+            filter: grayscale(1) opacity(0.4);
+            transition: 0.2s;
+            object-fit: contain;
+        }
+        .plat-card:hover {
+            border-color: #550011;
+            transform: translateY(-2px);
+        }
+        .plat-card.active {
+            border-color: var(--red);
+            background: var(--red-dim);
+            box-shadow: 0 0 15px var(--red-glow);
+            transform: scale(1.02);
+        }
+        .plat-card.active img {
+            filter: none;
+            opacity: 1;
+        }
 
+        /* Special style for the "OTHER" text card */
+        .plat-card.other-card {
+            font-size: 10px;
+            font-weight: bold;
+            color: #555;
+            letter-spacing: 1px;
+        }
+        .plat-card.other-card.active {
+            color: var(--red);
+        }
+        .plat-card.other-card img {
+            display: none;
+        }
+
+        .script-selector { display: flex; gap: 10px; margin-bottom: 25px; }
+        .script-opt { 
+            flex: 1; text-align: center; padding: 14px; border: 1px solid #222; 
+            border-radius: 8px; cursor: pointer; color: #555; transition: 0.3s; 
+            font-weight: bold; font-size: 10px; letter-spacing: 1px;
+        }
+        .script-opt:hover { border-color: #550011; }
+        .script-opt.active { border-color: var(--red); color: var(--red); background: var(--red-dim); box-shadow: 0 0 15px var(--red-dim); }
+
+        #custom-plat-box { display: none; animation: slideUpFade 0.3s ease forwards; }
+
+        /* --- BUTTONS & PULSE --- */
         .btn-check {
-            background: var(--gold); color: black; padding: 18px; border: none; 
+            background: linear-gradient(135deg, #ff0033, #99001a); color: white; padding: 18px; border: none; 
             border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
-            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 4px; transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 0, 51, 0.3); position: relative; overflow: hidden;
+            animation: btnPulse 2s infinite;
         }
-        .btn-check:disabled { background: #222; color: #444; cursor: not-allowed; }
+        .btn-check:hover { box-shadow: 0 0 30px rgba(255, 0, 51, 0.6); transform: translateY(-2px); }
+        .btn-check:active { transform: scale(0.96); }
+        .btn-check:disabled { background: #1a0505; color: #444; box-shadow: none; cursor: not-allowed; animation: none; border: 1px solid #330000; }
 
-        #custom-plat-box { display: none; }
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 51, 0.3); }
+            50% { box-shadow: 0 0 35px rgba(255, 0, 51, 0.6); }
+        }
 
         /* --- LOADING OVERLAY --- */
-        #loader {
-            display: none; text-align: center; margin-top: 20px;
+        #loader { display: none; text-align: center; margin-top: 20px; animation: slideUpFade 0.5s ease; }
+        
+        .spinner-container { position: relative; width: 40px; height: 40px; margin: 0 auto 15px; }
+        .spinner-ring {
+            width: 100%; height: 100%; border: 2px solid #220000; border-top-color: var(--red);
+            border-radius: 50%; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
         }
-        .spinner {
-            width: 30px; height: 30px; border: 2px solid var(--gold-dim); border-top-color: var(--gold);
-            border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 15px;
+        .spinner-core {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 10px; height: 10px; background: var(--red); border-radius: 50%;
+            box-shadow: 0 0 15px var(--red); animation: pulseGlow 1s ease-in-out infinite alternate;
         }
+        
         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulseGlow { from { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } }
 
-        #status-msg { margin-top: 20px; text-align: center; font-weight: 700; display: none; }
-        .success { color: var(--success); text-shadow: 0 0 10px rgba(0,255,102,0.3); }
+        #loader-text { font-size: 10px; color: var(--red); letter-spacing: 2px; font-weight: bold; margin-bottom: 8px; text-shadow: 0 0 8px var(--red); }
+        .progress-bar-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; margin: 10px 0; }
+        .progress-bar-fill { height: 100%; width: 0%; background: var(--red); box-shadow: 0 0 10px var(--red); transition: width 0.3s ease; }
+        #timer-text { font-size: 9px; color: #666; font-family: monospace; }
 
-        .script-selector { display: flex; gap: 10px; margin-bottom: 20px; }
-        .script-opt { flex: 1; text-align: center; padding: 12px; border: 1px solid #222; border-radius: 8px; cursor: pointer; color: #444; }
-        .script-opt.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+        /* --- SUCCESS MESSAGE --- */
+        #status-msg { margin-top: 20px; text-align: center; font-weight: 700; display: none; line-height: 1.6; animation: slideUpFade 0.5s ease; }
+        .success { color: white; text-shadow: 0 0 15px var(--red); padding: 15px; border: 1px solid var(--red); background: rgba(255,0,51,0.1); border-radius: 8px; display: inline-block; width: 100%; letter-spacing: 1px; }
 
+        @media (max-width: 500px) {
+            .container { padding: 20px 15px; }
+            .platform-grid { gap: 8px; }
+            .plat-card { height: 45px; }
+            .plat-card img { max-height: 24px; }
+        }
     </style>
 </head>
 <body>
@@ -101,102 +208,220 @@
         <p>Neural Account Synchronization</p>
     </div>
 
-    <label>User ID</label>
-    <input type="text" id="user-id" placeholder="Enter Account ID">
+    <label>Target User ID</label>
+    <input type="text" id="user-id" placeholder="ENTER ACCOUNT ID">
 
-    <label>Select Platform</label>
-    <div class="platform-grid">
-        <div class="plat-card active" onclick="setPlat(this, '1XBET')">1XBET</div>
-        <div class="plat-card" onclick="setPlat(this, '1WIN')">1WIN</div>
-        <div class="plat-card" onclick="setPlat(this, 'MELBET')">MELBET</div>
-        <div class="plat-card" onclick="setPlat(this, 'MSPORT')">MSPORT</div>
-        <div class="plat-card" onclick="setPlat(this, 'BET9JA')">BET9JA</div>
-        <div class="plat-card" onclick="setPlat(this, 'BETWAY')">BETWAY</div>
-        <div class="plat-card" onclick="setPlat(this, 'LINEBET')">LINEBET</div>
-        <div class="plat-card" onclick="setPlat(this, 'MOZZART')">MOZZART</div>
-        <div class="plat-card" onclick="setPlat(this, 'PREMIER')">PREMIER</div>
-        <div class="plat-card" onclick="setPlat(this, 'SPORTY')">SPORTY</div>
-        <div class="plat-card" onclick="setPlat(this, 'GOOBET')">GOOBET</div>
-        <div class="plat-card" onclick="setPlat(this, 'OTHER')">OTHER</div>
+    <label>Select Target Node</label>
+    <div class="platform-grid" id="platform-grid">
+        <!-- Logo cards will be generated dynamically to avoid hardcoding each image path,
+             but we'll embed them manually for clarity. Using the exact logos from your example. -->
+        <div class="plat-card" data-plat="1WIN"><img src="logos/1win.png" alt="1win"></div>
+        <div class="plat-card" data-plat="1XBET"><img src="logos/1xbet.png" alt="1xbet"></div>
+        <div class="plat-card" data-plat="MSPORT"><img src="logos/msport.png" alt="msport"></div>
+        <div class="plat-card" data-plat="BET9JA"><img src="logos/bet9ja.png" alt="bet9ja"></div>
+        <div class="plat-card" data-plat="BETWAY"><img src="logos/betway.png" alt="betway"></div>
+        <div class="plat-card" data-plat="LINEBET"><img src="logos/linebet.png" alt="linebet"></div>
+        <div class="plat-card" data-plat="MELBET"><img src="logos/melbet.png" alt="melbet"></div>
+        <div class="plat-card" data-plat="MOZZART"><img src="logos/mozzart.png" alt="mozzartbet"></div>
+        <div class="plat-card" data-plat="PREMIER"><img src="logos/premierbet.png" alt="premierbet"></div>
+        <div class="plat-card" data-plat="SPORTY"><img src="logos/sportybet.png" alt="sportybet"></div>
+        <div class="plat-card" data-plat="GOOBET"><img src="logos/goobet.png" alt="goobet"></div>
+        <div class="plat-card" data-plat="BETIKA"><img src="logos/betika.png" alt="betika"></div>
+        <div class="plat-card other-card" data-plat="OTHER">OTHER</div>
     </div>
 
     <div id="custom-plat-box">
-        <label>Platform Name</label>
-        <input type="text" id="custom-name" placeholder="Type platform name...">
+        <label>Manual Node Name</label>
+        <input type="text" id="custom-name" placeholder="TYPE PLATFORM NAME...">
     </div>
 
-    <label>Select Script</label>
+    <label>Select Payload Script</label>
     <div class="script-selector">
-        <div class="script-opt active" onclick="setScript(this, 'Crash')">CRASH</div>
-        <div class="script-opt" onclick="setScript(this, 'AOF')">APPLE OF FORTUNE</div>
+        <div class="script-opt active" onclick="setScript(this, 'Crash')">CRASH INTERCEPT</div>
+        <div class="script-opt" onclick="setScript(this, 'AOF')">APPLE ORCHARD</div>
     </div>
 
-    <button class="btn-check" onclick="startCheck()" id="check-btn">CHECK ID</button>
+    <button class="btn-check" onclick="startCheck()" id="check-btn">INITIALIZE BYPASS</button>
 
     <div id="loader">
-        <div class="spinner"></div>
-        <div style="font-size: 9px; color: var(--gold);" id="loader-text">CONNECTING TO DATABASE...</div>
-        <div style="font-size: 8px; color: #444; margin-top: 5px;" id="timer-text">Est. time: 0s</div>
+        <div class="spinner-container">
+            <div class="spinner-ring"></div>
+            <div class="spinner-core"></div>
+        </div>
+        <div id="loader-text">CONNECTING TO DATABASE...</div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
+        <div id="timer-text">EST. TIME: CALCULATING...</div>
     </div>
 
     <div id="status-msg"></div>
 </div>
 
 <script>
-    let selectedPlatform = "1XBET";
-    let selectedScript = "Crash";
+    // --- WEB AUDIO API (SOUND EFFECTS) ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(type, freq, duration, vol) {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    const sfx = {
+        click: () => playSound('square', 800, 0.05, 0.05),
+        scan: () => playSound('sawtooth', 300, 0.1, 0.02),
+        success: () => {
+            playSound('sine', 523.25, 0.2, 0.1); // C5
+            setTimeout(() => playSound('sine', 659.25, 0.2, 0.1), 150); // E5
+            setTimeout(() => playSound('sine', 783.99, 0.4, 0.1), 300); // G5
+        },
+        error: () => playSound('sawtooth', 150, 0.3, 0.1)
+    };
+
+    // --- LOGIC & UI ---
+    let selectedPlatform = "1XBET"; // default active is first card (1XBET)
+    let selectedScript = "CRASH INTERCEPT";
 
     function setPlat(el, name) {
+        sfx.click();
         document.querySelectorAll('.plat-card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         selectedPlatform = name;
-        
         const customBox = document.getElementById('custom-plat-box');
         customBox.style.display = (name === 'OTHER') ? 'block' : 'none';
     }
 
     function setScript(el, name) {
+        sfx.click();
         document.querySelectorAll('.script-opt').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         selectedScript = name;
     }
 
+    // Scramble effect
+    function scrambleText(element, newText) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+        let iterations = 0;
+        const interval = setInterval(() => {
+            element.innerText = newText.split('').map((char, index) => {
+                if(index < iterations) return char;
+                return chars[Math.floor(Math.random() * chars.length)];
+            }).join('');
+            if(iterations >= newText.length) clearInterval(interval);
+            iterations += 1/2; 
+        }, 30);
+    }
+
     function startCheck() {
+        initAudio(); // Required to unlock audio on first button press
+        
         const id = document.getElementById('user-id').value;
-        if(!id) { alert("Please enter your ID"); return; }
+        if(!id) { 
+            sfx.error();
+            const input = document.getElementById('user-id');
+            input.style.borderColor = "white";
+            setTimeout(() => input.style.borderColor = "#222", 300);
+            return; 
+        }
+
+        sfx.click();
 
         const btn = document.getElementById('check-btn');
         const loader = document.getElementById('loader');
         const loaderText = document.getElementById('loader-text');
         const timerText = document.getElementById('timer-text');
+        const progressBar = document.getElementById('progress-bar');
         const status = document.getElementById('status-msg');
 
         // Reset UI
         btn.disabled = true;
+        btn.innerText = "PROCESSING...";
         loader.style.display = 'block';
         status.style.display = 'none';
+        progressBar.style.width = '0%';
 
-        // Random wait between 25 and 45 seconds
-        const waitTime = Math.floor(Math.random() * (45 - 25 + 1)) + 25;
+        // Dynamic Wait Time (15-25s)
+        const waitTime = Math.floor(Math.random() * (25 - 15 + 1)) + 15; 
         let elapsed = 0;
+
+        // Sound loop
+        const scanSoundLoop = setInterval(() => { sfx.scan(); }, 800);
+
+        const phases = [
+            { time: 0, text: "INITIATING CORE LINK..." },
+            { time: Math.floor(waitTime * 0.2), text: "BYPASSING SECURITY FIREWALL..." },
+            { time: Math.floor(waitTime * 0.4), text: `LOCATING ID [ ${id} ] IN DATABASE...` },
+            { time: Math.floor(waitTime * 0.6), text: `INJECTING ${selectedScript} PAYLOAD...` },
+            { time: Math.floor(waitTime * 0.8), text: "FINALIZING HANDSHAKE PROTOCOL..." }
+        ];
 
         const interval = setInterval(() => {
             elapsed++;
-            timerText.innerText = `Analyzing: ${elapsed}s / ${waitTime}s`;
+            timerText.innerText = `TIME ELAPSED: ${elapsed}S / ${waitTime}S`;
+            progressBar.style.width = `${(elapsed / waitTime) * 100}%`;
             
-            if(elapsed > 5) loaderText.innerText = "BYPASSING SECURITY...";
-            if(elapsed > 12) loaderText.innerText = `SYNCING ${selectedScript.toUpperCase()} NODES...`;
-            if(elapsed > 20) loaderText.innerText = "FINALIZING HANDSHAKE...";
+            const currentPhase = phases.slice().reverse().find(p => elapsed >= p.time);
+            if(currentPhase && loaderText.dataset.current !== currentPhase.text) {
+                loaderText.dataset.current = currentPhase.text;
+                scrambleText(loaderText, currentPhase.text);
+            }
 
             if (elapsed >= waitTime) {
                 clearInterval(interval);
+                clearInterval(scanSoundLoop);
+                sfx.success();
+                
                 loader.style.display = 'none';
                 status.style.display = 'block';
-                status.innerHTML = `<span class="success">ID CHECKED!<br>THE ${selectedScript.toUpperCase()} SCRIPT WILL WORK PROPERLY ON YOUR ACCOUNT.</span>`;
+                
+                let targetPlat = selectedPlatform === 'OTHER' ? (document.getElementById('custom-name').value || 'UNKNOWN') : selectedPlatform;
+                
+                status.innerHTML = `<div class="success">
+                    <span style="font-size:16px; color:#fff;">VERIFICATION COMPLETE</span><br><br>
+                    <span style="color:#aaa; font-size:10px;">ID: <span style="color:var(--red)">${id}</span> | PLATFORM: <span style="color:var(--red)">${targetPlat}</span></span><br><br>
+                    THE <strong style="color:var(--red);">${selectedScript}</strong> ALGORITHM IS NOW SYNCED AND READY FOR EXTRACTION.
+                </div>`;
                 btn.style.display = 'none';
             }
         }, 1000);
     }
+
+    // Attach click handlers to all platform cards (including the "OTHER" card)
+    function initPlatforms() {
+        const cards = document.querySelectorAll('.plat-card');
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const platName = card.getAttribute('data-plat');
+                if (platName) {
+                    setPlat(card, platName);
+                }
+            });
+        });
+        // Set initial active (1XBET is the first card with data-plat="1XBET")
+        const defaultActive = document.querySelector('.plat-card[data-plat="1XBET"]');
+        if (defaultActive) setPlat(defaultActive, '1XBET');
+    }
+
+    // Run after DOM load
+    window.addEventListener('DOMContentLoaded', () => {
+        initPlatforms();
+    });
 </script>
 </body>
 </html>
