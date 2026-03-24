@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AFRICA HACKS | Neural Orchard v8.5</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
+
+        :root { 
+            --gold: #ffcc00; 
+            --gold-glow: rgba(255, 204, 0, 0.4);
+            --gold-dim: rgba(255, 204, 0, 0.05);
+            --bg: #0b0f07; 
+            --panel: rgba(20, 24, 15, 0.95);
+            --border: #2a1f0a;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; 
+            margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; 
+        }
+
+        /* --- BACKGROUND & EFFECTS --- */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; opacity: 0.6; }
+        
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 204, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 1000; background-size: 100% 4px, 3px 100%;
+            animation: scanline 8s linear infinite;
+        }
+
+        /* --- SELECTION SCREEN --- */
+        #selection-screen { 
+            max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; 
+            height: 100vh; overflow-y: auto; position: relative; z-index: 10;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .glitch-title {
+            font-size: 20px; font-weight: 900; letter-spacing: 8px; color: var(--gold);
+            position: relative; display: inline-block;
+            animation: textGlitch 4s infinite;
+        }
+
+        .logo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 25px 0; perspective: 1000px; }
+        
+        .card { 
+            background: #050505; border: 1px solid #111; padding: 10px; border-radius: 8px; 
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            height: 50px; display: flex; align-items: center; justify-content: center; 
+            opacity: 0; animation: cardPop 0.6s forwards ease-out;
+        }
+        
+        /* Staggered logo entrances */
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.15s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.25s; }
+        .card:nth-child(5) { animation-delay: 0.3s; }
+        .card:nth-child(6) { animation-delay: 0.35s; }
+        .card:nth-child(7) { animation-delay: 0.4s; }
+        .card:nth-child(8) { animation-delay: 0.45s; }
+        .card:nth-child(9) { animation-delay: 0.5s; }
+        .card:nth-child(10) { animation-delay: 0.55s; }
+        .card:nth-child(11) { animation-delay: 0.6s; }
+        .card:nth-child(12) { animation-delay: 0.65s; }
+
+        .card img { width: 100%; max-height: 25px; filter: grayscale(1) opacity(0.4); transition: 0.3s; }
+        .card:hover { transform: translateY(-3px) scale(1.02); border-color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .card.active { 
+            border-color: var(--gold); background: var(--gold-dim); 
+            box-shadow: 0 0 20px var(--gold-glow); transform: scale(1.05); 
+        }
+        .card.active img { filter: none; opacity: 1; drop-shadow(0 0 5px var(--gold)); }
+        
+        .card.other-btn { font-size: 8px; color: #444; border-style: dashed; }
+        .card.active.other-btn { color: var(--gold); border-style: solid; }
+
+        .activation-box { 
+            background: var(--panel); border: 1px solid var(--border); padding: 25px; 
+            border-radius: 15px; margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        input { 
+            width: 100%; padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid #222; 
+            color: var(--gold); text-align: center; border-radius: 8px; 
+            margin-bottom: 12px; outline: none; font-family: inherit; font-weight: bold;
+            transition: 0.3s; letter-spacing: 1px;
+        }
+        input:focus { border-color: var(--gold); box-shadow: inset 0 0 10px var(--gold-dim), 0 0 15px var(--gold-glow); background: #000; }
+
+        .btn-main { 
+            background: var(--gold); color: black; padding: 18px; border: none; 
+            border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+            animation: pulseGlow 2.5s infinite; position: relative; overflow: hidden;
+        }
+        .btn-main:active { transform: scale(0.96); }
+        .btn-main::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-100%); transition: 0.5s;
+        }
+        .btn-main:hover::after { transform: translateX(100%); transition: 0.5s; }
+
+        /* --- TERMINAL --- */
+        #terminal { 
+            position: fixed; inset: 0; background: #020202; z-index: 500; 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .term-log { color: var(--gold); font-size: 10px; margin: 4px; opacity: 0; animation: logIn 0.3s forwards; text-shadow: 0 0 8px var(--gold); letter-spacing: 1px; width: 100%; }
+        .bar-wrap { width: 280px; height: 3px; background: #111; margin-top: 30px; position: relative; overflow: hidden; border-radius: 2px; }
+        .bar-fill { height: 100%; width: 0%; background: var(--gold); box-shadow: 0 0 15px var(--gold); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* --- DASHBOARD --- */
+        #dashboard { 
+            position: fixed; inset: 0; background: var(--bg); z-index: 100; 
+            display: none; flex-direction: column; animation: dashEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .header { height: 60px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(5,7,4,0.8); backdrop-filter: blur(10px); }
+        
+        .viewport {
+            flex: 1; margin: 20px; border: 1px solid var(--border); border-radius: 20px;
+            background: var(--panel); display: flex; flex-direction: column; align-items: center; padding: 15px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+        }
+        /* Grid radar line effect container */
+        .viewport::before {
+            content: ''; position: absolute; left: 0; top: 100%; width: 100%; height: 10px;
+            background: linear-gradient(to bottom, transparent, var(--gold)); opacity: 0; z-index: 2; pointer-events: none;
+        }
+        .viewport.scanning::before { animation: radarSweep 1.5s ease-in-out; }
+
+        .grid {
+            display: grid; grid-template-columns: 40px repeat(5, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 6px; width: 100%; max-width: 380px; height: 100%; z-index: 3;
+        }
+        .row-lbl { display: flex; align-items: center; justify-content: center; color: #444; font-size: 9px; font-weight: 900; transition: color 0.3s; }
+        .row-lbl.active { color: var(--gold); text-shadow: 0 0 5px var(--gold); }
+        
+        .cell { 
+            background: rgba(0,0,0,0.4); border: 1px solid #1a1a1a; border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden;
+        }
+        
+        .cell.radar-hit { background: rgba(255,204,0,0.2); border-color: var(--gold); box-shadow: inset 0 0 10px var(--gold-glow); transition: 0.1s; }
+        
+        .cell.safe { 
+            background: var(--gold-dim); border-color: var(--gold); 
+            box-shadow: 0 0 20px var(--gold-glow), inset 0 0 10px var(--gold-glow); transform: scale(1.05); 
+            z-index: 5;
+        }
+
+        /* --- KEYFRAMES --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        @keyframes logIn { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes dashEntrance { from { opacity: 0; transform: scale(1.1); filter: blur(15px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
+        @keyframes applePop { 
+            0% { transform: scale(0) translateY(10px) rotate(-45deg); opacity: 0; } 
+            60% { transform: scale(1.3) translateY(-5px) rotate(10deg); opacity: 1; filter: drop-shadow(0 0 10px var(--gold)); } 
+            100% { transform: scale(1) translateY(0) rotate(0); filter: drop-shadow(0 0 5px var(--gold)); } 
+        }
+        @keyframes scanline { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
+        @keyframes cardPop { 0% { opacity: 0; transform: translateY(20px) rotateX(-20deg); } 100% { opacity: 1; transform: translateY(0) rotateX(0); } }
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 10px var(--gold-glow); } 50% { box-shadow: 0 0 25px var(--gold), 0 0 40px var(--gold-glow); } }
+        @keyframes radarSweep { 0% { top: 100%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: -10px; opacity: 0; } }
+        
+        @keyframes textGlitch {
+            0%, 96%, 98%, 100% { transform: translate(0); text-shadow: none; }
+            97% { transform: translate(-2px, 1px); text-shadow: -2px 0 red, 2px 0 cyan; }
+            99% { transform: translate(2px, -1px); text-shadow: 2px 0 red, -2px 0 cyan; }
+        }
+
+        .apple-anim { animation: applePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="crt-overlay"></div>
+
+<div id="selection-screen">
+    <div style="margin-top: 50px;">
+        <div class="glitch-title">NEURAL_ORCHARD</div>
+        <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.5</div>
+    </div>
+    <div class="logo-grid">
+        <div class="card active" onclick="setPlat(this, '1XBET')"><img src="logos/1xbet.png" alt="1X"></div>
+        <div class="card" onclick="setPlat(this, '1WIN')"><img src="logos/1win.png" alt="1W"></div>
+        <div class="card" onclick="setPlat(this, 'MELBET')"><img src="logos/melbet.png" alt="MB"></div>
+        <div class="card" onclick="setPlat(this, 'MSPORT')"><img src="logos/msport.png" alt="MS"></div>
+        <div class="card" onclick="setPlat(this, 'BET9JA')"><img src="logos/bet9ja.png" alt="B9"></div>
+        <div class="card" onclick="setPlat(this, 'BETWAY')"><img src="logos/betway.png" alt="BW"></div>
+        <div class="card" onclick="setPlat(this, 'LINEBET')"><img src="logos/linebet.png" alt="LB"></div>
+        <div class="card" onclick="setPlat(this, 'MOZZART')"><img src="logos/mozzart.png" alt="MZ"></div>
+        <div class="card" onclick="setPlat(this, 'PREMIER')"><img src="logos/premierbet.png" alt="PR"></div>
+        <div class="card" onclick="setPlat(this, 'SPORTY')"><img src="logos/sportybet.png" alt="SP"></div>
+        <div class="card" onclick="setPlat(this, 'GOOBET')"><img src="logos/goobet.png" alt="GB"></div>
+        <div class="card other-btn">OTHER</div>
+    </div>
+
+    <div class="activation-box">
+        <input type="text" id="user-id" placeholder="ACCOUNT ID">
+        <input type="password" id="license-key" placeholder="LICENSE KEY">
+        <button class="btn-main" onclick="startBypass()">BYPASS SERVER</button>
+    </div>
+</div>
+
+<div id="terminal">
+    <div id="log-box" style="width: 280px; display: flex; flex-direction: column; gap: 2px;"></div>
+    <div class="bar-wrap"><div class="bar-fill" id="progress"></div></div>
+</div>
+
+<div id="dashboard">
+    <div class="header">
+        <div><span style="color:var(--gold); font-weight:900;">SYNC:</span> <span id="sync-plat">1XBET</span></div>
+        <div id="sync-id" style="color:#888; font-size:9px; font-family: monospace;">ID: --------</div>
+    </div>
+    <div class="viewport" id="app-viewport">
+        <div class="grid" id="game-grid"></div>
+    </div>
+    <button class="btn-main" id="predict-btn" style="width:calc(100% - 40px); margin: 0 auto 30px;" onclick="runPrediction()">GENERATE PATH</button>
+</div>
+
+<script>
+    let activePlat = "1XBET";
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let mouse = { x: null, y: null };
+
+    // Track mouse for interactive background
+    window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+    window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+    // Neural Background Init
+    function initBg() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        particles = [];
+        const particleCount = window.innerWidth < 600 ? 30 : 60; // Less particles on mobile
+        for(let i=0; i<particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                vx: (Math.random()-0.5) * 0.5, vy: (Math.random()-0.5) * 0.5, size: Math.random() * 1.5 + 0.5
+            });
+        }
+    }
+
+    // Neural Background Anim
+    function animateBg() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach((p, i) => {
+            p.x += p.vx; p.y += p.vy;
+            if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            
+            ctx.fillStyle = "rgba(255,204,0,0.5)";
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+            
+            // Connect to other particles
+            for(let j=i+1; j<particles.length; j++) {
+                let p2 = particles[j];
+                let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if(dist < 80) {
+                    ctx.strokeStyle = `rgba(255,204,0,${0.2 - dist/80 * 0.2})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                }
+            }
+            
+            // Connect to mouse
+            if(mouse.x != null) {
+                let mDist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+                if(mDist < 120) {
+                    ctx.strokeStyle = `rgba(255,204,0,${0.4 - mDist/120 * 0.4})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+                }
+            }
+        });
+        requestAnimationFrame(animateBg);
+    }
+
+    function setPlat(el, name) {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        activePlat = name;
+    }
+
+    // Hacker text scramble effect
+    function scrambleText(elementId, finalStr) {
+        const el = document.getElementById(elementId);
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+        let iterations = 0;
+        const interval = setInterval(() => {
+            el.innerText = "ID: " + finalStr.split('').map((char, index) => {
+                if(index < iterations) return char;
+                return chars[Math.floor(Math.random() * chars.length)];
+            }).join('');
+            if(iterations >= finalStr.length) clearInterval(interval);
+            iterations += 1/3; // Speed of decoding
+        }, 30);
+    }
+
+    function startBypass() {
+        const id = document.getElementById('user-id').value;
+        const key = document.getElementById('license-key').value;
+        
+        if(!id || !key) {
+            document.getElementById('user-id').style.borderColor = "red";
+            document.getElementById('license-key').style.borderColor = "red";
+            setTimeout(() => {
+                document.getElementById('user-id').style.borderColor = "#222";
+                document.getElementById('license-key').style.borderColor = "#222";
+            }, 1000);
+            return;
+        }
+
+        document.getElementById('selection-screen').style.display = 'none';
+        document.getElementById('terminal').style.display = 'flex';
+
+        const logs = [
+            "INITIATING CORE_LINK...",
+            "BYPASSING SECURE_GATE_V4...",
+            "INJECTING NEURAL_SHELL...",
+            "SYNCING ACCOUNT: " + id,
+            "PLATFORM TARGET: " + activePlat,
+            "DECRYPTING ORCHARD_SEED...",
+            "VERIFYING NODE INTEGRITY...",
+            "CONNECTION STABLE. LAUNCHING UI."
+        ];
+        
+        let i = 0;
+        document.getElementById('log-box').innerHTML = ''; // clear previous
+        
+        const timer = setInterval(() => {
+            if(i < logs.length) {
+                const p = document.createElement('div');
+                p.className = 'term-log';
+                p.innerText = "> " + logs[i];
+                document.getElementById('log-box').appendChild(p);
+                
+                // Jittery progress bar
+                let targetWidth = ((i+1)/logs.length * 100);
+                document.getElementById('progress').style.width = targetWidth + "%";
+                i++;
+            } else {
+                clearInterval(timer);
+                setTimeout(() => {
+                    document.getElementById('terminal').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'flex';
+                    document.getElementById('sync-plat').innerText = activePlat;
+                    renderGrid();
+                    setTimeout(() => scrambleText('sync-id', id), 500); // trigger scramble
+                }, 800);
+            }
+        }, 500); // slightly faster logs
+    }
+
+    const odds = ['12.42x','9.82x','7.45x','5.12x','4.02x','3.11x','2.44x','1.93x','1.54x','1.23x'];
+    
+    function renderGrid() {
+        const g = document.getElementById('game-grid');
+        g.innerHTML = '';
+        for(let r=0; r<10; r++) {
+            const lbl = document.createElement('div');
+            lbl.className = 'row-lbl'; 
+            lbl.id = `lbl-${r}`;
+            lbl.innerText = odds[r];
+            g.appendChild(lbl);
+            
+            for(let c=0; c<5; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell'; cell.id = `cell-${r}-${c}`;
+                g.appendChild(cell);
+            }
+        }
+    }
+
+    function runPrediction() {
+        renderGrid();
+        const btn = document.getElementById('predict-btn');
+        const viewport = document.getElementById('app-viewport');
+        
+        btn.innerText = "BYPASSING ALGORITHM...";
+        btn.disabled = true;
+        btn.style.animation = "none"; // stop pulse while loading
+        btn.style.background = "#554400";
+        btn.style.color = "#999";
+
+        // Trigger CSS Radar Sweep
+        viewport.classList.add('scanning');
+
+        // JS Simulated Radar Sweep (Bottom to Top)
+        let sweepRow = 9;
+        const sweepInterval = setInterval(() => {
+            // clear prev
+            if(sweepRow < 9) {
+                document.getElementById(`lbl-${sweepRow+1}`).classList.remove('active');
+                for(let c=0; c<5; c++) document.getElementById(`cell-${sweepRow+1}-${c}`).classList.remove('radar-hit');
+            }
+            // hit current
+            if(sweepRow >= 0) {
+                document.getElementById(`lbl-${sweepRow}`).classList.add('active');
+                for(let c=0; c<5; c++) document.getElementById(`cell-${sweepRow}-${c}`).classList.add('radar-hit');
+                sweepRow--;
+            } else {
+                clearInterval(sweepInterval);
+                finishPrediction();
+            }
+        }, 150); // Speed of the sweep
+
+        function finishPrediction() {
+            viewport.classList.remove('scanning');
+            // Clean up last row highlights
+            document.querySelectorAll('.row-lbl').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('radar-hit'));
+            
+            // Staggered Apple Reveal
+            for(let r=0; r<10; r++) {
+                const safeCol = Math.floor(Math.random() * 5);
+                setTimeout(() => {
+                    const target = document.getElementById(`cell-${r}-${safeCol}`);
+                    const lbl = document.getElementById(`lbl-${r}`);
+                    target.classList.add('safe');
+                    lbl.classList.add('active'); // Keep label lit up
+                    target.innerHTML = '<span class="apple-anim">🍎</span>';
+                }, (9 - r) * 150); // Reveal from bottom to top sequentially
+            }
+            
+            // Reset Button after animation completes
+            setTimeout(() => {
+                btn.innerText = "GENERATE PATH";
+                btn.disabled = false;
+                btn.style.animation = "pulseGlow 2.5s infinite";
+                btn.style.background = "var(--gold)";
+                btn.style.color = "black";
+            }, 10 * 150 + 500);
+        }
+    }
+
+    window.addEventListener('resize', initBg);
+    initBg(); animateBg();
+</script>
+</body>
+</html>
