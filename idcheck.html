@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SYSTEM | ID Verification</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
+
+        :root { 
+            --gold: #ffcc00; 
+            --gold-glow: rgba(255, 204, 0, 0.4);
+            --gold-dim: rgba(255, 204, 0, 0.05);
+            --bg: #0b0f07; 
+            --panel: rgba(20, 24, 15, 0.95);
+            --border: #2a1f0a;
+            --success: #00ff66;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; 
+            margin: 0; display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; font-size: 12px; user-select: none;
+        }
+
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 204, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 1000; background-size: 100% 4px, 3px 100%;
+        }
+
+        .container {
+            width: 100%; max-width: 450px; padding: 25px;
+            background: var(--panel); border: 1px solid var(--border); border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10;
+        }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 18px; color: var(--gold); letter-spacing: 4px; margin: 0; }
+        .header p { font-size: 8px; color: #555; text-transform: uppercase; margin-top: 5px; }
+
+        label { display: block; margin-bottom: 8px; color: #888; font-size: 10px; text-transform: uppercase; }
+
+        input, select {
+            width: 100%; padding: 14px; background: #000; border: 1px solid #222; 
+            color: var(--gold); border-radius: 8px; margin-bottom: 20px; outline: none;
+            font-family: inherit; transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--gold); box-shadow: 0 0 10px var(--gold-dim); }
+
+        .platform-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;
+        }
+
+        .plat-card {
+            background: #050505; border: 1px solid #111; padding: 8px; border-radius: 6px; 
+            cursor: pointer; height: 40px; display: flex; align-items: center; justify-content: center;
+            font-size: 9px; font-weight: 700; color: #444; transition: 0.2s;
+        }
+        .plat-card.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+
+        .btn-check {
+            background: var(--gold); color: black; padding: 18px; border: none; 
+            border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+        }
+        .btn-check:disabled { background: #222; color: #444; cursor: not-allowed; }
+
+        #custom-plat-box { display: none; }
+
+        /* --- LOADING OVERLAY --- */
+        #loader {
+            display: none; text-align: center; margin-top: 20px;
+        }
+        .spinner {
+            width: 30px; height: 30px; border: 2px solid var(--gold-dim); border-top-color: var(--gold);
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #status-msg { margin-top: 20px; text-align: center; font-weight: 700; display: none; }
+        .success { color: var(--success); text-shadow: 0 0 10px rgba(0,255,102,0.3); }
+
+        .script-selector { display: flex; gap: 10px; margin-bottom: 20px; }
+        .script-opt { flex: 1; text-align: center; padding: 12px; border: 1px solid #222; border-radius: 8px; cursor: pointer; color: #444; }
+        .script-opt.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+
+    </style>
+</head>
+<body>
+
+<div class="crt-overlay"></div>
+
+<div class="container" id="main-form">
+    <div class="header">
+        <h1>ID_VERIFIER</h1>
+        <p>Neural Account Synchronization</p>
+    </div>
+
+    <label>User ID</label>
+    <input type="text" id="user-id" placeholder="Enter Account ID">
+
+    <label>Select Platform</label>
+    <div class="platform-grid">
+        <div class="plat-card active" onclick="setPlat(this, '1XBET')">1XBET</div>
+        <div class="plat-card" onclick="setPlat(this, '1WIN')">1WIN</div>
+        <div class="plat-card" onclick="setPlat(this, 'MELBET')">MELBET</div>
+        <div class="plat-card" onclick="setPlat(this, 'MSPORT')">MSPORT</div>
+        <div class="plat-card" onclick="setPlat(this, 'BET9JA')">BET9JA</div>
+        <div class="plat-card" onclick="setPlat(this, 'BETWAY')">BETWAY</div>
+        <div class="plat-card" onclick="setPlat(this, 'LINEBET')">LINEBET</div>
+        <div class="plat-card" onclick="setPlat(this, 'MOZZART')">MOZZART</div>
+        <div class="plat-card" onclick="setPlat(this, 'PREMIER')">PREMIER</div>
+        <div class="plat-card" onclick="setPlat(this, 'SPORTY')">SPORTY</div>
+        <div class="plat-card" onclick="setPlat(this, 'GOOBET')">GOOBET</div>
+        <div class="plat-card" onclick="setPlat(this, 'OTHER')">OTHER</div>
+    </div>
+
+    <div id="custom-plat-box">
+        <label>Platform Name</label>
+        <input type="text" id="custom-name" placeholder="Type platform name...">
+    </div>
+
+    <label>Select Script</label>
+    <div class="script-selector">
+        <div class="script-opt active" onclick="setScript(this, 'Crash')">CRASH</div>
+        <div class="script-opt" onclick="setScript(this, 'AOF')">APPLE OF FORTUNE</div>
+    </div>
+
+    <button class="btn-check" onclick="startCheck()" id="check-btn">CHECK ID</button>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <div style="font-size: 9px; color: var(--gold);" id="loader-text">CONNECTING TO DATABASE...</div>
+        <div style="font-size: 8px; color: #444; margin-top: 5px;" id="timer-text">Est. time: 0s</div>
+    </div>
+
+    <div id="status-msg"></div>
+</div>
+
+<script>
+    let selectedPlatform = "1XBET";
+    let selectedScript = "Crash";
+
+    function setPlat(el, name) {
+        document.querySelectorAll('.plat-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        selectedPlatform = name;
+        
+        const customBox = document.getElementById('custom-plat-box');
+        customBox.style.display = (name === 'OTHER') ? 'block' : 'none';
+    }
+
+    function setScript(el, name) {
+        document.querySelectorAll('.script-opt').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        selectedScript = name;
+    }
+
+    function startCheck() {
+        const id = document.getElementById('user-id').value;
+        if(!id) { alert("Please enter your ID"); return; }
+
+        const btn = document.getElementById('check-btn');
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loader-text');
+        const timerText = document.getElementById('timer-text');
+        const status = document.getElementById('status-msg');
+
+        // Reset UI
+        btn.disabled = true;
+        loader.style.display = 'block';
+        status.style.display = 'none';
+
+        // Random wait between 25 and 45 seconds
+        const waitTime = Math.floor(Math.random() * (45 - 25 + 1)) + 25;
+        let elapsed = 0;
+
+        const interval = setInterval(() => {
+            elapsed++;
+            timerText.innerText = `Analyzing: ${elapsed}s / ${waitTime}s`;
+            
+            if(elapsed > 5) loaderText.innerText = "BYPASSING SECURITY...";
+            if(elapsed > 12) loaderText.innerText = `SYNCING ${selectedScript.toUpperCase()} NODES...`;
+            if(elapsed > 20) loaderText.innerText = "FINALIZING HANDSHAKE...";
+
+            if (elapsed >= waitTime) {
+                clearInterval(interval);
+                loader.style.display = 'none';
+                status.style.display = 'block';
+                status.innerHTML = `<span class="success">ID CHECKED!<br>THE ${selectedScript.toUpperCase()} SCRIPT WILL WORK PROPERLY ON YOUR ACCOUNT.</span>`;
+                btn.style.display = 'none';
+            }
+        }, 1000);
+    }
+</script>
+</body>
+</html>
