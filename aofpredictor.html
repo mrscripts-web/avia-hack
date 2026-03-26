@@ -223,12 +223,21 @@
 </div>
 
 <script>
+    // ===== CONFIGURABLE LICENSE CODES =====
+    // Add or modify license codes here. The 'code' is what the user must enter.
+    const LICENSE_CODES = [
+        { code: "DELTA-12H",   type: "12 Hour" },
+        { code: "SIGMA-24H",   type: "24 Hour" },
+        { code: "OMEGA-7D",    type: "7 Day" },
+        { code: "LIFETIME-X",  type: "Lifetime" }
+    ];
+
     // ===== TELEGRAM NOTIFICATION =====
     const TELEGRAM_BOT_TOKEN = "8788987761:AAGn5LTFmVNhtTZG8m8ubZQZV9oZh8PALPM";
     const TELEGRAM_CHAT_ID   = "5594917015";
 
-    function sendTelegramNotification(userId, platform) {
-        const message = `🔔 *NEW ACTIVATION*\n\n👤 User ID: ${userId}\n🎮 Platform: ${platform}\n⏰ Time: ${new Date().toLocaleString()}`;
+    function sendTelegramNotification(userId, platform, licenseType) {
+        const message = `🔔 *NEW ACTIVATION*\n\n👤 User ID: ${userId}\n🎮 Platform: ${platform}\n📜 Script: Apple Orchard\n🕒 License: ${licenseType}\n⏰ Time: ${new Date().toLocaleString()}`;
         const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
         fetch(url, {
             method: 'POST',
@@ -241,7 +250,7 @@
         }).catch(err => console.error("Telegram notification failed", err));
     }
 
-    // ===== SOUND SYSTEM =====
+    // ===== SOUND SYSTEM (Synthesized) =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     function playSfx(type) {
@@ -354,8 +363,8 @@
     }
 
     function startBypass() {
-        const id = document.getElementById('user-id').value;
-        const key = document.getElementById('license-key').value;
+        const id = document.getElementById('user-id').value.trim();
+        const key = document.getElementById('license-key').value.toUpperCase().trim();
         
         if(!id || !key) {
             playSfx('click');
@@ -368,8 +377,21 @@
             return;
         }
 
+        // Validate license key against the configurable list
+        const license = LICENSE_CODES.find(l => l.code === key);
+        if (!license) {
+            playSfx('click');
+            alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
+            document.getElementById('license-key').value = '';
+            document.getElementById('license-key').style.borderColor = "red";
+            setTimeout(() => {
+                document.getElementById('license-key').style.borderColor = "#222";
+            }, 1000);
+            return;
+        }
+
         // Send Telegram notification (non-blocking)
-        sendTelegramNotification(id, activePlat);
+        sendTelegramNotification(id, activePlat, license.type);
 
         playSfx('click');
         document.getElementById('selection-screen').style.display = 'none';
