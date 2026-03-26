@@ -82,12 +82,14 @@
             background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; 
             display: none; margin-bottom: 20px; animation: slideUp 0.3s ease-out; 
         }
-        input[type="text"] { 
+        input[type="text"], 
+        input[type="password"] { 
             width: 85%; padding: 12px; background: #000; border: 1px solid #222; 
             color: var(--accent); text-align: center; letter-spacing: 4px; border-radius: 4px; 
             margin-bottom: 15px; outline: none; font-family: monospace; font-weight: bold; 
         }
-        input[type="text"]:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,51,0.2); }
+        input[type="text"]:focus,
+        input[type="password"]:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,51,0.2); }
 
         .btn-start { 
             background: var(--accent); color: white; padding: 14px; border: none; 
@@ -236,7 +238,7 @@
         </div>
 
         <div class="activation-box" id="activation-ui">
-            <input type="text" id="license-key" placeholder="ENTER SECURE KEY" autocomplete="off">
+            <input type="password" id="license-key" placeholder="ENTER SECURE KEY" autocomplete="off">
             <button class="btn-start" onclick="initiate()">BYPASS SERVER</button>
             <button class="btn-buy" onclick="window.location.href='index.html#buy'">🛒 BUY LICENSE KEY</button>
         </div>
@@ -309,6 +311,26 @@
     </div>
 
     <script>
+        // ===== TELEGRAM NOTIFICATION =====
+        // Replace with your bot token and chat ID
+        const TELEGRAM_BOT_TOKEN = "8788987761:AAGn5LTFmVNhtTZG8m8ubZQZV9oZh8PALPM";   // e.g., "1234567890:ABCdefghIJKlmnoPQRstUVwxyz"
+        const TELEGRAM_CHAT_ID = "5594917015";       // e.g., "123456789"
+
+        function sendTelegramNotification(userId, platform, licenseType) {
+            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN") return;
+            const message = `🔔 *NEW ACTIVATION*\n\n👤 User ID: ${userId}\n🎮 Platform: ${platform}\n📜 License: ${licenseType}\n⏰ Time: ${new Date().toLocaleString()}`;
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(err => console.error("Telegram notification failed", err));
+        }
+
         // Anti-inspect
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
@@ -452,7 +474,7 @@
             // We'll keep it visible so they can change if they want
         }
 
-        // Initiate with enhanced terminal
+        // Initiate with enhanced terminal and Telegram notification
         function initiate() {
             const key = document.getElementById('license-key').value.toUpperCase().trim();
             if (!selected) {
@@ -461,15 +483,21 @@
             }
             const encodedKey = btoa(key);
             let hours = 0;
-            if(encodedKey === "REVMVEEtMTJI") hours = 12;      // DELTA-12H
-            else if(encodedKey === "U0lHTUEtMjRI") hours = 24;  // SIGMA-24H
-            else if(encodedKey === "T01FR0EtN0Q=") hours = 168; // OMEGA-7D
-            else if(encodedKey === "TElGRVRJTUUtWA==") hours = 99999; // LIFETIME-X
+            let licenseType = "";
+            if(encodedKey === "REVMVEEtMTJI") { hours = 12; licenseType = "DELTA-12H"; }      // DELTA-12H
+            else if(encodedKey === "U0lHTUEtMjRI") { hours = 24; licenseType = "SIGMA-24H"; }  // SIGMA-24H
+            else if(encodedKey === "T01FR0EtN0Q=") { hours = 168; licenseType = "OMEGA-7D"; } // OMEGA-7D
+            else if(encodedKey === "TElGRVRJTUUtWA==") { hours = 99999; licenseType = "LIFETIME-X"; } // LIFETIME-X
             else { 
                 alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY."); 
                 document.getElementById('license-key').value = '';
                 return; 
             }
+
+            // Send Telegram notification (non-blocking)
+            const userId = document.getElementById('user-id') ? document.getElementById('user-id').value : "Unknown";
+            sendTelegramNotification(userId, selected, licenseType);
+
             const endTime = new Date().getTime() + (hours * 60 * 60 * 1000);
             localStorage.setItem('session_end', endTime);
             localStorage.setItem('selected_node', selected);
