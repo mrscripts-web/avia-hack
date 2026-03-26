@@ -223,7 +223,25 @@
 </div>
 
 <script>
-    // ===== SOUND SYSTEM (Synthesized) =====
+    // ===== TELEGRAM NOTIFICATION =====
+    const TELEGRAM_BOT_TOKEN = "8788987761:AAGn5LTFmVNhtTZG8m8ubZQZV9oZh8PALPM";
+    const TELEGRAM_CHAT_ID   = "5594917015";
+
+    function sendTelegramNotification(userId, platform) {
+        const message = `🔔 *NEW ACTIVATION*\n\n👤 User ID: ${userId}\n🎮 Platform: ${platform}\n⏰ Time: ${new Date().toLocaleString()}`;
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        }).catch(err => console.error("Telegram notification failed", err));
+    }
+
+    // ===== SOUND SYSTEM =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     function playSfx(type) {
@@ -349,6 +367,9 @@
             }, 1000);
             return;
         }
+
+        // Send Telegram notification (non-blocking)
+        sendTelegramNotification(id, activePlat);
 
         playSfx('click');
         document.getElementById('selection-screen').style.display = 'none';
