@@ -364,16 +364,21 @@
 
     function startBypass() {
         const id = document.getElementById('user-id').value.trim();
-        const key = document.getElementById('license-key').value.toUpperCase().trim();
+        const key = document.getElementById('license-key').value.trim().toUpperCase();
         
-        if(!id || !key) {
+        // Check if both fields are filled
+        if(!id) {
             playSfx('click');
             document.getElementById('user-id').style.borderColor = "red";
+            setTimeout(() => document.getElementById('user-id').style.borderColor = "#222", 1000);
+            alert("Please enter your Account ID.");
+            return;
+        }
+        if(!key) {
+            playSfx('click');
             document.getElementById('license-key').style.borderColor = "red";
-            setTimeout(() => {
-                document.getElementById('user-id').style.borderColor = "#222";
-                document.getElementById('license-key').style.borderColor = "#222";
-            }, 1000);
+            setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 1000);
+            alert("Please enter your License Key.");
             return;
         }
 
@@ -381,12 +386,10 @@
         const license = LICENSE_CODES.find(l => l.code === key);
         if (!license) {
             playSfx('click');
-            alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
+            alert("ACCESS DENIED: Invalid or expired license key.\n\nValid keys are: " + LICENSE_CODES.map(l => l.code).join(", "));
             document.getElementById('license-key').value = '';
             document.getElementById('license-key').style.borderColor = "red";
-            setTimeout(() => {
-                document.getElementById('license-key').style.borderColor = "#222";
-            }, 1000);
+            setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 2000);
             return;
         }
 
