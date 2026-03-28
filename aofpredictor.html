@@ -172,6 +172,37 @@
         }
 
         .apple-anim { animation: applePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
+
+        /* Waiting message styles (from crash predictor) */
+        .waiting-message {
+            background: rgba(0,0,0,0.85);
+            border: 2px solid #ffcc00;
+            border-radius: 8px;
+            padding: 20px 15px;
+            margin: 15px auto;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #ffcc00;
+            box-shadow: 0 0 20px rgba(255,204,0,0.3);
+            backdrop-filter: blur(5px);
+        }
+        .waiting-message .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,204,0,0.3);
+            border-top-color: #ffcc00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .waiting-message .small {
+            font-size: 10px;
+            color: #aaa;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -202,7 +233,7 @@
     <div class="activation-box">
         <input type="text" id="user-id" placeholder="ACCOUNT ID">
         <input type="password" id="license-key" placeholder="LICENSE KEY">
-        <button class="btn-main" onclick="startBypass()">BYPASS SERVER</button>
+        <button class="btn-main" id="bypass-btn" onclick="startBypass()">BYPASS SERVER</button>
     </div>
 </div>
 
@@ -223,8 +254,11 @@
 </div>
 
 <script>
+    // ===== BACKEND URL (your Apps Script web app) =====
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzD9-JhwWS1jjL9Rfm-ZW9sVHIToRZLaLw8BqfwTZG-KEHBxY5zGz1DK5LfRHFac5XJ/exec";
+    const SCRIPT_TYPE = "Apple Orchard";
+
     // ===== CONFIGURABLE LICENSE CODES =====
-    // Add or modify license codes here. The 'code' is what the user must enter.
     const LICENSE_CODES = [
         { code: "DELTA-12H",   type: "12 Hour" },
         { code: "SIGMA-24H",   type: "24 Hour" },
@@ -232,25 +266,26 @@
         { code: "LIFETIME-X",  type: "Lifetime" }
     ];
 
-    // ===== TELEGRAM NOTIFICATION =====
-    const TELEGRAM_BOT_TOKEN = "8788987761:AAGn5LTFmVNhtTZG8m8ubZQZV9oZh8PALPM";
-    const TELEGRAM_CHAT_ID   = "5594917015";
+    // ===== TELEGRAM NOTIFICATION (only for reference, now handled by backend) =====
+    // We keep the function but it's not used because the backend sends the request.
+    // The original sendTelegramNotification is removed to avoid duplicate.
 
-    function sendTelegramNotification(userId, platform, licenseType) {
-        const message = `🔔 *NEW ACTIVATION*\n\n👤 User ID: ${userId}\n🎮 Platform: ${platform}\n📜 Script: Apple Orchard\n🕒 License: ${licenseType}\n⏰ Time: ${new Date().toLocaleString()}`;
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        }).catch(err => console.error("Telegram notification failed", err));
+    // ===== HELPER FUNCTIONS FOR APPROVAL =====
+    function checkApproval(userId, scriptType, callback) {
+        fetch(`${BACKEND_URL}?action=check&userId=${encodeURIComponent(userId)}&scriptType=${encodeURIComponent(scriptType)}`)
+            .then(res => res.text())
+            .then(status => callback(status === "approved"))
+            .catch(err => { console.error("Check approval error", err); callback(false); });
     }
 
-    // ===== SOUND SYSTEM (Synthesized) =====
+    function requestApproval(userId, platform, scriptType, callback) {
+        fetch(`${BACKEND_URL}?action=request&userId=${encodeURIComponent(userId)}&platform=${encodeURIComponent(platform)}&scriptType=${encodeURIComponent(scriptType)}`)
+            .then(res => res.text())
+            .then(requestId => callback(requestId))
+            .catch(err => console.error("Request error", err));
+    }
+
+    // ===== SOUND SYSTEM (unchanged) =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     function playSfx(type) {
@@ -366,7 +401,6 @@
         const id = document.getElementById('user-id').value.trim();
         const key = document.getElementById('license-key').value.trim().toUpperCase();
         
-        // Check if both fields are filled
         if(!id) {
             playSfx('click');
             document.getElementById('user-id').style.borderColor = "red";
@@ -382,7 +416,6 @@
             return;
         }
 
-        // Validate license key against the configurable list
         const license = LICENSE_CODES.find(l => l.code === key);
         if (!license) {
             playSfx('click');
@@ -393,17 +426,77 @@
             return;
         }
 
-        // Send Telegram notification (non-blocking)
-        sendTelegramNotification(id, activePlat, license.type);
+        // Disable button and show waiting message
+        const btn = document.getElementById('bypass-btn');
+        btn.disabled = true;
+        btn.innerText = "WAITING...";
 
+        const existingMsg = document.querySelector('.activation-box .waiting-message');
+        if (existingMsg) existingMsg.remove();
+
+        const waitingMsgDiv = document.createElement('div');
+        waitingMsgDiv.className = 'waiting-message';
+        waitingMsgDiv.innerHTML = `
+            <div class="spinner"></div>
+            <div>Awaiting administrator approval...</div>
+            <div class="small">Please wait while your request is reviewed</div>
+        `;
+        document.querySelector('.activation-box').appendChild(waitingMsgDiv);
+
+        // Check if already approved
+        checkApproval(id, SCRIPT_TYPE, (approved) => {
+            if (approved) {
+                waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
+                setTimeout(() => {
+                    waitingMsgDiv.remove();
+                    proceedWithBypass(id, activePlat, license.type);
+                }, 1000);
+            } else {
+                requestApproval(id, activePlat, SCRIPT_TYPE, (requestId) => {
+                    let pollCount = 0;
+                    const maxPolls = 150; // 5 minutes
+                    let interval = null;
+                    interval = setInterval(() => {
+                        pollCount++;
+                        if (pollCount > maxPolls) {
+                            clearInterval(interval);
+                            waitingMsgDiv.innerHTML = `<div style="color: #ff6666;">⏰ Request timed out. Please try again later.</div>`;
+                            btn.disabled = false;
+                            btn.innerText = "BYPASS SERVER";
+                            return;
+                        }
+                        checkApproval(id, SCRIPT_TYPE, (approved) => {
+                            if (approved) {
+                                clearInterval(interval);
+                                waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
+                                setTimeout(() => {
+                                    waitingMsgDiv.remove();
+                                    proceedWithBypass(id, activePlat, license.type);
+                                }, 1000);
+                            } else {
+                                const elapsedMin = Math.floor(pollCount * 2 / 60);
+                                waitingMsgDiv.innerHTML = `
+                                    <div class="spinner"></div>
+                                    <div>Awaiting administrator approval...</div>
+                                    <div class="small">Waiting for admin decision (${elapsedMin} min)</div>
+                                `;
+                            }
+                        });
+                    }, 2000);
+                });
+            }
+        });
+    }
+
+    function proceedWithBypass(userId, platform, licenseType) {
         playSfx('click');
         document.getElementById('selection-screen').style.display = 'none';
         document.getElementById('terminal').style.display = 'flex';
 
         const logs = [
             "INITIATING CORE_LINK...", "BYPASSING SECURE_GATE_V4...",
-            "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + id,
-            "PLATFORM TARGET: " + activePlat, "DECRYPTING ORCHARD_SEED...",
+            "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + userId,
+            "PLATFORM TARGET: " + platform, "DECRYPTING ORCHARD_SEED...",
             "VERIFYING NODE INTEGRITY...", "CONNECTION STABLE. LAUNCHING UI."
         ];
         
@@ -423,15 +516,15 @@
                 setTimeout(() => {
                     document.getElementById('terminal').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'flex';
-                    document.getElementById('sync-plat').innerText = activePlat;
+                    document.getElementById('sync-plat').innerText = platform;
                     renderGrid();
-                    setTimeout(() => scrambleText('sync-id', id), 500);
+                    setTimeout(() => scrambleText('sync-id', userId), 500);
                 }, 800);
             }
         }, 500);
     }
 
-    const odds = ['12.42x','9.82x','7.45x','5.12x','4.02x','3.11x','2.44x','1.93x','1.54x','1.23x'];
+    const odds = ['STOP','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
     
     function renderGrid() {
         const g = document.getElementById('game-grid');
