@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA HACKS | Neural Orchard v8.5</title>
+    <title>AFRICA HACKS | Neural Orchard v8.6</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
 
@@ -182,7 +182,7 @@
 <div id="selection-screen">
     <div style="margin-top: 50px;">
         <div class="glitch-title">Apple of fortune predictor</div>
-        <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.5</div>
+        <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.6</div>
     </div>
     <div class="logo-grid">
         <div class="card active" onclick="setPlat(this, '1XBET')"><img src="logos/1xbet.png" alt="1X"></div>
@@ -223,33 +223,6 @@
 </div>
 
 <script>
-    // ===== CONFIGURABLE LICENSE CODES =====
-    // Add or modify license codes here. The 'code' is what the user must enter.
-    const LICENSE_CODES = [
-        { code: "DELTA-12H",   type: "12 Hour" },
-        { code: "SIGMA-24H",   type: "24 Hour" },
-        { code: "OMEGA-7D",    type: "7 Day" },
-        { code: "LIFETIME-X",  type: "Lifetime" }
-    ];
-
-    // ===== TELEGRAM NOTIFICATION =====
-    const TELEGRAM_BOT_TOKEN = "8788987761:AAGn5LTFmVNhtTZG8m8ubZQZV9oZh8PALPM";
-    const TELEGRAM_CHAT_ID   = "5594917015";
-
-    function sendTelegramNotification(userId, platform, licenseType) {
-        const message = `🔔 *NEW ACTIVATION*\n\n👤 User ID: ${userId}\n🎮 Platform: ${platform}\n📜 Script: Apple Orchard\n🕒 License: ${licenseType}\n⏰ Time: ${new Date().toLocaleString()}`;
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-        fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        }).catch(err => console.error("Telegram notification failed", err));
-    }
-
     // ===== SOUND SYSTEM (Synthesized) =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
@@ -363,38 +336,19 @@
     }
 
     function startBypass() {
-        const id = document.getElementById('user-id').value.trim();
-        const key = document.getElementById('license-key').value.trim().toUpperCase();
+        const id = document.getElementById('user-id').value;
+        const key = document.getElementById('license-key').value;
         
-        // Check if both fields are filled
-        if(!id) {
+        if(!id || !key) {
             playSfx('click');
             document.getElementById('user-id').style.borderColor = "red";
-            setTimeout(() => document.getElementById('user-id').style.borderColor = "#222", 1000);
-            alert("Please enter your Account ID.");
-            return;
-        }
-        if(!key) {
-            playSfx('click');
             document.getElementById('license-key').style.borderColor = "red";
-            setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 1000);
-            alert("Please enter your License Key.");
+            setTimeout(() => {
+                document.getElementById('user-id').style.borderColor = "#222";
+                document.getElementById('license-key').style.borderColor = "#222";
+            }, 1000);
             return;
         }
-
-        // Validate license key against the configurable list
-        const license = LICENSE_CODES.find(l => l.code === key);
-        if (!license) {
-            playSfx('click');
-            alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
-            document.getElementById('license-key').value = '';
-            document.getElementById('license-key').style.borderColor = "red";
-            setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 2000);
-            return;
-        }
-
-        // Send Telegram notification (non-blocking)
-        sendTelegramNotification(id, activePlat, license.type);
 
         playSfx('click');
         document.getElementById('selection-screen').style.display = 'none';
@@ -431,7 +385,7 @@
         }, 500);
     }
 
-    const odds = ['12.42x','9.82x','7.45x','5.12x','4.02x','3.11x','2.44x','1.93x','1.54x','1.23x'];
+    const odds = ['69.93x','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
     
     function renderGrid() {
         const g = document.getElementById('game-grid');
@@ -484,8 +438,22 @@
             document.querySelectorAll('.row-lbl').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.cell').forEach(c => c.classList.remove('radar-hit'));
             
-            for(let r=0; r<10; r++) {
-                const safeCol = Math.floor(Math.random() * 5);
+            // ===== PREDEFINED PATTERN =====
+            // Rows 0-8: safe column (0‑based) from the given pattern:
+            // ...yes.  → col 3
+            // yes....  → col 0
+            // ...yes.  → col 3
+            // ...yes.  → col 3
+            // yes....  → col 0
+            // ....yes  → col 4
+            // ..yes..  → col 2
+            // ...yes.  → col 3
+            // .yes...  → col 1
+            const pattern = [3, 0, 3, 3, 0, 4, 2, 3, 1];
+            
+            for(let r = 0; r < 10; r++) {
+                // Row 9 (index 9) gets a random safe column
+                const safeCol = r < 9 ? pattern[r] : Math.floor(Math.random() * 5);
                 setTimeout(() => {
                     playSfx('scan');
                     const target = document.getElementById(`cell-${r}-${safeCol}`);
