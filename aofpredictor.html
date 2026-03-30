@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA HACKS | Neural Orchard v8.5</title>
+    <title>AFRICA HACKS | Neural Orchard v8.6</title>
     <style>
+        /* ========== ORIGINAL STYLES (unchanged) ========== */
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
 
         :root { 
@@ -172,37 +173,6 @@
         }
 
         .apple-anim { animation: applePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
-
-        /* Waiting message styles (from crash predictor) */
-        .waiting-message {
-            background: rgba(0,0,0,0.85);
-            border: 2px solid #ffcc00;
-            border-radius: 8px;
-            padding: 20px 15px;
-            margin: 15px auto;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: #ffcc00;
-            box-shadow: 0 0 20px rgba(255,204,0,0.3);
-            backdrop-filter: blur(5px);
-        }
-        .waiting-message .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,204,0,0.3);
-            border-top-color: #ffcc00;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .waiting-message .small {
-            font-size: 10px;
-            color: #aaa;
-            margin-top: 8px;
-        }
     </style>
 </head>
 <body>
@@ -213,7 +183,7 @@
 <div id="selection-screen">
     <div style="margin-top: 50px;">
         <div class="glitch-title">Apple of fortune predictor</div>
-        <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.5</div>
+        <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.6</div>
     </div>
     <div class="logo-grid">
         <div class="card active" onclick="setPlat(this, '1XBET')"><img src="logos/1xbet.png" alt="1X"></div>
@@ -233,7 +203,7 @@
     <div class="activation-box">
         <input type="text" id="user-id" placeholder="ACCOUNT ID">
         <input type="password" id="license-key" placeholder="LICENSE KEY">
-        <button class="btn-main" id="bypass-btn" onclick="startBypass()">BYPASS SERVER</button>
+        <button class="btn-main" onclick="startBypass()">BYPASS SERVER</button>
     </div>
 </div>
 
@@ -254,38 +224,10 @@
 </div>
 
 <script>
-    // ===== BACKEND URL (your Apps Script web app) =====
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzLj7iRI0EnrLhJz5N3fzrKJPzzd1Iyg8-oyZFMYuA3Ji4yKIb3KI7f9K43zbTx_3mV/exec";
-    const SCRIPT_TYPE = "Apple Orchard";
+    // ===== SIMPLE ACCESS KEY =====
+    const VALID_KEY = "TEST1234";   // user must enter "test 1234" (case‑insensitive)
 
-    // ===== CONFIGURABLE LICENSE CODES =====
-    const LICENSE_CODES = [
-        { code: "DELTA-12H",   type: "12 Hour" },
-        { code: "SIGMA-24H",   type: "24 Hour" },
-        { code: "OMEGA-7D",    type: "7 Day" },
-        { code: "LIFETIME-X",  type: "Lifetime" }
-    ];
-
-    // ===== TELEGRAM NOTIFICATION (only for reference, now handled by backend) =====
-    // We keep the function but it's not used because the backend sends the request.
-    // The original sendTelegramNotification is removed to avoid duplicate.
-
-    // ===== HELPER FUNCTIONS FOR APPROVAL =====
-    function checkApproval(userId, scriptType, callback) {
-        fetch(`${BACKEND_URL}?action=check&userId=${encodeURIComponent(userId)}&scriptType=${encodeURIComponent(scriptType)}`)
-            .then(res => res.text())
-            .then(status => callback(status === "approved"))
-            .catch(err => { console.error("Check approval error", err); callback(false); });
-    }
-
-    function requestApproval(userId, platform, scriptType, callback) {
-        fetch(`${BACKEND_URL}?action=request&userId=${encodeURIComponent(userId)}&platform=${encodeURIComponent(platform)}&scriptType=${encodeURIComponent(scriptType)}`)
-            .then(res => res.text())
-            .then(requestId => callback(requestId))
-            .catch(err => console.error("Request error", err));
-    }
-
-    // ===== SOUND SYSTEM (unchanged) =====
+    // ===== SOUND SYSTEM =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     function playSfx(type) {
@@ -416,87 +358,25 @@
             return;
         }
 
-        const license = LICENSE_CODES.find(l => l.code === key);
-        if (!license) {
+        // Check the static key
+        if (key !== VALID_KEY) {
             playSfx('click');
-            alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
+            alert("ACCESS DENIED: INVALID LICENSE KEY.");
             document.getElementById('license-key').value = '';
             document.getElementById('license-key').style.borderColor = "red";
             setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 2000);
             return;
         }
 
-        // Disable button and show waiting message
-        const btn = document.getElementById('bypass-btn');
-        btn.disabled = true;
-        btn.innerText = "WAITING...";
-
-        const existingMsg = document.querySelector('.activation-box .waiting-message');
-        if (existingMsg) existingMsg.remove();
-
-        const waitingMsgDiv = document.createElement('div');
-        waitingMsgDiv.className = 'waiting-message';
-        waitingMsgDiv.innerHTML = `
-            <div class="spinner"></div>
-            <div>Awaiting administrator approval...</div>
-            <div class="small">Please wait while your request is reviewed</div>
-        `;
-        document.querySelector('.activation-box').appendChild(waitingMsgDiv);
-
-        // Check if already approved
-        checkApproval(id, SCRIPT_TYPE, (approved) => {
-            if (approved) {
-                waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
-                setTimeout(() => {
-                    waitingMsgDiv.remove();
-                    proceedWithBypass(id, activePlat, license.type);
-                }, 1000);
-            } else {
-                requestApproval(id, activePlat, SCRIPT_TYPE, (requestId) => {
-                    let pollCount = 0;
-                    const maxPolls = 150; // 5 minutes
-                    let interval = null;
-                    interval = setInterval(() => {
-                        pollCount++;
-                        if (pollCount > maxPolls) {
-                            clearInterval(interval);
-                            waitingMsgDiv.innerHTML = `<div style="color: #ff6666;">⏰ Request timed out. Please try again later.</div>`;
-                            btn.disabled = false;
-                            btn.innerText = "BYPASS SERVER";
-                            return;
-                        }
-                        checkApproval(id, SCRIPT_TYPE, (approved) => {
-                            if (approved) {
-                                clearInterval(interval);
-                                waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
-                                setTimeout(() => {
-                                    waitingMsgDiv.remove();
-                                    proceedWithBypass(id, activePlat, license.type);
-                                }, 1000);
-                            } else {
-                                const elapsedMin = Math.floor(pollCount * 2 / 60);
-                                waitingMsgDiv.innerHTML = `
-                                    <div class="spinner"></div>
-                                    <div>Awaiting administrator approval...</div>
-                                    <div class="small">Waiting for admin decision (${elapsedMin} min)</div>
-                                `;
-                            }
-                        });
-                    }, 2000);
-                });
-            }
-        });
-    }
-
-    function proceedWithBypass(userId, platform, licenseType) {
+        // Valid key – proceed
         playSfx('click');
         document.getElementById('selection-screen').style.display = 'none';
         document.getElementById('terminal').style.display = 'flex';
 
         const logs = [
             "INITIATING CORE_LINK...", "BYPASSING SECURE_GATE_V4...",
-            "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + userId,
-            "PLATFORM TARGET: " + platform, "DECRYPTING ORCHARD_SEED...",
+            "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + id,
+            "PLATFORM TARGET: " + activePlat, "DECRYPTING ORCHARD_SEED...",
             "VERIFYING NODE INTEGRITY...", "CONNECTION STABLE. LAUNCHING UI."
         ];
         
@@ -516,15 +396,15 @@
                 setTimeout(() => {
                     document.getElementById('terminal').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'flex';
-                    document.getElementById('sync-plat').innerText = platform;
+                    document.getElementById('sync-plat').innerText = activePlat;
                     renderGrid();
-                    setTimeout(() => scrambleText('sync-id', userId), 500);
+                    setTimeout(() => scrambleText('sync-id', id), 500);
                 }, 800);
             }
         }, 500);
     }
 
-    const odds = ['STOP','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
+    const odds = ['stop','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
     
     function renderGrid() {
         const g = document.getElementById('game-grid');
@@ -577,8 +457,11 @@
             document.querySelectorAll('.row-lbl').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.cell').forEach(c => c.classList.remove('radar-hit'));
             
-            for(let r=0; r<10; r++) {
-                const safeCol = Math.floor(Math.random() * 5);
+            // ===== PREDEFINED PATTERN =====
+            const pattern = [3, 0, 3, 3, 0, 4, 2, 3, 1];
+            
+            for(let r = 0; r < 10; r++) {
+                const safeCol = r < 9 ? pattern[r] : Math.floor(Math.random() * 5);
                 setTimeout(() => {
                     playSfx('scan');
                     const target = document.getElementById(`cell-${r}-${safeCol}`);
