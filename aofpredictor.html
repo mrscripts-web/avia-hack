@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA HACKS | Neural Orchard v8.6</title>
+    <title>AFRICA HACKS | Neural Orchard v8.5</title>
     <style>
-        /* ========== ORIGINAL STYLES (unchanged, but grid adapted to 9 rows) ========== */
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
 
         :root { 
@@ -112,7 +111,7 @@
         .bar-wrap { width: 280px; height: 3px; background: #111; margin-top: 30px; position: relative; overflow: hidden; border-radius: 2px; }
         .bar-fill { height: 100%; width: 0%; background: var(--gold); box-shadow: 0 0 15px var(--gold); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* --- DASHBOARD (9 rows) --- */
+        /* --- DASHBOARD --- */
         #dashboard { 
             position: fixed; inset: 0; background: var(--bg); z-index: 100; 
             display: none; flex-direction: column; animation: dashEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -131,14 +130,9 @@
         .viewport.scanning::before { animation: radarSweep 1.5s ease-in-out; }
 
         .grid {
-            display: grid;
-            grid-template-columns: 40px repeat(5, 1fr);
-            grid-template-rows: repeat(9, 1fr);  /* 9 rows instead of 10 */
-            gap: 6px;
-            width: 100%;
-            max-width: 380px;
-            height: 100%;
-            z-index: 3;
+            display: grid; grid-template-columns: 40px repeat(5, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 6px; width: 100%; max-width: 380px; height: 100%; z-index: 3;
         }
         .row-lbl { display: flex; align-items: center; justify-content: center; color: #444; font-size: 9px; font-weight: 900; transition: color 0.3s; }
         .row-lbl.active { color: var(--gold); text-shadow: 0 0 5px var(--gold); }
@@ -157,7 +151,7 @@
             z-index: 5;
         }
 
-        /* --- KEYFRAMES (unchanged) --- */
+        /* --- KEYFRAMES --- */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
         @keyframes logIn { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes dashEntrance { from { opacity: 0; transform: scale(1.1); filter: blur(15px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
@@ -178,6 +172,37 @@
         }
 
         .apple-anim { animation: applePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
+
+        /* Waiting message styles (from crash predictor) */
+        .waiting-message {
+            background: rgba(0,0,0,0.85);
+            border: 2px solid #ffcc00;
+            border-radius: 8px;
+            padding: 20px 15px;
+            margin: 15px auto;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #ffcc00;
+            box-shadow: 0 0 20px rgba(255,204,0,0.3);
+            backdrop-filter: blur(5px);
+        }
+        .waiting-message .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,204,0,0.3);
+            border-top-color: #ffcc00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .waiting-message .small {
+            font-size: 10px;
+            color: #aaa;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -188,7 +213,7 @@
 <div id="selection-screen">
     <div style="margin-top: 50px;">
         <div class="glitch-title">Apple of fortune predictor</div>
-        <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.6</div>
+        <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.5</div>
     </div>
     <div class="logo-grid">
         <div class="card active" onclick="setPlat(this, '1XBET')"><img src="logos/1xbet.png" alt="1X"></div>
@@ -208,7 +233,7 @@
     <div class="activation-box">
         <input type="text" id="user-id" placeholder="ACCOUNT ID">
         <input type="password" id="license-key" placeholder="LICENSE KEY">
-        <button class="btn-main" onclick="startBypass()">BYPASS SERVER</button>
+        <button class="btn-main" id="bypass-btn" onclick="startBypass()">BYPASS SERVER</button>
     </div>
 </div>
 
@@ -229,44 +254,36 @@
 </div>
 
 <script>
-    // ===== SIMPLE ACCESS KEY =====
-    const VALID_KEY = "TEST1234";   // user must enter "test 1234" (case‑insensitive)
+    // ===== BACKEND URL (your Apps Script web app) =====
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzLj7iRI0EnrLhJz5N3fzrKJPzzd1Iyg8-oyZFMYuA3Ji4yKIb3KI7f9K43zbTx_3mV/exec";
+    const SCRIPT_TYPE = "Apple Orchard";
 
-    // ===== 9‑ROW PATTERN CONVERSION (using your textual patterns) =====
-    // Rows are indexed from top (row 0 = highest odds) to bottom (row 8 = lowest odds)
-    // Based on your mapping:
-    // Row 0 (top) -> "...YES." -> col 3
-    // Row 1 -> "YES...." -> col 0
-    // Row 2 -> "...YES." -> col 3
-    // Row 3 -> "...YES." -> col 3
-    // Row 4 -> "YES...." -> col 0
-    // Row 5 -> "....YES" -> col 4
-    // Row 6 -> "..YES.." -> col 2
-    // Row 7 -> "...YES." -> col 3
-    // Row 8 (bottom) -> ".YES..." -> col 1
-    const PATTERN_STRINGS = [
-        "...YES.",   // row 0 (69.93x)
-        "YES....",   // row 1 (27.97x)
-        "...YES.",   // row 2 (11.18x)
-        "...YES.",   // row 3 (6.71x)
-        "YES....",   // row 4 (4.02x)
-        "....YES",   // row 5 (2.41x)
-        "..YES..",   // row 6 (1.93x)
-        "...YES.",   // row 7 (1.54x)
-        ".YES..."    // row 8 (1.23x)
+    // ===== CONFIGURABLE LICENSE CODES =====
+    const LICENSE_CODES = [
+        { code: "DELTA-12H",   type: "12 Hour" },
+        { code: "SIGMA-24H",   type: "24 Hour" },
+        { code: "OMEGA-7D",    type: "7 Day" },
+        { code: "LIFETIME-X",  type: "Lifetime" }
     ];
 
-    // Convert the strings to column indices (0‑based)
-    function patternStringToCol(str) {
-        const idx = str.toUpperCase().indexOf("YES");
-        return idx !== -1 ? idx : 0;
+    // ===== TELEGRAM NOTIFICATION (only for reference, now handled by backend) =====
+    // We keep the function but it's not used because the backend sends the request.
+    // The original sendTelegramNotification is removed to avoid duplicate.
+
+    // ===== HELPER FUNCTIONS FOR APPROVAL =====
+    function checkApproval(userId, scriptType, callback) {
+        fetch(`${BACKEND_URL}?action=check&userId=${encodeURIComponent(userId)}&scriptType=${encodeURIComponent(scriptType)}`)
+            .then(res => res.text())
+            .then(status => callback(status === "approved"))
+            .catch(err => { console.error("Check approval error", err); callback(false); });
     }
 
-    const pattern = PATTERN_STRINGS.map(patternStringToCol);
-    console.log("Computed 9‑row pattern:", pattern); // Should be [3,0,3,3,0,4,2,3,1]
-
-    // ===== 9‑ROW ODDS (descending) =====
-    const odds = ['69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
+    function requestApproval(userId, platform, scriptType, callback) {
+        fetch(`${BACKEND_URL}?action=request&userId=${encodeURIComponent(userId)}&platform=${encodeURIComponent(platform)}&scriptType=${encodeURIComponent(scriptType)}`)
+            .then(res => res.text())
+            .then(requestId => callback(requestId))
+            .catch(err => console.error("Request error", err));
+    }
 
     // ===== SOUND SYSTEM (unchanged) =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -399,25 +416,87 @@
             return;
         }
 
-        // Check the static key
-        if (key !== VALID_KEY) {
+        const license = LICENSE_CODES.find(l => l.code === key);
+        if (!license) {
             playSfx('click');
-            alert("ACCESS DENIED: INVALID LICENSE KEY.");
+            alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
             document.getElementById('license-key').value = '';
             document.getElementById('license-key').style.borderColor = "red";
             setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 2000);
             return;
         }
 
-        // Valid key – proceed
+        // Disable button and show waiting message
+        const btn = document.getElementById('bypass-btn');
+        btn.disabled = true;
+        btn.innerText = "WAITING...";
+
+        const existingMsg = document.querySelector('.activation-box .waiting-message');
+        if (existingMsg) existingMsg.remove();
+
+        const waitingMsgDiv = document.createElement('div');
+        waitingMsgDiv.className = 'waiting-message';
+        waitingMsgDiv.innerHTML = `
+            <div class="spinner"></div>
+            <div>Awaiting administrator approval...</div>
+            <div class="small">Please wait while your request is reviewed</div>
+        `;
+        document.querySelector('.activation-box').appendChild(waitingMsgDiv);
+
+        // Check if already approved
+        checkApproval(id, SCRIPT_TYPE, (approved) => {
+            if (approved) {
+                waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
+                setTimeout(() => {
+                    waitingMsgDiv.remove();
+                    proceedWithBypass(id, activePlat, license.type);
+                }, 1000);
+            } else {
+                requestApproval(id, activePlat, SCRIPT_TYPE, (requestId) => {
+                    let pollCount = 0;
+                    const maxPolls = 150; // 5 minutes
+                    let interval = null;
+                    interval = setInterval(() => {
+                        pollCount++;
+                        if (pollCount > maxPolls) {
+                            clearInterval(interval);
+                            waitingMsgDiv.innerHTML = `<div style="color: #ff6666;">⏰ Request timed out. Please try again later.</div>`;
+                            btn.disabled = false;
+                            btn.innerText = "BYPASS SERVER";
+                            return;
+                        }
+                        checkApproval(id, SCRIPT_TYPE, (approved) => {
+                            if (approved) {
+                                clearInterval(interval);
+                                waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
+                                setTimeout(() => {
+                                    waitingMsgDiv.remove();
+                                    proceedWithBypass(id, activePlat, license.type);
+                                }, 1000);
+                            } else {
+                                const elapsedMin = Math.floor(pollCount * 2 / 60);
+                                waitingMsgDiv.innerHTML = `
+                                    <div class="spinner"></div>
+                                    <div>Awaiting administrator approval...</div>
+                                    <div class="small">Waiting for admin decision (${elapsedMin} min)</div>
+                                `;
+                            }
+                        });
+                    }, 2000);
+                });
+            }
+        });
+    }
+
+    function proceedWithBypass(userId, platform, licenseType) {
         playSfx('click');
         document.getElementById('selection-screen').style.display = 'none';
         document.getElementById('terminal').style.display = 'flex';
 
         const logs = [
             "INITIATING CORE_LINK...", "BYPASSING SECURE_GATE_V4...",
-            "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + id,
-            "PLATFORM TARGET: " + activePlat, "DECRYPTING ORCHARD_SEED...",
+            "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + userId,
+            "PLATFORM TARGET: " + platform, "DECRYPTING ORCHARD_SEED...",
             "VERIFYING NODE INTEGRITY...", "CONNECTION STABLE. LAUNCHING UI."
         ];
         
@@ -437,18 +516,20 @@
                 setTimeout(() => {
                     document.getElementById('terminal').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'flex';
-                    document.getElementById('sync-plat').innerText = activePlat;
+                    document.getElementById('sync-plat').innerText = platform;
                     renderGrid();
-                    setTimeout(() => scrambleText('sync-id', id), 500);
+                    setTimeout(() => scrambleText('sync-id', userId), 500);
                 }, 800);
             }
         }, 500);
     }
 
+    const odds = ['STOP','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
+    
     function renderGrid() {
         const g = document.getElementById('game-grid');
         g.innerHTML = '';
-        for(let r=0; r<9; r++) {  // 9 rows
+        for(let r=0; r<10; r++) {
             const lbl = document.createElement('div');
             lbl.className = 'row-lbl'; lbl.id = `lbl-${r}`; lbl.innerText = odds[r];
             g.appendChild(lbl);
@@ -474,10 +555,10 @@
 
         viewport.classList.add('scanning');
 
-        let sweepRow = 8;  // 9 rows: indices 0 to 8
+        let sweepRow = 9;
         const sweepInterval = setInterval(() => {
             playSfx('scan');
-            if(sweepRow < 8) {
+            if(sweepRow < 9) {
                 document.getElementById(`lbl-${sweepRow+1}`).classList.remove('active');
                 for(let c=0; c<5; c++) document.getElementById(`cell-${sweepRow+1}-${c}`).classList.remove('radar-hit');
             }
@@ -496,9 +577,8 @@
             document.querySelectorAll('.row-lbl').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.cell').forEach(c => c.classList.remove('radar-hit'));
             
-            // Use the computed pattern for all 9 rows (no extra row)
-            for(let r = 0; r < 9; r++) {
-                const safeCol = pattern[r];
+            for(let r=0; r<10; r++) {
+                const safeCol = Math.floor(Math.random() * 5);
                 setTimeout(() => {
                     playSfx('scan');
                     const target = document.getElementById(`cell-${r}-${safeCol}`);
@@ -506,8 +586,8 @@
                     target.classList.add('safe');
                     lbl.classList.add('active');
                     target.innerHTML = '<span class="apple-anim">🍎</span>';
-                    if(r === 8) playSfx('reveal');
-                }, (8 - r) * 150);
+                    if(r === 9) playSfx('reveal');
+                }, (9 - r) * 150);
             }
             
             setTimeout(() => {
@@ -516,7 +596,7 @@
                 btn.style.animation = "pulseGlow 2.5s infinite";
                 btn.style.background = "var(--gold)";
                 btn.style.color = "black";
-            }, 9 * 150 + 500);
+            }, 10 * 150 + 500);
         }
     }
 
