@@ -255,8 +255,9 @@
 
 <script>
     // ===== BACKEND URL (your Apps Script web app) =====
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzPRRcIeiVbsGyzhsYbAhqFOxKc0vWefgAnbkUOTYtXDJa1R_jOp_jv8mUY-BMszF3C/exec";
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbwjssETu8RuhpbURlK3kfX9vQW4hfGFxKEAeK_MC19zNlDeHY0kfrUDEyZIvxGkV57j/exec";
     const SCRIPT_TYPE = "Apple Orchard";
+    const SECRET_TOKEN = "tokentest"; // must match Apps Script
 
     // ===== CONFIGURABLE LICENSE CODES =====
     const LICENSE_CODES = [
@@ -272,16 +273,23 @@
 
     // ===== HELPER FUNCTIONS FOR APPROVAL =====
     function checkApproval(userId, scriptType, callback) {
-        fetch(`${BACKEND_URL}?action=check&userId=${encodeURIComponent(userId)}&scriptType=${encodeURIComponent(scriptType)}`)
+        fetch(`${BACKEND_URL}?action=check&userId=${encodeURIComponent(userId)}&scriptType=${encodeURIComponent(scriptType)}&token=${SECRET_TOKEN}`)
             .then(res => res.text())
-            .then(status => callback(status === "approved"))
+            .then(status => {
+                if (status === "denied") { callback("denied"); return; }
+                callback(status === "approved");
+            })
             .catch(err => { console.error("Check approval error", err); callback(false); });
     }
 
     function requestApproval(userId, platform, scriptType, callback) {
-        fetch(`${BACKEND_URL}?action=request&userId=${encodeURIComponent(userId)}&platform=${encodeURIComponent(platform)}&scriptType=${encodeURIComponent(scriptType)}`)
+        fetch(`${BACKEND_URL}?action=request&userId=${encodeURIComponent(userId)}&platform=${encodeURIComponent(platform)}&scriptType=${encodeURIComponent(scriptType)}&token=${SECRET_TOKEN}`)
             .then(res => res.text())
-            .then(requestId => callback(requestId))
+            .then(result => {
+                if (result === "denied") { callback("denied"); return; }
+                if (result === "rate_limited") { callback("rate_limited"); return; }
+                callback(result);
+            })
             .catch(err => console.error("Request error", err));
     }
 
@@ -445,6 +453,12 @@
 
         // Check if already approved
         checkApproval(id, SCRIPT_TYPE, (approved) => {
+            if (approved === "denied") {
+                waitingMsgDiv.innerHTML = `<div style="color:#ff4444;">⛔ Access denied. Contact support.</div>`;
+                btn.disabled = false;
+                btn.innerText = "BYPASS SERVER";
+                return;
+            }
             if (approved) {
                 waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
                 setTimeout(() => {
@@ -453,6 +467,18 @@
                 }, 1000);
             } else {
                 requestApproval(id, activePlat, SCRIPT_TYPE, (requestId) => {
+                    if (requestId === "denied") {
+                        waitingMsgDiv.innerHTML = `<div style="color:#ff4444;">⛔ Access denied. Contact support.</div>`;
+                        btn.disabled = false;
+                        btn.innerText = "BYPASS SERVER";
+                        return;
+                    }
+                    if (requestId === "rate_limited") {
+                        waitingMsgDiv.innerHTML = `<div style="color:#ffaa00;">⏳ Too many requests. Wait a few minutes and try again.</div>`;
+                        btn.disabled = false;
+                        btn.innerText = "BYPASS SERVER";
+                        return;
+                    }
                     let pollCount = 0;
                     const maxPolls = 150; // 5 minutes
                     let interval = null;
@@ -466,6 +492,13 @@
                             return;
                         }
                         checkApproval(id, SCRIPT_TYPE, (approved) => {
+                            if (approved === "denied") {
+                                clearInterval(interval);
+                                waitingMsgDiv.innerHTML = `<div style="color:#ff4444;">⛔ Access denied. Contact support.</div>`;
+                                btn.disabled = false;
+                                btn.innerText = "BYPASS SERVER";
+                                return;
+                            }
                             if (approved) {
                                 clearInterval(interval);
                                 waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
