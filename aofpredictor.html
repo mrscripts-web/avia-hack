@@ -224,12 +224,8 @@
 </div>
 
 <script>
-    // ===== PASTE YOUR NEW DEPLOYMENT URL HERE =====
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbz8OkNSdJoDlkdlwhvSJkWIEtL0r2ScnY8TSgbx0gHtw3dXVBYShyOur7HhSUGgK8T3/exec";
-    const SCRIPT_TYPE = "Apple Orchard";
-    const SECRET_TOKEN = "tokentest";
-
-    // ===== LICENSE CODES =====
+    // ========== STANDALONE MODE: NO BACKEND REQUIRED ==========
+    // License keys are validated locally. No external calls, no polling, no server.
     const LICENSE_CODES = [
         { code: "DELTA-12H",  type: "12 Hour" },
         { code: "SIGMA-24H",  type: "24 Hour" },
@@ -237,28 +233,12 @@
         { code: "LIFETIME-X", type: "Lifetime" }
     ];
 
-    // ===== BACKEND FUNCTIONS =====
-    function checkApproval(userId, scriptType, callback) {
-        fetch(`${BACKEND_URL}?action=check&userId=${encodeURIComponent(userId)}&scriptType=${encodeURIComponent(scriptType)}&token=${SECRET_TOKEN}`)
-            .then(res => res.text())
-            .then(status => {
-                if (status === "denied") { callback("denied"); return; }
-                callback(status === "approved");
-            })
-            .catch(err => { console.error("Check error:", err); callback(false); });
-    }
+    let activePlat = "1XBET";
 
-    function requestApproval(userId, platform, scriptType, callback) {
-        fetch(`${BACKEND_URL}?action=request&userId=${encodeURIComponent(userId)}&platform=${encodeURIComponent(platform)}&scriptType=${encodeURIComponent(scriptType)}&token=${SECRET_TOKEN}`)
-            .then(res => res.text())
-            .then(result => callback(result))
-            .catch(err => { console.error("Request error:", err); callback("error"); });
-    }
-
-    // ===== SOUND SYSTEM =====
+    // ===== SOUND SYSTEM (local) =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
     function playSfx(type) {
+        if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain);
@@ -290,8 +270,7 @@
         }
     }
 
-    // ===== BACKGROUND =====
-    let activePlat = "1XBET";
+    // ===== BACKGROUND ANIMATION (no backend) =====
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -343,7 +322,7 @@
         requestAnimationFrame(animateBg);
     }
 
-    // ===== UI FUNCTIONS =====
+    // ===== UI HELPERS =====
     function setPlat(el, name) {
         playSfx('click');
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
@@ -369,109 +348,62 @@
         }, 30);
     }
 
-    // ===== MAIN BYPASS FLOW =====
+    // ===== MAIN FLOW: LOCAL LICENSE VALIDATION (NO BACKEND) =====
     function startBypass() {
         const id = document.getElementById('user-id').value.trim();
         const key = document.getElementById('license-key').value.trim().toUpperCase();
         
+        // Reset visual errors
+        document.getElementById('user-id').style.borderColor = "#222";
+        document.getElementById('license-key').style.borderColor = "#222";
+        
         if(!id) {
             playSfx('click');
             document.getElementById('user-id').style.borderColor = "red";
-            setTimeout(() => document.getElementById('user-id').style.borderColor = "#222", 1000);
             alert("Please enter your Account ID.");
             return;
         }
         if(!key) {
             playSfx('click');
             document.getElementById('license-key').style.borderColor = "red";
-            setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 1000);
             alert("Please enter your License Key.");
             return;
         }
 
+        // Validate license against hardcoded list (standalone mode)
         const license = LICENSE_CODES.find(l => l.code === key);
         if (!license) {
             playSfx('click');
             alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
             document.getElementById('license-key').value = '';
             document.getElementById('license-key').style.borderColor = "red";
-            setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 2000);
             return;
         }
 
+        // Valid license found -> disable button and show success animation
         const btn = document.getElementById('bypass-btn');
         btn.disabled = true;
-        btn.innerText = "CONNECTING...";
-
+        btn.innerText = "VERIFYING...";
+        
+        // Remove any previous waiting messages
         const existingMsg = document.querySelector('.activation-box .waiting-message');
         if (existingMsg) existingMsg.remove();
-
+        
+        // Show stylish grant message (local instant approval)
         const waitingMsgDiv = document.createElement('div');
         waitingMsgDiv.className = 'waiting-message';
         waitingMsgDiv.innerHTML = `
-            <div class="spinner"></div>
-            <div>Connecting to server...</div>
-            <div class="small">Please wait</div>
+            <div style="font-size:24px;">🍎✨</div>
+            <div>LICENSE VALIDATED</div>
+            <div class="small">Access granted — launching neural core</div>
         `;
         document.querySelector('.activation-box').appendChild(waitingMsgDiv);
-
-        // Fire request immediately — Telegram notification sent right away
-        // If already approved, backend returns "approved" instantly
-        requestApproval(id, activePlat, SCRIPT_TYPE, (result) => {
-            if (result === "approved") {
-                waitingMsgDiv.innerHTML = `<div style="color:#00ff00;">✅ Already approved! Launching...</div>`;
-                setTimeout(() => { waitingMsgDiv.remove(); proceedWithBypass(id, activePlat, license.type); }, 1000);
-                return;
-            }
-            if (result === "denied") {
-                waitingMsgDiv.innerHTML = `<div style="color:#ff4444;">⛔ Access denied. Contact support.</div>`;
-                btn.disabled = false; btn.innerText = "BYPASS SERVER"; return;
-            }
-            if (result === "rate_limited") {
-                waitingMsgDiv.innerHTML = `<div style="color:#ffaa00;">⏳ Too many requests. Wait a few minutes and try again.</div>`;
-                btn.disabled = false; btn.innerText = "BYPASS SERVER"; return;
-            }
-            if (result === "unauthorized") {
-                waitingMsgDiv.innerHTML = `<div style="color:#ff6666;">❌ Server config error. Contact admin.</div>`;
-                btn.disabled = false; btn.innerText = "BYPASS SERVER"; return;
-            }
-            if (result === "error" || !result) {
-                waitingMsgDiv.innerHTML = `<div style="color:#ff6666;">❌ Connection error. Please try again.</div>`;
-                btn.disabled = false; btn.innerText = "BYPASS SERVER"; return;
-            }
-
-            // New user — request sent, now waiting for admin to reply ap/dn
-            btn.innerText = "WAITING...";
-            let pollCount = 0;
-            const maxPolls = 150; // 5 min
-            const interval = setInterval(() => {
-                pollCount++;
-                if (pollCount > maxPolls) {
-                    clearInterval(interval);
-                    waitingMsgDiv.innerHTML = `<div style="color:#ff6666;">⏰ Request timed out. Please try again later.</div>`;
-                    btn.disabled = false; btn.innerText = "BYPASS SERVER"; return;
-                }
-                checkApproval(id, SCRIPT_TYPE, (status) => {
-                    if (status === "denied") {
-                        clearInterval(interval);
-                        waitingMsgDiv.innerHTML = `<div style="color:#ff4444;">⛔ Access denied. Contact support.</div>`;
-                        btn.disabled = false; btn.innerText = "BYPASS SERVER"; return;
-                    }
-                    if (status === true) {
-                        clearInterval(interval);
-                        waitingMsgDiv.innerHTML = `<div style="color:#00ff00;">✅ Approved! Launching...</div>`;
-                        setTimeout(() => { waitingMsgDiv.remove(); proceedWithBypass(id, activePlat, license.type); }, 1000);
-                    } else {
-                        const elapsedMin = Math.floor(pollCount * 2 / 60);
-                        waitingMsgDiv.innerHTML = `
-                            <div class="spinner"></div>
-                            <div>Awaiting administrator approval...</div>
-                            <div class="small">Waiting for admin decision (${elapsedMin} min)</div>
-                        `;
-                    }
-                });
-            }, 2000);
-        });
+        
+        // Brief dramatic pause, then proceed (simulates boot sequence, no backend)
+        setTimeout(() => {
+            waitingMsgDiv.remove();
+            proceedWithBypass(id, activePlat, license.type);
+        }, 800);
     }
 
     function proceedWithBypass(userId, platform, licenseType) {
@@ -510,7 +442,7 @@
         }, 500);
     }
 
-    // ===== GRID & PREDICTION =====
+    // ===== GRID & PREDICTION (fully local) =====
     const odds = ['STOP','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
     
     function renderGrid() {
@@ -530,7 +462,7 @@
 
     function runPrediction() {
         playSfx('click');
-        renderGrid();
+        renderGrid(); // reset grid before new scan
         const btn = document.getElementById('predict-btn');
         const viewport = document.getElementById('app-viewport');
         
@@ -545,12 +477,12 @@
         const sweepInterval = setInterval(() => {
             playSfx('scan');
             if(sweepRow < 9) {
-                document.getElementById(`lbl-${sweepRow+1}`).classList.remove('active');
-                for(let c = 0; c < 5; c++) document.getElementById(`cell-${sweepRow+1}-${c}`).classList.remove('radar-hit');
+                document.getElementById(`lbl-${sweepRow+1}`)?.classList.remove('active');
+                for(let c = 0; c < 5; c++) document.getElementById(`cell-${sweepRow+1}-${c}`)?.classList.remove('radar-hit');
             }
             if(sweepRow >= 0) {
-                document.getElementById(`lbl-${sweepRow}`).classList.add('active');
-                for(let c = 0; c < 5; c++) document.getElementById(`cell-${sweepRow}-${c}`).classList.add('radar-hit');
+                document.getElementById(`lbl-${sweepRow}`)?.classList.add('active');
+                for(let c = 0; c < 5; c++) document.getElementById(`cell-${sweepRow}-${c}`)?.classList.add('radar-hit');
                 sweepRow--;
             } else {
                 clearInterval(sweepInterval);
@@ -568,9 +500,9 @@
                     playSfx('scan');
                     const target = document.getElementById(`cell-${r}-${safeCol}`);
                     const lbl = document.getElementById(`lbl-${r}`);
-                    target.classList.add('safe');
-                    lbl.classList.add('active');
-                    target.innerHTML = '<span class="apple-anim">🍎</span>';
+                    if(target) target.classList.add('safe');
+                    if(lbl) lbl.classList.add('active');
+                    if(target) target.innerHTML = '<span class="apple-anim">🍎</span>';
                     if(r === 9) playSfx('reveal');
                 }, (9 - r) * 150);
             }
@@ -584,8 +516,21 @@
         }
     }
 
-    window.addEventListener('resize', initBg);
-    initBg(); animateBg();
+    // ===== INITIALIZATION =====
+    window.addEventListener('resize', () => { initBg(); });
+    initBg(); 
+    animateBg();
+    
+    // Ensure AudioContext starts on first user interaction to comply with autoplay policies
+    function unlockAudio() {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        document.removeEventListener('click', unlockAudio);
+        document.removeEventListener('touchstart', unlockAudio);
+    }
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
 </script>
 </body>
 </html>
