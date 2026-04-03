@@ -44,6 +44,7 @@
         .box-header { font-size: 8px; color: var(--accent); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
         .id-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 4px; color: #555; }
         .id-row span:last-child { color: #aaa; font-weight: bold; }
+        .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
 
         #terminal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .term-line { color: var(--accent); margin-bottom: 4px; width: 280px; text-shadow: 0 0 5px var(--accent); }
@@ -69,7 +70,6 @@
         .logout-btn:hover { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
         .stat-label { font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 4px; }
         .stat-val { font-size: 11px; color: var(--accent); font-weight: bold; text-shadow: 0 0 8px rgba(255,0,51,0.4); }
-        .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
         .blink { animation: fast-blink 0.2s infinite; color: #fff !important; text-shadow: 0 0 10px #fff !important; }
 
         @keyframes blinker { 50% { opacity: 0.3; } }
@@ -84,7 +84,6 @@
         .modal-hash { color: var(--accent); word-break: break-all; font-size: 9px; margin: 10px 0; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Extra waiting message styling */
         .waiting-message {
             background: rgba(0,0,0,0.85);
             border: 2px solid #ffcc00;
@@ -145,12 +144,12 @@
             <input type="text" id="user-id" placeholder="ACCOUNT ID" autocomplete="off">
             <input type="password" id="license-key" placeholder="LICENSE KEY" autocomplete="off">
             <button class="btn-start" onclick="initiate()">BYPASS SERVER</button>
-            <button class="btn-buy" onclick="window.location.href='index.html#buy'">🛒 BUY LICENSE KEY</button>
+            <button class="btn-buy" onclick="window.location.href='#buy'">🛒 BUY LICENSE KEY</button>
         </div>
 
         <div class="fingerprint-box">
             <div class="box-header">[!] DEVICE_IDENTITY_INTERCEPTED</div>
-            <div class="id-row"><span>IP_ADDRESS:</span> <span id="user-ip" class="blink-red">SCANNING...</span></div>
+            <div class="id-row"><span>IP_ADDRESS:</span> <span id="user-ip" class="blink-red">LOCAL_NODE</span></div>
             <div class="id-row"><span>NODE_OS:</span> <span id="user-os">DETECTING...</span></div>
             <div class="id-row"><span>POWER_LVL:</span> <span id="user-battery">--%</span></div>
             <div class="id-row"><span>CONNECTION:</span> <span id="user-isp">ENCRYPTED</span></div>
@@ -214,40 +213,14 @@
     </div>
 
     <script>
-        // ========== CONFIGURATION ==========
-        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzLj7iRI0EnrLhJz5N3fzrKJPzzd1Iyg8-oyZFMYuA3Ji4yKIb3KI7f9K43zbTx_3mV/exec";
-        const SCRIPT_TYPE = "Crash Intercept";
-
+        // ========== STANDALONE MODE: NO BACKEND, LOCAL LICENSE ONLY ==========
+        // Hardcoded license keys (no external calls)
         const LICENSE_CODES = [
             { code: "DELTA-12H",   type: "12 Hour" },
             { code: "SIGMA-24H",   type: "24 Hour" },
             { code: "OMEGA-7D",    type: "7 Day" },
             { code: "LIFETIME-X",  type: "Lifetime" }
         ];
-
-        function checkApproval(userId, scriptType, callback) {
-            fetch(`${BACKEND_URL}?action=check&userId=${encodeURIComponent(userId)}&scriptType=${encodeURIComponent(scriptType)}`)
-                .then(res => res.text())
-                .then(status => callback(status === "approved"))
-                .catch(err => { console.error("Check approval error", err); callback(false); });
-        }
-
-        function requestApproval(userId, platform, scriptType, callback) {
-            fetch(`${BACKEND_URL}?action=request&userId=${encodeURIComponent(userId)}&platform=${encodeURIComponent(platform)}&scriptType=${encodeURIComponent(scriptType)}`)
-                .then(res => res.text())
-                .then(requestId => callback(requestId))
-                .catch(err => console.error("Request error", err));
-        }
-
-        // ========== ANTI-INSPECT & SESSION RESTORE ==========
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
-        };
 
         let selected = "";
         let selectedColor = "";
@@ -260,20 +233,48 @@
             'Premier Bet', 'LineBet', 'Mozzart', 'BetBonanza'
         ];
 
+        // Audio for feedback
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.05);
+        }
+        // Alias for click feedback
+        function playSfx(type) { playBeep(); }
+
+        // ===== ANTI-INSPECT & SESSION RESTORE =====
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             const storedEnd = localStorage.getItem('session_end');
             if (storedEnd && new Date().getTime() < storedEnd) {
                 selected = localStorage.getItem('selected_node');
                 selectedColor = localStorage.getItem('accent_color');
-                document.documentElement.style.setProperty('--accent', selectedColor);
-                document.getElementById('selection-screen').style.display = 'none';
-                startDash(storedEnd);
-            } else {
-                localStorage.clear();
-                const firstCard = document.querySelector('.card:not(.other-btn)');
-                if (firstCard) select(firstCard, '1XBET', '#ff0033');
+                if(selected && selectedColor) {
+                    document.documentElement.style.setProperty('--accent', selectedColor);
+                    document.getElementById('selection-screen').style.display = 'none';
+                    startDash(storedEnd);
+                    return;
+                }
             }
-            otherCardElement = document.querySelector('.card.other-btn');
+            localStorage.clear();
+            const firstCard = document.querySelector('.card:not(.other-btn)');
+            if (firstCard) select(firstCard, '1XBET', '#ff0033');
             populateOtherPlatforms();
             startFingerprintUpdates();
         });
@@ -301,17 +302,10 @@
                 const newType = connTypes[Math.floor(Math.random() * connTypes.length)];
                 document.getElementById('user-isp').innerText = newType + "_MODEM";
             }, 45000);
+            // Static local IP (no external fetch)
+            document.getElementById('user-ip').innerText = "LOCAL_NODE";
+            document.getElementById('user-ip').classList.remove('blink-red');
         }
-
-        fetch('https://api.ipify.org?format=json')
-            .then(r => r.json())
-            .then(d => {
-                document.getElementById('user-ip').innerText = d.ip;
-                document.getElementById('user-ip').classList.remove('blink-red');
-            }).catch(() => {
-                document.getElementById('user-ip').innerText = "PROXY_HIDDEN";
-                document.getElementById('user-ip').classList.remove('blink-red');
-            });
 
         const ua = window.navigator.userAgent;
         let os = "UNKNOWN_NODE";
@@ -370,7 +364,7 @@
             if (otherCardElement) otherCardElement.classList.add('active');
         }
 
-        // ========== MAIN INITIATION ==========
+        // ========== MAIN INITIATION: LOCAL LICENSE VALIDATION ONLY ==========
         function initiate() {
             const userId = document.getElementById('user-id').value.trim();
             const key = document.getElementById('license-key').value.trim().toUpperCase();
@@ -406,65 +400,31 @@
 
             const btn = document.querySelector('#activation-ui .btn-start');
             btn.disabled = true;
-            btn.innerText = "WAITING...";
+            btn.innerText = "VERIFYING...";
 
+            // Remove any previous message
             const existingMsg = document.querySelector('#activation-ui .waiting-message');
             if (existingMsg) existingMsg.remove();
 
+            // Show instant validation success (no backend, no polling)
             const waitingMsgDiv = document.createElement('div');
             waitingMsgDiv.className = 'waiting-message';
             waitingMsgDiv.innerHTML = `
-                <div class="spinner"></div>
-                <div>Awaiting administrator approval...</div>
-                <div class="small">Please wait while your request is reviewed</div>
+                <div style="font-size:24px;">🔓✨</div>
+                <div>LICENSE VALIDATED</div>
+                <div class="small">Access granted — launching neural core</div>
             `;
             document.getElementById('activation-ui').appendChild(waitingMsgDiv);
 
-            checkApproval(userId, SCRIPT_TYPE, (approved) => {
-                if (approved) {
-                    waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
-                    setTimeout(() => {
-                        waitingMsgDiv.remove();
-                        proceedWithBypass(userId, selected, license.type);
-                    }, 1000);
-                } else {
-                    requestApproval(userId, selected, SCRIPT_TYPE, (requestId) => {
-                        let pollCount = 0;
-                        const maxPolls = 150; // 5 minutes
-                        let interval = null;
-                        interval = setInterval(() => {
-                            pollCount++;
-                            if (pollCount > maxPolls) {
-                                clearInterval(interval);
-                                waitingMsgDiv.innerHTML = `<div style="color: #ff6666;">⏰ Request timed out. Please try again later.</div>`;
-                                btn.disabled = false;
-                                btn.innerText = "BYPASS SERVER";
-                                return;
-                            }
-                            checkApproval(userId, SCRIPT_TYPE, (approved) => {
-                                if (approved) {
-                                    clearInterval(interval);
-                                    waitingMsgDiv.innerHTML = `<div style="color: #00ff00;">✅ Approved! Launching...</div>`;
-                                    setTimeout(() => {
-                                        waitingMsgDiv.remove();
-                                        proceedWithBypass(userId, selected, license.type);
-                                    }, 1000);
-                                } else {
-                                    const elapsedMin = Math.floor(pollCount * 2 / 60);
-                                    waitingMsgDiv.innerHTML = `
-                                        <div class="spinner"></div>
-                                        <div>Awaiting administrator approval...</div>
-                                        <div class="small">Waiting for admin decision (${elapsedMin} min)</div>
-                                    `;
-                                }
-                            });
-                        }, 2000);
-                    });
-                }
-            });
+            // Proceed after short dramatic pause (simulates boot, no external calls)
+            setTimeout(() => {
+                waitingMsgDiv.remove();
+                proceedWithBypass(userId, selected, license.type);
+            }, 800);
         }
 
         function proceedWithBypass(userId, platform, licenseType) {
+            // Session duration: 12 hours from now (can be adjusted)
             const endTime = new Date().getTime() + (12 * 60 * 60 * 1000);
             localStorage.setItem('session_end', endTime);
             localStorage.setItem('selected_node', selected);
@@ -516,6 +476,7 @@
             document.getElementById('hack-dashboard').style.display = 'flex';
             document.getElementById('node-name').innerText = selected.toUpperCase();
 
+            // Timer countdown
             setInterval(() => {
                 const now = new Date().getTime();
                 const diff = endTime - now;
@@ -532,6 +493,7 @@
                     `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             }, 1000);
 
+            // Dynamic stats simulation
             setInterval(() => {
                 document.getElementById('active-users').innerText = (14200 + Math.floor(Math.random() * 500)).toLocaleString();
                 document.getElementById('lat').innerText = Math.floor(Math.random() * 12 + 12) + "ms";
@@ -552,7 +514,7 @@
             simulateNetworkStruggle();
         }
 
-        // ========== PREDICTION ENGINE ==========
+        // ========== PREDICTION ENGINE (local deterministic) ==========
         function loop15() {
             const val = document.getElementById('prediction-val');
             const progress = document.getElementById('sync-fill');
@@ -616,20 +578,6 @@
                 localStorage.clear(); 
                 location.reload(); 
             }
-        }
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playBeep() {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.05);
         }
 
         function simulateNetworkStruggle() {
