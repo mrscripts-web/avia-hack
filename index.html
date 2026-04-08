@@ -102,7 +102,7 @@
         .status-dot { width: 6px; height: 6px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* --- SUPPORT BUTTONS --- */
+        /* --- SUPPORT BUTTONS (Enhanced) --- */
         .social-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
             width: 100%; max-width: 450px; margin-bottom: 60px;
@@ -110,13 +110,32 @@
         .social-link {
             padding: 16px; border-radius: 12px; font-family: 'JetBrains Mono', monospace;
             font-size: 11px; font-weight: 800; text-decoration: none; color: white;
-            text-align: center; border: 1px solid var(--border-dim);
-            background: rgba(255,255,255,0.02); backdrop-filter: blur(5px);
+            text-align: center; backdrop-filter: blur(5px);
             display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.3s ease;
         }
-        .social-link:hover { transform: translateY(-3px); }
-        .wa:hover { border-color: var(--whatsapp); background: rgba(37, 211, 102, 0.1); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.15); }
-        .tg:hover { border-color: var(--telegram); background: rgba(0, 136, 204, 0.1); box-shadow: 0 10px 20px rgba(0, 136, 204, 0.15); }
+        /* WhatsApp button - bright green */
+        .social-link.wa {
+            background: linear-gradient(135deg, #25d366, #128C7E);
+            border: none;
+            box-shadow: 0 0 12px rgba(37, 211, 102, 0.6);
+        }
+        .social-link.wa:hover {
+            background: linear-gradient(135deg, #2ee070, #1da17a);
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.9);
+            transform: translateY(-3px);
+        }
+        /* Telegram button - bright blue */
+        .social-link.tg {
+            background: linear-gradient(135deg, #0088cc, #005f8c);
+            border: none;
+            box-shadow: 0 0 12px rgba(0, 136, 204, 0.6);
+        }
+        .social-link.tg:hover {
+            background: linear-gradient(135deg, #00a4e8, #0077b3);
+            box-shadow: 0 0 20px rgba(0, 136, 204, 0.9);
+            transform: translateY(-3px);
+        }
 
         /* --- DUAL-TONE PORTAL CARDS --- */
         .portal-grid {
@@ -178,7 +197,7 @@
         }
         .logo-wall img:hover { filter: grayscale(0) brightness(1) opacity(1); transform: scale(1.15) translateY(-2px); }
 
-        /* --- PRICING TIERS (GLOW RED REWORK) --- */
+        /* --- PRICING TIERS --- */
         .pricing-list { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-bottom: 80px; }
         
         .tier {
@@ -208,17 +227,13 @@
         }
         .tier-duration { font-size: 9px; color: #888; font-family: 'JetBrains Mono', monospace; margin-left: 15px; text-align: right; width: 80px; z-index: 2; }
 
-        /* Highlight Popular Tier */
         .tier.popular { border-color: rgba(255, 0, 51, 0.5); background: rgba(255, 0, 51, 0.04); }
-        .tier.popular .tier-name { color: #fff; }
         .popular-badge {
             position: absolute; top: 0; right: 0; background: var(--glow-red); color: #fff;
             font-size: 7px; font-family: 'JetBrains Mono', monospace; font-weight: 900;
             padding: 4px 12px; border-radius: 0 12px 0 8px; letter-spacing: 2px; z-index: 3;
             box-shadow: 0 0 10px rgba(255, 0, 51, 0.5);
         }
-
-        /* New Users Only Badge (Gold) */
         .new-user-badge {
             position: absolute; top: 0; right: 0; background: var(--glow-red); color: #000;
             font-size: 7px; font-family: 'JetBrains Mono', monospace; font-weight: 900;
@@ -226,7 +241,7 @@
             box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
         }
 
-        /* --- PROFESSIONAL FOOTER REWORK --- */
+        /* --- FOOTER --- */
         footer {
             width: 100%; background: #020202; border-top: 1px solid rgba(255, 0, 51, 0.2);
             padding: 60px 20px 30px; position: relative; z-index: 10;
@@ -447,7 +462,6 @@
         mouse.y = e.clientY;
     });
 
-    // Reset mouse off-screen when leaving window
     window.addEventListener('mouseout', () => {
         mouse.x = -1000;
         mouse.y = -1000;
@@ -475,7 +489,6 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         points.forEach((p, i) => {
-            // Mouse Repel Physics
             let dx = p.x - mouse.x;
             let dy = p.y - mouse.y;
             let distToMouse = Math.hypot(dx, dy);
