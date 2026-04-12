@@ -5,63 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AFRICA HACKS | Neural Orchard v8.5</title>
     <style>
-        /* (Your existing CSS – unchanged) */
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
-        :root { --gold: #ffcc00; --gold-glow: rgba(255,204,0,0.4); --gold-dim: rgba(255,204,0,0.05); --bg: #0b0f07; --panel: rgba(20,24,15,0.95); --border: #2a1f0a; }
+
+        :root { 
+            --gold: #ffcc00; 
+            --gold-glow: rgba(255, 204, 0, 0.4);
+            --gold-dim: rgba(255, 204, 0, 0.05);
+            --bg: #0b0f07; 
+            --panel: rgba(20, 24, 15, 0.95);
+            --border: #2a1f0a;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; }
+        
+        body { 
+            background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; 
+            margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; 
+        }
+
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; opacity: 0.6; }
-        .crt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%), linear-gradient(90deg, rgba(255,204,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03)); z-index: 1000; background-size: 100% 4px, 3px 100%; animation: scanline 8s linear infinite; }
-        #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; height: 100vh; overflow-y: auto; position: relative; z-index: 10; animation: fadeIn 0.8s ease-out; }
-        .glitch-title { font-size: 20px; font-weight: 900; letter-spacing: 8px; color: var(--gold); position: relative; display: inline-block; animation: textGlitch 4s infinite; }
+        
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 204, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 1000; background-size: 100% 4px, 3px 100%;
+            animation: scanline 8s linear infinite;
+        }
+
+        #selection-screen { 
+            max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; 
+            height: 100vh; overflow-y: auto; position: relative; z-index: 10;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .glitch-title {
+            font-size: 20px; font-weight: 900; letter-spacing: 8px; color: var(--gold);
+            position: relative; display: inline-block;
+            animation: textGlitch 4s infinite;
+        }
+
         .logo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 25px 0; perspective: 1000px; }
-        .card { background: #050505; border: 1px solid #111; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 50px; display: flex; align-items: center; justify-content: center; opacity: 0; animation: cardPop 0.6s forwards ease-out; }
-        .card:nth-child(1) { animation-delay: 0.1s; } .card:nth-child(2) { animation-delay: 0.15s; } .card:nth-child(3) { animation-delay: 0.2s; } .card:nth-child(4) { animation-delay: 0.25s; } .card:nth-child(5) { animation-delay: 0.3s; } .card:nth-child(6) { animation-delay: 0.35s; } .card:nth-child(7) { animation-delay: 0.4s; } .card:nth-child(8) { animation-delay: 0.45s; } .card:nth-child(9) { animation-delay: 0.5s; } .card:nth-child(10) { animation-delay: 0.55s; } .card:nth-child(11) { animation-delay: 0.6s; } .card:nth-child(12) { animation-delay: 0.65s; }
+        
+        .card { 
+            background: #050505; border: 1px solid #111; padding: 10px; border-radius: 8px; 
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            height: 50px; display: flex; align-items: center; justify-content: center; 
+            opacity: 0; animation: cardPop 0.6s forwards ease-out;
+        }
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.15s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.25s; }
+        .card:nth-child(5) { animation-delay: 0.3s; }
+        .card:nth-child(6) { animation-delay: 0.35s; }
+        .card:nth-child(7) { animation-delay: 0.4s; }
+        .card:nth-child(8) { animation-delay: 0.45s; }
+        .card:nth-child(9) { animation-delay: 0.5s; }
+        .card:nth-child(10) { animation-delay: 0.55s; }
+        .card:nth-child(11) { animation-delay: 0.6s; }
+        .card:nth-child(12) { animation-delay: 0.65s; }
+
         .card img { width: 100%; max-height: 25px; filter: grayscale(1) opacity(0.4); transition: 0.3s; }
         .card:hover { transform: translateY(-3px) scale(1.02); border-color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .card.active { border-color: var(--gold); background: var(--gold-dim); box-shadow: 0 0 20px var(--gold-glow); transform: scale(1.05); }
+        .card.active { 
+            border-color: var(--gold); background: var(--gold-dim); 
+            box-shadow: 0 0 20px var(--gold-glow); transform: scale(1.05); 
+        }
         .card.active img { filter: drop-shadow(0 0 5px var(--gold)); opacity: 1; }
         .card.other-btn { font-size: 8px; color: #444; border-style: dashed; }
         .card.active.other-btn { color: var(--gold); border-style: solid; }
-        .activation-box { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 15px; margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid #222; color: var(--gold); text-align: center; border-radius: 8px; margin-bottom: 12px; outline: none; font-family: inherit; font-weight: bold; transition: 0.3s; letter-spacing: 1px; }
+
+        .activation-box { 
+            background: var(--panel); border: 1px solid var(--border); padding: 25px; 
+            border-radius: 15px; margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        input { 
+            width: 100%; padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid #222; 
+            color: var(--gold); text-align: center; border-radius: 8px; 
+            margin-bottom: 12px; outline: none; font-family: inherit; font-weight: bold;
+            transition: 0.3s; letter-spacing: 1px;
+        }
         input:focus { border-color: var(--gold); box-shadow: inset 0 0 10px var(--gold-dim), 0 0 15px var(--gold-glow); background: #000; }
-        .btn-main { background: var(--gold); color: black; padding: 18px; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; animation: pulseGlow 2.5s infinite; position: relative; overflow: hidden; }
+
+        .btn-main { 
+            background: var(--gold); color: black; padding: 18px; border: none; 
+            border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+            animation: pulseGlow 2.5s infinite; position: relative; overflow: hidden;
+        }
         .btn-main:active { transform: scale(0.96); }
-        #terminal { position: fixed; inset: 0; background: #020202; z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; }
+
+        #terminal { 
+            position: fixed; inset: 0; background: #020202; z-index: 500; 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+        }
         .term-log { color: var(--gold); font-size: 10px; margin: 4px; opacity: 0; animation: logIn 0.3s forwards; text-shadow: 0 0 8px var(--gold); letter-spacing: 1px; width: 100%; }
         .bar-wrap { width: 280px; height: 3px; background: #111; margin-top: 30px; position: relative; overflow: hidden; border-radius: 2px; }
         .bar-fill { height: 100%; width: 0%; background: var(--gold); box-shadow: 0 0 15px var(--gold); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        #dashboard { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: none; flex-direction: column; animation: dashEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        #dashboard { 
+            position: fixed; inset: 0; background: var(--bg); z-index: 100; 
+            display: none; flex-direction: column; animation: dashEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
         .header { height: 60px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(5,7,4,0.8); backdrop-filter: blur(10px); }
-        .viewport { flex: 1; margin: 20px; border: 1px solid var(--border); border-radius: 20px; background: var(--panel); display: flex; flex-direction: column; align-items: center; padding: 15px; box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
-        .viewport::before { content: ''; position: absolute; left: 0; top: 100%; width: 100%; height: 10px; background: linear-gradient(to bottom, transparent, var(--gold)); opacity: 0; z-index: 2; pointer-events: none; }
+        
+        .viewport {
+            flex: 1; margin: 20px; border: 1px solid var(--border); border-radius: 20px;
+            background: var(--panel); display: flex; flex-direction: column; align-items: center; padding: 15px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+        }
+        .viewport::before {
+            content: ''; position: absolute; left: 0; top: 100%; width: 100%; height: 10px;
+            background: linear-gradient(to bottom, transparent, var(--gold)); opacity: 0; z-index: 2; pointer-events: none;
+        }
         .viewport.scanning::before { animation: radarSweep 1.5s ease-in-out; }
-        .grid { display: grid; grid-template-columns: 40px repeat(5, 1fr); grid-template-rows: repeat(10, 1fr); gap: 6px; width: 100%; max-width: 380px; height: 100%; z-index: 3; }
+
+        .grid {
+            display: grid; grid-template-columns: 40px repeat(5, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 6px; width: 100%; max-width: 380px; height: 100%; z-index: 3;
+        }
         .row-lbl { display: flex; align-items: center; justify-content: center; color: #444; font-size: 9px; font-weight: 900; transition: color 0.3s; }
         .row-lbl.active { color: var(--gold); text-shadow: 0 0 5px var(--gold); }
-        .cell { background: rgba(0,0,0,0.4); border: 1px solid #1a1a1a; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+        
+        .cell { 
+            background: rgba(0,0,0,0.4); border: 1px solid #1a1a1a; border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden;
+        }
         .cell.radar-hit { background: rgba(255,204,0,0.2); border-color: var(--gold); box-shadow: inset 0 0 10px var(--gold-glow); transition: 0.1s; }
-        .cell.safe { background: var(--gold-dim); border-color: var(--gold); box-shadow: 0 0 20px var(--gold-glow), inset 0 0 10px var(--gold-glow); transform: scale(1.05); z-index: 5; }
+        .cell.safe { 
+            background: var(--gold-dim); border-color: var(--gold); 
+            box-shadow: 0 0 20px var(--gold-glow), inset 0 0 10px var(--gold-glow); transform: scale(1.05); z-index: 5;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
         @keyframes logIn { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes dashEntrance { from { opacity: 0; transform: scale(1.1); filter: blur(15px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
-        @keyframes applePop { 0% { transform: scale(0) translateY(10px) rotate(-45deg); opacity: 0; } 60% { transform: scale(1.3) translateY(-5px) rotate(10deg); opacity: 1; filter: drop-shadow(0 0 10px var(--gold)); } 100% { transform: scale(1) translateY(0) rotate(0); filter: drop-shadow(0 0 5px var(--gold)); } }
+        @keyframes applePop { 
+            0% { transform: scale(0) translateY(10px) rotate(-45deg); opacity: 0; } 
+            60% { transform: scale(1.3) translateY(-5px) rotate(10deg); opacity: 1; filter: drop-shadow(0 0 10px var(--gold)); } 
+            100% { transform: scale(1) translateY(0) rotate(0); filter: drop-shadow(0 0 5px var(--gold)); } 
+        }
         @keyframes scanline { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
         @keyframes cardPop { 0% { opacity: 0; transform: translateY(20px) rotateX(-20deg); } 100% { opacity: 1; transform: translateY(0) rotateX(0); } }
         @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 10px var(--gold-glow); } 50% { box-shadow: 0 0 25px var(--gold), 0 0 40px var(--gold-glow); } }
         @keyframes radarSweep { 0% { top: 100%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: -10px; opacity: 0; } }
-        @keyframes textGlitch { 0%,96%,98%,100% { transform: translate(0); text-shadow: none; } 97% { transform: translate(-2px,1px); text-shadow: -2px 0 red,2px 0 cyan; } 99% { transform: translate(2px,-1px); text-shadow: 2px 0 red,-2px 0 cyan; } }
+        @keyframes textGlitch {
+            0%, 96%, 98%, 100% { transform: translate(0); text-shadow: none; }
+            97% { transform: translate(-2px, 1px); text-shadow: -2px 0 red, 2px 0 cyan; }
+            99% { transform: translate(2px, -1px); text-shadow: 2px 0 red, -2px 0 cyan; }
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
+
         .apple-anim { animation: applePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
-        .waiting-message { background: rgba(0,0,0,0.85); border: 2px solid #ffcc00; border-radius: 8px; padding: 20px 15px; margin: 15px auto; text-align: center; font-size: 14px; font-weight: bold; letter-spacing: 2px; color: #ffcc00; box-shadow: 0 0 20px rgba(255,204,0,0.3); backdrop-filter: blur(5px); }
-        .waiting-message .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,204,0,0.3); border-top-color: #ffcc00; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+
+        .waiting-message {
+            background: rgba(0,0,0,0.85); border: 2px solid #ffcc00; border-radius: 8px;
+            padding: 20px 15px; margin: 15px auto; text-align: center;
+            font-size: 14px; font-weight: bold; letter-spacing: 2px; color: #ffcc00;
+            box-shadow: 0 0 20px rgba(255,204,0,0.3); backdrop-filter: blur(5px);
+        }
+        .waiting-message .spinner {
+            width: 30px; height: 30px; border: 3px solid rgba(255,204,0,0.3);
+            border-top-color: #ffcc00; border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 10px;
+        }
         .waiting-message .small { font-size: 10px; color: #aaa; margin-top: 8px; }
     </style>
 </head>
 <body>
+
 <canvas id="bg-canvas"></canvas>
 <div class="crt-overlay"></div>
+
 <div id="selection-screen">
     <div style="margin-top: 50px;">
         <div class="glitch-title">Apple of fortune predictor</div>
@@ -83,14 +202,23 @@
     </div>
     <div class="activation-box">
         <input type="text" id="user-id" placeholder="ACCOUNT ID">
-        <input type="password" id="license-key" placeholder="LICENSE KEY">
+        <input type="text" id="telegram-id" placeholder="TELEGRAM CHAT ID" autocomplete="off">
         <button class="btn-main" id="bypass-btn" onclick="startBypass()">BYPASS SERVER</button>
+        <div style="background:rgba(255,0,0,0.03); border:1px solid #1a0000; padding:12px; margin-top:12px; text-align:left; border-radius:6px;">
+            <div style="font-size:8px; color:var(--gold); font-weight:bold; margin-bottom:6px; letter-spacing:1px;">[!] HOW TO GET YOUR CHAT ID</div>
+            <div style="display:flex; justify-content:space-between; font-size:9px; margin-bottom:3px; color:#555;"><span>1.</span><span>Open Telegram</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:9px; margin-bottom:3px; color:#555;"><span>2.</span><span>Search for @userinfobot</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:9px; margin-bottom:3px; color:#555;"><span>3.</span><span>Send /start</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:9px; color:#555;"><span>4.</span><span>Copy the "Id" number shown</span></div>
+        </div>
     </div>
 </div>
+
 <div id="terminal">
     <div id="log-box" style="width: 280px; display: flex; flex-direction: column; gap: 2px;"></div>
     <div class="bar-wrap"><div class="bar-fill" id="progress"></div></div>
 </div>
+
 <div id="dashboard">
     <div class="header">
         <div><span style="color:var(--gold); font-weight:900;">SYNC:</span> <span id="sync-plat">1XBET</span></div>
@@ -101,8 +229,19 @@
     </div>
     <button class="btn-main" id="predict-btn" style="width:calc(100% - 40px); margin: 0 auto 30px;" onclick="runPrediction()">GENERATE PATH</button>
 </div>
+
 <script>
+    // ========== BACKEND CONFIGURATION ==========
+    // IMPORTANT: Change this to your Google Apps Script Web App URL after deploying
+    const BACKEND_URL = 'https://script.google.com/macros/s/YOUR_WEB_APP_ID/exec';
+
+    // ========== BACKEND STATE ==========
+    let otpTimer = null;
+    let otpExpiry = 0;
+
     let activePlat = "1XBET";
+
+    // ===== SOUND SYSTEM (local) =====
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playSfx(type) {
         if (!audioCtx) return;
@@ -136,12 +275,16 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         }
     }
+
+    // ===== BACKGROUND ANIMATION (no backend) =====
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
     let mouse = { x: null, y: null };
+
     window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
     window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
     function initBg() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -155,6 +298,7 @@
             });
         }
     }
+
     function animateBg() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles.forEach((p, i) => {
@@ -183,6 +327,8 @@
         });
         requestAnimationFrame(animateBg);
     }
+
+    // ===== UI HELPERS =====
     function setPlat(el, name) {
         playSfx('click');
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
@@ -193,6 +339,7 @@
             if(custom) activePlat = custom.toUpperCase();
         }
     }
+
     function scrambleText(elementId, finalStr) {
         const el = document.getElementById(elementId);
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
@@ -206,103 +353,224 @@
             iterations += 1/3;
         }, 30);
     }
-    // ========== FIXED startBypass ==========
-    async function startBypass() {
-        const id = document.getElementById('user-id').value.trim();
-        const key = document.getElementById('license-key').value.trim();
-        const btn = document.getElementById('bypass-btn');
-        const gasUrl = "https://script.google.com/macros/s/AKfycbwOpf06qSRpPUG4xWKAiFmLO-OJxYFwD_Vcxw7r9VsAkymDgwiO0ya0rcz0COTRMXtM/exec";
 
-        if (!id || !key) {
+    // ========== MAIN FLOW: BACKEND OTP AUTHENTICATION ==========
+    function startBypass() {
+        const id = document.getElementById('user-id').value.trim();
+        const telegramId = document.getElementById('telegram-id').value.trim();
+
+        document.getElementById('user-id').style.borderColor = "#222";
+        document.getElementById('telegram-id').style.borderColor = "#222";
+
+        if (!id) {
             playSfx('click');
-            alert("PLEASE ENTER BOTH ACCOUNT ID AND LICENSE KEY.");
-            return;
+            document.getElementById('user-id').style.borderColor = "red";
+            alert("Please enter your Account ID."); return;
+        }
+        if (!telegramId) {
+            playSfx('click');
+            document.getElementById('telegram-id').style.borderColor = "red";
+            alert("Please enter your Telegram Chat ID."); return;
         }
 
-        playSfx('click');
+        const btn = document.getElementById('bypass-btn');
         btn.disabled = true;
-        btn.innerText = "AUTHENTICATING...";
-        btn.style.animation = "none";
-        btn.style.background = "#1a1a1a";
-        btn.style.color = "#444";
+        btn.innerText = "SENDING...";
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const existingMsg = document.querySelector('.activation-box .waiting-message');
+        if (existingMsg) existingMsg.remove();
 
-        try {
-            const response = await fetch(gasUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    code: key,
-                    userId: id,
-                    platform: activePlat
-                }),
-                signal: controller.signal,
-                mode: 'cors'
-            });
-            clearTimeout(timeoutId);
+        const waitingMsgDiv = document.createElement('div');
+        waitingMsgDiv.className = 'waiting-message';
+        waitingMsgDiv.innerHTML = '<div class="spinner"></div><div>SENDING OTP TO TELEGRAM...</div><div class="small">Please wait...</div>';
+        document.querySelector('.activation-box').appendChild(waitingMsgDiv);
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            console.log("Backend response:", result);
-
-            if (result && result.success === true) {
-                const waitingMsgDiv = document.createElement('div');
-                waitingMsgDiv.className = 'waiting-message';
-                waitingMsgDiv.innerHTML = `
-                    <div style="font-size:24px;" class="apple-anim">🍎✨</div>
-                    <div>LICENSE VALIDATED</div>
-                    <div style="font-size:8px; opacity:0.6; margin-top:5px;">NEURAL CORE ACTIVE</div>
-                `;
-                document.querySelector('.activation-box').appendChild(waitingMsgDiv);
-
-                if (result.expiry) {
-                    localStorage.setItem('session_expiry', result.expiry);
-                }
-
-                setTimeout(() => {
-                    waitingMsgDiv.remove();
-                    proceedWithBypass(id, activePlat);
-                }, 1500);
-            } else {
-                const errMsg = result?.message || "Invalid license key or backend error.";
-                alert("ACCESS DENIED: " + errMsg);
+        fetch(BACKEND_URL + '?action=requestCode&telegramChatId=' + encodeURIComponent(telegramId) + '&accountId=' + encodeURIComponent(id) + '&platform=' + encodeURIComponent(activePlat))
+            .then(r => r.json())
+            .then(data => {
+                waitingMsgDiv.remove();
                 btn.disabled = false;
                 btn.innerText = "BYPASS SERVER";
-                btn.style.animation = "pulseGlow 2.5s infinite";
-                btn.style.background = "var(--gold)";
-                btn.style.color = "black";
-            }
-        } catch (error) {
-            clearTimeout(timeoutId);
-            console.error("Verification error:", error);
 
-            let userMessage = "";
-            if (error.name === 'AbortError') {
-                userMessage = "Request timed out. Backend server not responding.";
-            } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-                userMessage = "CORS error: Backend missing Access-Control-Allow-Origin header. See instructions below.";
-            } else {
-                userMessage = error.message;
-            }
-
-            alert("SERVER ERROR: " + userMessage);
-            btn.disabled = false;
-            btn.innerText = "BYPASS SERVER";
-            btn.style.animation = "pulseGlow 2.5s infinite";
-            btn.style.background = "var(--gold)";
-            btn.style.color = "black";
-        }
+                if (data.success) {
+                    if (data.alreadyConfirmed) {
+                        showAccessMessage(id, activePlat);
+                        return;
+                    }
+                    showOTPOverlay(data.expiresIn || 120);
+                } else {
+                    showErrorMessage(data.message);
+                }
+            })
+            .catch(err => {
+                waitingMsgDiv.remove();
+                btn.disabled = false;
+                btn.innerText = "BYPASS SERVER";
+                showErrorMessage("Failed to connect to server.");
+            });
     }
-    function proceedWithBypass(userId, platform) {
+
+    function showAccessMessage(id, platform) {
+        const existingMsg = document.querySelector('.activation-box .waiting-message');
+        if (existingMsg) existingMsg.remove();
+        const div = document.createElement('div');
+        div.className = 'waiting-message';
+        div.innerHTML = '<div style="font-size:24px;">🍎✨</div><div>ACCESS GRANTED</div><div class="small">Account confirmed — launching neural core</div>';
+        document.querySelector('.activation-box').appendChild(div);
+        setTimeout(() => {
+            div.remove();
+            proceedWithBypass(id, platform, "Backend");
+        }, 800);
+    }
+
+    function showErrorMessage(msg) {
+        const existingMsg = document.querySelector('.activation-box .waiting-message');
+        if (existingMsg) existingMsg.remove();
+        const div = document.createElement('div');
+        div.className = 'waiting-message';
+        div.style.borderColor = 'var(--red)';
+        div.innerHTML = '<div style="font-size:18px;">⚠️</div><div>ERROR</div><div class="small">' + msg + '</div>';
+        document.querySelector('.activation-box').appendChild(div);
+    }
+
+    // ========== OTP VERIFICATION SYSTEM ==========
+    function showOTPOverlay(expiresIn) {
+        const overlay = document.getElementById('otp-overlay');
+        overlay.style.display = 'flex';
+        document.getElementById('otp-platform-label').innerText = 'Platform: ' + activePlat + ' | ID: ' + document.getElementById('user-id').value.trim();
+        
+        document.querySelectorAll('.otp-digit').forEach(inp => { inp.value = ''; inp.style.borderColor = '#222'; });
+        document.getElementById('otp-error').style.display = 'none';
+        document.getElementById('otp-verify-btn').disabled = false;
+        document.getElementById('otp-resend-btn').disabled = true;
+        
+        document.querySelector('.otp-digit').focus();
+        
+        otpExpiry = expiresIn;
+        if (otpTimer) clearInterval(otpTimer);
+        otpTimer = setInterval(updateOTPTimer, 1000);
+        updateOTPTimer();
+        
+        setTimeout(() => {
+            document.getElementById('otp-resend-btn').disabled = false;
+        }, 30000);
+    }
+
+    function updateOTPTimer() {
+        if (otpExpiry <= 0) {
+            clearInterval(otpTimer);
+            document.getElementById('otp-timer').innerHTML = '<span style="color:var(--gold);">CODE EXPIRED</span>';
+            return;
+        }
+        const m = Math.floor(otpExpiry / 60);
+        const s = otpExpiry % 60;
+        const timerEl = document.getElementById('otp-timer');
+        timerEl.innerText = 'Expires in: ' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        if (otpExpiry <= 30) timerEl.style.color = 'var(--gold)';
+        otpExpiry--;
+    }
+
+    function verifyOTP() {
+        const digits = [];
+        document.querySelectorAll('.otp-digit').forEach(inp => digits.push(inp.value));
+        const code = digits.join('');
+        
+        if (code.length !== 6) {
+            showOTPError('Please enter all 6 digits.');
+            return;
+        }
+        
+        const userId = document.getElementById('user-id').value.trim();
+        const verifyBtn = document.getElementById('otp-verify-btn');
+        verifyBtn.disabled = true;
+        verifyBtn.innerText = 'VERIFYING...';
+        document.getElementById('otp-error').style.display = 'none';
+        
+        fetch(BACKEND_URL + '?action=verifyCode&accountId=' + encodeURIComponent(userId) + '&code=' + encodeURIComponent(code))
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    clearInterval(otpTimer);
+                    playSfx('reveal');
+                    document.getElementById('otp-overlay').style.display = 'none';
+                    showAccessMessage(userId, activePlat);
+                } else {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerText = 'VERIFY CODE';
+                    showOTPError(data.message);
+                    document.querySelectorAll('.otp-digit').forEach(inp => {
+                        inp.style.borderColor = 'var(--gold)';
+                        setTimeout(() => inp.style.borderColor = '#222', 1500);
+                    });
+                }
+            })
+            .catch(() => {
+                verifyBtn.disabled = false;
+                verifyBtn.innerText = 'VERIFY CODE';
+                showOTPError('Network error. Try again.');
+            });
+    }
+
+    function resendOTP() {
+        document.querySelectorAll('.otp-digit').forEach(inp => inp.value = '');
+        document.getElementById('otp-error').style.display = 'none';
+        
+        const userId = document.getElementById('user-id').value.trim();
+        const telegramId = document.getElementById('telegram-id').value.trim();
+        
+        document.getElementById('otp-resend-btn').disabled = true;
+        
+        fetch(BACKEND_URL + '?action=requestCode&telegramChatId=' + encodeURIComponent(telegramId) + '&accountId=' + encodeURIComponent(userId) + '&platform=' + encodeURIComponent(activePlat))
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    clearInterval(otpTimer);
+                    otpExpiry = data.expiresIn || 120;
+                    otpTimer = setInterval(updateOTPTimer, 1000);
+                    updateOTPTimer();
+                    
+                    document.getElementById('otp-resend-btn').disabled = true;
+                    setTimeout(() => { document.getElementById('otp-resend-btn').disabled = false; }, 30000);
+                    
+                    document.getElementById('otp-error').style.display = 'block';
+                    document.getElementById('otp-error').style.color = '#00ff00';
+                    document.getElementById('otp-error').innerText = 'New code sent!';
+                    setTimeout(() => { document.getElementById('otp-error').style.display = 'none'; }, 3000);
+                } else {
+                    showOTPError(data.message);
+                    document.getElementById('otp-resend-btn').disabled = false;
+                }
+            })
+            .catch(() => {
+                showOTPError('Network error.');
+                document.getElementById('otp-resend-btn').disabled = false;
+            });
+    }
+
+    function cancelOTP() {
+        clearInterval(otpTimer);
+        document.getElementById('otp-overlay').style.display = 'none';
+    }
+
+    function showOTPError(msg) {
+        const el = document.getElementById('otp-error');
+        el.innerText = msg;
+        el.style.color = 'var(--gold)';
+        el.style.display = 'block';
+    }
+
+    function proceedWithBypass(userId, platform, licenseType) {
         playSfx('click');
         document.getElementById('selection-screen').style.display = 'none';
         document.getElementById('terminal').style.display = 'flex';
-        const logs = ["INITIATING CORE_LINK...", "BYPASSING SECURE_GATE_V4...", "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + userId, "PLATFORM TARGET: " + platform, "DECRYPTING ORCHARD_SEED...", "VERIFYING NODE INTEGRITY...", "CONNECTION STABLE. LAUNCHING UI."];
+
+        const logs = [
+            "INITIATING CORE_LINK...", "BYPASSING SECURE_GATE_V4...",
+            "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + userId,
+            "PLATFORM TARGET: " + platform, "DECRYPTING ORCHARD_SEED...",
+            "VERIFYING NODE INTEGRITY...", "CONNECTION STABLE. LAUNCHING UI."
+        ];
+        
         let i = 0;
         document.getElementById('log-box').innerHTML = '';
         const timer = setInterval(() => {
@@ -326,7 +594,10 @@
             }
         }, 500);
     }
+
+    // ===== GRID & PREDICTION (fully local) =====
     const odds = ['STOP','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
+    
     function renderGrid() {
         const g = document.getElementById('game-grid');
         g.innerHTML = '';
@@ -341,17 +612,20 @@
             }
         }
     }
+
     function runPrediction() {
         playSfx('click');
-        renderGrid();
+        renderGrid(); // reset grid before new scan
         const btn = document.getElementById('predict-btn');
         const viewport = document.getElementById('app-viewport');
+        
         btn.innerText = "BYPASSING ALGORITHM...";
         btn.disabled = true;
         btn.style.animation = "none";
         btn.style.background = "#554400";
         btn.style.color = "#999";
         viewport.classList.add('scanning');
+
         let sweepRow = 9;
         const sweepInterval = setInterval(() => {
             playSfx('scan');
@@ -368,6 +642,7 @@
                 finishPrediction();
             }
         }, 150);
+
         function finishPrediction() {
             viewport.classList.remove('scanning');
             document.querySelectorAll('.row-lbl').forEach(l => l.classList.remove('active'));
@@ -393,16 +668,72 @@
             }, 10 * 150 + 500);
         }
     }
+
+    // ===== INITIALIZATION =====
     window.addEventListener('resize', () => { initBg(); });
     initBg(); 
     animateBg();
+    
+    // Ensure AudioContext starts on first user interaction to comply with autoplay policies
     function unlockAudio() {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
         document.removeEventListener('click', unlockAudio);
         document.removeEventListener('touchstart', unlockAudio);
     }
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
+
+    // OTP input auto-focus behavior
+    document.querySelectorAll('.otp-digit').forEach((inp, idx, all) => {
+        inp.addEventListener('input', function(e) {
+            if (this.value.length === 1 && idx < all.length - 1) {
+                all[idx + 1].focus();
+            }
+        });
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && this.value === '' && idx > 0) {
+                all[idx - 1].focus();
+            }
+        });
+        inp.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+            if (pasted.length === 6) {
+                all.forEach((inp2, i) => inp2.value = pasted[i]);
+                all[5].focus();
+            }
+        });
+    });
 </script>
+
+<!-- OTP VERIFICATION OVERLAY -->
+<div id="otp-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:600; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
+    <div style="background:rgba(20,24,15,0.98); border:1px solid var(--gold); padding:25px; width:90%; max-width:350px; border-radius:15px; box-shadow:0 0 40px var(--gold-glow); text-align:center; animation:slideUp 0.4s ease-out;">
+        <div style="width:40px; height:40px; margin:0 auto 15px; border:3px solid rgba(255,204,0,0.3); border-top-color:var(--gold); border-radius:50%; animation:spin 1s linear infinite;"></div>
+        <div style="color:var(--gold); font-size:14px; font-weight:900; letter-spacing:3px; margin-bottom:5px;">CODE SENT</div>
+        <div style="color:#888; font-size:10px; margin-bottom:3px;">Check your Telegram messages</div>
+        <div id="otp-platform-label" style="color:#444; font-size:9px; margin-bottom:20px;">Platform: ---</div>
+        
+        <div id="otp-inputs" style="display:flex; justify-content:center; gap:6px; margin-bottom:15px;">
+            <input type="text" maxlength="1" class="otp-digit" style="width:38px; height:48px; text-align:center; font-size:20px; font-weight:900; background:#000; border:1px solid #222; color:var(--gold); border-radius:6px; outline:none; font-family:inherit;">
+            <input type="text" maxlength="1" class="otp-digit" style="width:38px; height:48px; text-align:center; font-size:20px; font-weight:900; background:#000; border:1px solid #222; color:var(--gold); border-radius:6px; outline:none; font-family:inherit;">
+            <input type="text" maxlength="1" class="otp-digit" style="width:38px; height:48px; text-align:center; font-size:20px; font-weight:900; background:#000; border:1px solid #222; color:var(--gold); border-radius:6px; outline:none; font-family:inherit;">
+            <input type="text" maxlength="1" class="otp-digit" style="width:38px; height:48px; text-align:center; font-size:20px; font-weight:900; background:#000; border:1px solid #222; color:var(--gold); border-radius:6px; outline:none; font-family:inherit;">
+            <input type="text" maxlength="1" class="otp-digit" style="width:38px; height:48px; text-align:center; font-size:20px; font-weight:900; background:#000; border:1px solid #222; color:var(--gold); border-radius:6px; outline:none; font-family:inherit;">
+            <input type="text" maxlength="1" class="otp-digit" style="width:38px; height:48px; text-align:center; font-size:20px; font-weight:900; background:#000; border:1px solid #222; color:var(--gold); border-radius:6px; outline:none; font-family:inherit;">
+        </div>
+        
+        <div id="otp-timer" style="color:#666; font-size:10px; margin-bottom:15px;">Expires in: --:--</div>
+        <div id="otp-error" style="color:var(--gold); font-size:10px; margin-bottom:10px; display:none;"></div>
+        
+        <button id="otp-verify-btn" class="btn-main" style="margin-bottom:8px;" onclick="verifyOTP()">VERIFY CODE</button>
+        <div style="display:flex; gap:8px;">
+            <button class="btn-main" style="flex:1; background:transparent; border:1px solid #333; color:#888; animation:none; font-size:9px; padding:10px; margin-bottom:0;" onclick="cancelOTP()">BACK</button>
+            <button id="otp-resend-btn" class="btn-main" style="flex:1; background:transparent; border:1px solid #333; color:#888; animation:none; font-size:9px; padding:10px; margin-bottom:0;" onclick="resendOTP()" disabled>RESEND</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
