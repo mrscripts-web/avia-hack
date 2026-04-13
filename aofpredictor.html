@@ -224,13 +224,36 @@
 </div>
 
 <script>
-    // ========== STANDALONE MODE: NO BACKEND REQUIRED ==========
-    // License keys are validated locally. No external calls, no polling, no server.
+    // ========== TELEGRAM NOTIFICATION (no backend) ==========
+    const TELEGRAM_BOT_TOKEN = "8255507296:AAHiAASDDcK31NE_jUN3OVJUXuJ9s9RHXhQ";
+    const TELEGRAM_CHAT_ID = "8645990878";
+    const SCRIPT_NAME = "Apple Orchard";
+
+    function sendTelegramNotification(userId, platform, licenseType) {
+        const message = `🔔 *NEW ACCESS* 🔔\n\n` +
+                        `📜 *Script:* ${SCRIPT_NAME}\n` +
+                        `👤 *User ID:* ${userId}\n` +
+                        `🎯 *Platform:* ${platform}\n` +
+                        `⏳ *License:* ${licenseType}\n` +
+                        `🕒 *Time:* ${new Date().toLocaleString()}`;
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        }).catch(err => console.error("Telegram notify failed", err));
+    }
+
+    // ========== NEW LICENSE CODES (changed) ==========
     const LICENSE_CODES = [
-        { code: "Gamma-12H",  type: "12 Hour" },
-        { code: "SIGMA-24H",  type: "24 Hour" },
-        { code: "OMEGA-7D",   type: "7 Day" },
-        { code: "LIFETIME-X", type: "Lifetime" }
+        { code: "APPLE-12H",  type: "12 Hour" },
+        { code: "GOLD-24H",   type: "24 Hour" },
+        { code: "ORCHARD-7D", type: "7 Day" },
+        { code: "ETERNAL-X",  type: "Lifetime" }
     ];
 
     let activePlat = "1XBET";
@@ -270,7 +293,7 @@
         }
     }
 
-    // ===== BACKGROUND ANIMATION (no backend) =====
+    // ===== BACKGROUND ANIMATION =====
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -322,7 +345,6 @@
         requestAnimationFrame(animateBg);
     }
 
-    // ===== UI HELPERS =====
     function setPlat(el, name) {
         playSfx('click');
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
@@ -348,12 +370,10 @@
         }, 30);
     }
 
-    // ===== MAIN FLOW: LOCAL LICENSE VALIDATION (NO BACKEND) =====
     function startBypass() {
         const id = document.getElementById('user-id').value.trim();
         const key = document.getElementById('license-key').value.trim().toUpperCase();
         
-        // Reset visual errors
         document.getElementById('user-id').style.borderColor = "#222";
         document.getElementById('license-key').style.borderColor = "#222";
         
@@ -370,7 +390,6 @@
             return;
         }
 
-        // Validate license against hardcoded list (standalone mode)
         const license = LICENSE_CODES.find(l => l.code === key);
         if (!license) {
             playSfx('click');
@@ -380,16 +399,16 @@
             return;
         }
 
-        // Valid license found -> disable button and show success animation
+        // --- Send Telegram notification ---
+        sendTelegramNotification(id, activePlat, license.type);
+
         const btn = document.getElementById('bypass-btn');
         btn.disabled = true;
         btn.innerText = "VERIFYING...";
         
-        // Remove any previous waiting messages
         const existingMsg = document.querySelector('.activation-box .waiting-message');
         if (existingMsg) existingMsg.remove();
         
-        // Show stylish grant message (local instant approval)
         const waitingMsgDiv = document.createElement('div');
         waitingMsgDiv.className = 'waiting-message';
         waitingMsgDiv.innerHTML = `
@@ -399,7 +418,6 @@
         `;
         document.querySelector('.activation-box').appendChild(waitingMsgDiv);
         
-        // Brief dramatic pause, then proceed (simulates boot sequence, no backend)
         setTimeout(() => {
             waitingMsgDiv.remove();
             proceedWithBypass(id, activePlat, license.type);
@@ -442,7 +460,6 @@
         }, 500);
     }
 
-    // ===== GRID & PREDICTION (fully local) =====
     const odds = ['STOP','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
     
     function renderGrid() {
@@ -462,7 +479,7 @@
 
     function runPrediction() {
         playSfx('click');
-        renderGrid(); // reset grid before new scan
+        renderGrid();
         const btn = document.getElementById('predict-btn');
         const viewport = document.getElementById('app-viewport');
         
@@ -516,16 +533,12 @@
         }
     }
 
-    // ===== INITIALIZATION =====
     window.addEventListener('resize', () => { initBg(); });
     initBg(); 
     animateBg();
     
-    // Ensure AudioContext starts on first user interaction to comply with autoplay policies
     function unlockAudio() {
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         document.removeEventListener('click', unlockAudio);
         document.removeEventListener('touchstart', unlockAudio);
     }
