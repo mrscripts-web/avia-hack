@@ -1,627 +1,620 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA HACKS | Neural Link v8.2</title>
-    <style>
-        /* ===== ORIGINAL STYLES (fully restored) ===== */
-        :root { --accent: #ff0033; --bg: #010101; }
-        body { background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; }
-
-        body::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
-        }
-
-        #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; height: 100vh; overflow-y: auto; position: relative; z-index: 10; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
-        .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
-        .card img { width: 100%; max-width: 60px; filter: grayscale(1) opacity(0.3); transition: 0.3s; }
-        .card.other-btn { font-size: 12px; font-weight: bold; color: #888; letter-spacing: 1px; grid-column: 2; }
-        .card:hover { border-color: #333; transform: translateY(-2px); box-shadow: 0 5px 10px rgba(255,0,51,0.2); }
-        .card.active { border-color: var(--accent); background: rgba(255,0,51,0.05); box-shadow: 0 0 15px rgba(255,0,51,0.2); }
-        .card.active img { filter: none; opacity: 1; transform: scale(1.1); }
-        .card.active.other-btn { color: var(--accent); }
-
-        .other-platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 15px 0; max-height: 200px; overflow-y: auto; padding: 5px; border: 1px solid #222; border-radius: 8px; background: #080808; }
-        .platform-option { background: #111; border: 1px solid #333; padding: 10px 5px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #aaa; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; }
-        .platform-option:hover { border-color: var(--accent); color: #fff; background: #1a1a1a; }
-        .platform-option.selected { border-color: var(--accent); background: rgba(255,0,51,0.1); color: var(--accent); box-shadow: 0 0 10px rgba(255,0,51,0.3); }
-
-        .activation-box { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; margin-bottom: 20px; animation: slideUp 0.3s ease-out; }
-        input[type="text"], input[type="password"] { width: 85%; padding: 12px; background: #000; border: 1px solid #222; color: var(--accent); text-align: center; letter-spacing: 4px; border-radius: 4px; margin-bottom: 15px; outline: none; font-family: monospace; font-weight: bold; }
-        input[type="text"]:focus, input[type="password"]:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,51,0.2); }
-
-        .btn-start { background: var(--accent); color: white; padding: 14px; border: none; border-radius: 4px; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 2px; transition: 0.3s; }
-        .btn-start:hover { box-shadow: 0 0 20px var(--accent); }
-        .btn-buy { background: #111; color: #888; border: 1px solid #222; padding: 10px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 8px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .btn-buy:hover { background: #222; color: white; }
-
-        .fingerprint-box { background: rgba(255, 0, 0, 0.03); border: 1px solid #1a0000; padding: 15px; margin-top: 20px; text-align: left; border-radius: 4px; }
-        .box-header { font-size: 8px; color: var(--accent); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
-        .id-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 4px; color: #555; }
-        .id-row span:last-child { color: #aaa; font-weight: bold; }
-        .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
-
-        #terminal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .term-line { color: var(--accent); margin-bottom: 4px; width: 280px; text-shadow: 0 0 5px var(--accent); }
-        .term-progress-container { width: 280px; height: 2px; background: #222; margin-top: 15px; border-radius: 2px; overflow: hidden; }
-        .term-progress-fill { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.3s ease; }
-
-        #hack-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
-        .dash-header { height: 45px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #050505; }
-        .main-layout { display: flex; flex: 1; overflow: hidden; }
-        .side-panel { width: 80px; border-right: 1px solid #111; padding: 15px 10px; display: flex; flex-direction: column; gap: 15px; background: #020202; }
-        .side-panel.right { border-right: none; border-left: 1px solid #111; }
-        .center-content { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .multiplier-circle { width: 190px; height: 190px; border: 1px solid #111; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); background: #050505; }
-        #prediction-val { font-size: 44px; color: white; text-shadow: 0 0 15px var(--accent); transition: 0.3s; }
-        .signal-meter { display: flex; gap: 3px; align-items: center; justify-content: center; margin-top: 5px; }
-        .signal-bar { width: 6px; height: 12px; background: #222; border-radius: 1px; transition: 0.2s; }
-        .signal-bar.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-        .history-bar { height: 70px; border-top: 1px solid #111; display: flex; align-items: center; gap: 10px; padding: 0 15px; overflow-x: auto; background: #020202; }
-        .hist-item { min-width: 45px; height: 45px; border: 1px solid #1a1a1a; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; animation: popIn 0.3s ease-out; cursor: pointer; transition: 0.2s; }
-        .hist-item:hover { border-color: var(--accent); transform: scale(1.1); }
-
-        .logout-btn { background: #111; color: #888; border: 1px solid #333; padding: 6px 12px; font-size: 8px; border-radius: 3px; cursor: pointer; font-weight: bold; transition: 0.3s; letter-spacing: 1px; }
-        .logout-btn:hover { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
-        .stat-label { font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 4px; }
-        .stat-val { font-size: 11px; color: var(--accent); font-weight: bold; text-shadow: 0 0 8px rgba(255,0,51,0.4); }
-        .blink { animation: fast-blink 0.2s infinite; color: #fff !important; text-shadow: 0 0 10px #fff !important; }
-
-        @keyframes blinker { 50% { opacity: 0.3; } }
-        @keyframes fast-blink { 50% { opacity: 0.3; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        #verify-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 300; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
-        .modal-content { background: #0a0a0a; border: 1px solid var(--accent); padding: 20px; width: 85%; max-width: 320px; border-radius: 8px; box-shadow: 0 0 30px rgba(255,0,51,0.3); font-size: 10px; color: #ccc; position: relative; animation: slideIn 0.3s ease-out; }
-        .close-btn { color: #888; position: absolute; right: 12px; top: 10px; cursor: pointer; font-size: 18px; }
-        .close-btn:hover { color: #fff; }
-        .modal-hash { color: var(--accent); word-break: break-all; font-size: 9px; margin: 10px 0; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .waiting-message {
-            background: rgba(0,0,0,0.85);
-            border: 2px solid #ffcc00;
-            border-radius: 8px;
-            padding: 20px 15px;
-            margin: 15px auto;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: #ffcc00;
-            box-shadow: 0 0 20px rgba(255,204,0,0.3);
-            backdrop-filter: blur(5px);
-        }
-        .waiting-message .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,204,0,0.3);
-            border-top-color: #ffcc00;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .waiting-message .small {
-            font-size: 10px;
-            color: #aaa;
-            margin-top: 8px;
-        }
-    </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ <title>AFRICA HACKS | Neural Link v8.2</title>
+ <style>
+ /* ===== ORIGINAL STYLES (fully restored) ===== */
+ :root { --accent: #ff0033; --bg: #010101; }
+ body { background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; }
+ body::before {
+ content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+ background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+ linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+ z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
+ }
+ #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; height: 100vh; overflow-y: auto; position: relative; z-index: 10; }
+ .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+ .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
+ .card img { width: 100%; max-width: 60px; filter: grayscale(1) opacity(0.3); transition: 0.3s; }
+ .card.other-btn { font-size: 12px; font-weight: bold; color: #888; letter-spacing: 1px; grid-column: 2; }
+ .card:hover { border-color: #333; transform: translateY(-2px); box-shadow: 0 5px 10px rgba(255,0,51,0.2); }
+ .card.active { border-color: var(--accent); background: rgba(255,0,51,0.05); box-shadow: 0 0 15px rgba(255,0,51,0.2); }
+ .card.active img { filter: none; opacity: 1; transform: scale(1.1); }
+ .card.active.other-btn { color: var(--accent); }
+ .other-platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 15px 0; max-height: 200px; overflow-y: auto; padding: 5px; border: 1px solid #222; border-radius: 8px; background: #080808; }
+ .platform-option { background: #111; border: 1px solid #333; padding: 10px 5px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #aaa; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; }
+ .platform-option:hover { border-color: var(--accent); color: #fff; background: #1a1a1a; }
+ .platform-option.selected { border-color: var(--accent); background: rgba(255,0,51,0.1); color: var(--accent); box-shadow: 0 0 10px rgba(255,0,51,0.3); }
+ .activation-box { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; margin-bottom: 20px; animation: slideUp 0.3s ease-out; }
+ input[type="text"], input[type="password"] { width: 85%; padding: 12px; background: #000; border: 1px solid #222; color: var(--accent); text-align: center; letter-spacing: 4px; border-radius: 4px; margin-bottom: 15px; outline: none; font-family: monospace; font-weight: bold; }
+ input[type="text"]:focus, input[type="password"]:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,51,0.2); }
+ .btn-start { background: var(--accent); color: white; padding: 14px; border: none; border-radius: 4px; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 2px; transition: 0.3s; }
+ .btn-start:hover { box-shadow: 0 0 20px var(--accent); }
+ .btn-buy { background: #111; color: #888; border: 1px solid #222; padding: 10px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 8px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+ .btn-buy:hover { background: #222; color: white; }
+ .fingerprint-box { background: rgba(255, 0, 0, 0.03); border: 1px solid #1a0000; padding: 15px; margin-top: 20px; text-align: left; border-radius: 4px; }
+ .box-header { font-size: 8px; color: var(--accent); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
+ .id-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 4px; color: #555; }
+ .id-row span:last-child { color: #aaa; font-weight: bold; }
+ .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
+ #terminal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; }
+ .term-line { color: var(--accent); margin-bottom: 4px; width: 280px; text-shadow: 0 0 5px var(--accent); }
+ .term-progress-container { width: 280px; height: 2px; background: #222; margin-top: 15px; border-radius: 2px; overflow: hidden; }
+ .term-progress-fill { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.3s ease; }
+ #hack-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
+ .dash-header { height: 45px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #050505; }
+ .main-layout { display: flex; flex: 1; overflow: hidden; }
+ .side-panel { width: 80px; border-right: 1px solid #111; padding: 15px 10px; display: flex; flex-direction: column; gap: 15px; background: #020202; }
+ .side-panel.right { border-right: none; border-left: 1px solid #111; }
+ .center-content { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+ .multiplier-circle { width: 190px; height: 190px; border: 1px solid #111; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); background: #050505; }
+ #prediction-val { font-size: 44px; color: white; text-shadow: 0 0 15px var(--accent); transition: 0.3s; }
+ .signal-meter { display: flex; gap: 3px; align-items: center; justify-content: center; margin-top: 5px; }
+ .signal-bar { width: 6px; height: 12px; background: #222; border-radius: 1px; transition: 0.2s; }
+ .signal-bar.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+ .history-bar { height: 70px; border-top: 1px solid #111; display: flex; align-items: center; gap: 10px; padding: 0 15px; overflow-x: auto; background: #020202; }
+ .hist-item { min-width: 45px; height: 45px; border: 1px solid #1a1a1a; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; animation: popIn 0.3s ease-out; cursor: pointer; transition: 0.2s; }
+ .hist-item:hover { border-color: var(--accent); transform: scale(1.1); }
+ .logout-btn { background: #111; color: #888; border: 1px solid #333; padding: 6px 12px; font-size: 8px; border-radius: 3px; cursor: pointer; font-weight: bold; transition: 0.3s; letter-spacing: 1px; }
+ .logout-btn:hover { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
+ .stat-label { font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 4px; }
+ .stat-val { font-size: 11px; color: var(--accent); font-weight: bold; text-shadow: 0 0 8px rgba(255,0,51,0.4); }
+ .blink { animation: fast-blink 0.2s infinite; color: #fff !important; text-shadow: 0 0 10px #fff !important; }
+ @keyframes blinker { 50% { opacity: 0.3; } }
+ @keyframes fast-blink { 50% { opacity: 0.3; } }
+ @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+ @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+ #verify-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 300; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
+ .modal-content { background: #0a0a0a; border: 1px solid var(--accent); padding: 20px; width: 85%; max-width: 320px; border-radius: 8px; box-shadow: 0 0 30px rgba(255,0,51,0.3); font-size: 10px; color: #ccc; position: relative; animation: slideIn 0.3s ease-out; }
+ .close-btn { color: #888; position: absolute; right: 12px; top: 10px; cursor: pointer; font-size: 18px; }
+ .close-btn:hover { color: #fff; }
+ .modal-hash { color: var(--accent); word-break: break-all; font-size: 9px; margin: 10px 0; }
+ @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+ .waiting-message {
+ background: rgba(0,0,0,0.85);
+ border: 2px solid #ffcc00;
+ border-radius: 8px;
+ padding: 20px 15px;
+ margin: 15px auto;
+ text-align: center;
+ font-size: 14px;
+ font-weight: bold;
+ letter-spacing: 2px;
+ color: #ffcc00;
+ box-shadow: 0 0 20px rgba(255,204,0,0.3);
+ backdrop-filter: blur(5px);
+ }
+ .waiting-message .spinner {
+ width: 30px;
+ height: 30px;
+ border: 3px solid rgba(255,204,0,0.3);
+ border-top-color: #ffcc00;
+ border-radius: 50%;
+ animation: spin 1s linear infinite;
+ margin: 0 auto 10px;
+ }
+ @keyframes spin { to { transform: rotate(360deg); } }
+ .waiting-message .small {
+ font-size: 10px;
+ color: #aaa;
+ margin-top: 8px;
+ }
+ </style>
 </head>
 <body>
+ <div id="selection-screen">
+ <h2 style="font-size: 9px; letter-spacing: 3px; color: #444;">AFRICA_SECURE_GATE v8.2</h2>
+ <div class="grid">
+ <div class="card" onclick="select(this, 'SportyBet', '#ff0033')"><img src="logos/sportybet.png" alt="SportyBet"></div>
+ <div class="card" onclick="select(this, '1Win', '#007bff')"><img src="logos/1win.png" alt="1Win"></div>
+ <div class="card" onclick="select(this, 'Betway', '#00ff00')"><img src="logos/betway.png" alt="Betway"></div>
+ <div class="card" onclick="select(this, '1xBet', '#00acee')"><img src="logos/1xbet.png" alt="1xBet"></div>
+ <div class="card" onclick="select(this, 'Bet9ja', '#008d36')"><img src="logos/bet9ja.png" alt="Bet9ja"></div>
+ <div class="card" onclick="select(this, 'MSport', '#ffc107')"><img src="logos/msport.png" alt="MSport"></div>
+ <div class="card" onclick="select(this, 'goobet', '#022cfa')"><img src="logos/goobet.png" alt="Goobet"></div>
+ <div class="card" onclick="select(this, 'Mozzart', '#2d3291')"><img src="logos/mozzart.png" alt="MozzartBet"></div>
+ <div class="card" onclick="select(this, 'Betika', '#8dc63f')"><img src="logos/betika.png" alt="Betika"></div>
+ <div class="card" onclick="select(this, 'Premier Bet', '#23fa02')"><img src="logos/premierbet.png" alt="Premier Bet"></div>
+ <div class="card" onclick="select(this, 'LineBet', '#004a34')"><img src="logos/linebet.png" alt="LineBet"></div>
+ <div class="card" onclick="select(this, 'MelBet', '#f7941d')"><img src="logos/melbet.png" alt="MelBet"></div>
+ <div class="card other-btn" onclick="selectOtherPlatform(this)">OTHER</div>
+ </div>
+ <div id="other-platform-container" style="display: none; margin-bottom: 20px;">
+ <label style="display:block; font-size:9px; color:#666; margin-bottom:8px; letter-spacing:1px;">SELECT A PLATFORM:</label>
+ <div class="other-platform-grid" id="other-platform-grid"></div>
+ </div>
+ <div class="activation-box" id="activation-ui">
+ <input type="text" id="user-id" placeholder="ACCOUNT ID" autocomplete="off">
+ <input type="password" id="license-key" placeholder="LICENSE KEY" autocomplete="off">
+ <button class="btn-start" onclick="initiate()">BYPASS SERVER</button>
+ <button class="btn-buy" onclick="window.location.href='#buy'">🛒 BUY LICENSE KEY</button>
+ </div>
+ <div class="fingerprint-box">
+ <div class="box-header">[!] DEVICE_IDENTITY_INTERCEPTED</div>
+ <div class="id-row"><span>IP_ADDRESS:</span> <span id="user-ip" class="blink-red">LOCAL_NODE</span></div>
+ <div class="id-row"><span>NODE_OS:</span> <span id="user-os">DETECTING...</span></div>
+ <div class="id-row"><span>POWER_LVL:</span> <span id="user-battery">--%</span></div>
+ <div class="id-row"><span>CONNECTION:</span> <span id="user-isp">ENCRYPTED</span></div>
+ <div style="font-size: 6px; color: #333; margin-top: 10px; text-align: center;">LOG_ID: AF-NET-99102-X</div>
+ </div>
+ </div>
+ <div id="terminal-overlay">
+ <div id="term-lines"></div>
+ <div class="term-progress-container">
+ <div class="term-progress-fill" id="term-progress"></div>
+ </div>
+ </div>
+ <div id="hack-dashboard">
+ <div class="dash-header">
+ <div class="user-count">👁 <span id="active-users">14,201</span> ACTIVE</div>
+ <div id="timer-txt" style="color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px;">00:00:00</div>
+ <button class="logout-btn" onclick="terminateSession()">DISCONNECT</button>
+ </div>
+ <div class="main-layout">
+ <div class="side-panel">
+ <div><div class="stat-label">LATENCY</div><div class="stat-val" id="lat">18ms</div></div>
+ <div><div class="stat-label">UPLINK</div><div class="stat-val" style="color:#00ff00;">SECURE</div></div>
+ <div><div class="stat-label">PACKETS</div><div class="stat-val" id="pkts">912/s</div></div>
+ <div><div class="stat-label">PEERS</div><div class="stat-val" id="peers">16</div></div>
+ </div>
+ <div class="center-content">
+ <div class="multiplier-circle">
+ <span id="prediction-val">0.00x</span>
+ <span style="font-size: 7px; color: #555; margin-top: 10px; letter-spacing: 2px;">NEURAL_SYNC_15S</span>
+ </div>
+ <div class="signal-meter" id="signal-meter">
+ <div class="signal-bar"></div>
+ <div class="signal-bar"></div>
+ <div class="signal-bar"></div>
+ <div class="signal-bar"></div>
+ </div>
+ <div style="margin-top: 15px; width: 160px; height: 3px; background: #111; border-radius: 2px; overflow: hidden;">
+ <div id="sync-fill" style="height: 100%; background: var(--accent); width: 0%; box-shadow: 0 0 10px var(--accent);"></div>
+ </div>
+ </div>
+ <div class="side-panel right">
+ <div><div class="stat-label">REGION</div><div class="stat-val">AFR_W</div></div>
+ <div><div class="stat-label">THREAT</div><div class="stat-val" style="color:#00ff00;">LOW</div></div>
+ <div><div class="stat-label">TARGET</div><div class="stat-val" id="node-name">---</div></div>
+ </div>
+ </div>
+ <div class="history-bar" id="history-box"></div>
+ </div>
+ <div id="verify-modal">
+ <div class="modal-content">
+ <span class="close-btn" onclick="document.getElementById('verify-modal').style.display='none'">&times;</span>
+ <div style="color: #fff; margin-bottom: 10px; font-size: 11px; font-weight: bold;">BLOCKCHAIN VERIFICATION</div>
+ <div>Transaction Hash:</div>
+ <div class="modal-hash" id="modal-hash">0x8F3A...B2E1</div>
+ <div>Status: <span style="color:var(--green);">CONFIRMED</span></div>
+ <div style="margin-top:10px; color:#666;">Block: 1847291<br>Timestamp: 2025-03-18 14:22:31 UTC</div>
+ </div>
+ </div>
+ <script>
+ // ⚙️ CLOUDFLARE WORKER URL - REPLACE WITH YOURS!
+ const API_URL = 'https://telegram-auth-worker.YOUR-NAME.workers.dev';
 
-    <div id="selection-screen">
-        <h2 style="font-size: 9px; letter-spacing: 3px; color: #444;">AFRICA_SECURE_GATE v8.2</h2>
-        <div class="grid">
-            <div class="card" onclick="select(this, 'SportyBet', '#ff0033')"><img src="logos/sportybet.png" alt="SportyBet"></div>
-            <div class="card" onclick="select(this, '1Win', '#007bff')"><img src="logos/1win.png" alt="1Win"></div>
-            <div class="card" onclick="select(this, 'Betway', '#00ff00')"><img src="logos/betway.png" alt="Betway"></div>
-            <div class="card" onclick="select(this, '1xBet', '#00acee')"><img src="logos/1xbet.png" alt="1xBet"></div>
-            <div class="card" onclick="select(this, 'Bet9ja', '#008d36')"><img src="logos/bet9ja.png" alt="Bet9ja"></div>
-            <div class="card" onclick="select(this, 'MSport', '#ffc107')"><img src="logos/msport.png" alt="MSport"></div>
-            <div class="card" onclick="select(this, 'goobet', '#022cfa')"><img src="logos/goobet.png" alt="Goobet"></div>
-            <div class="card" onclick="select(this, 'Mozzart', '#2d3291')"><img src="logos/mozzart.png" alt="MozzartBet"></div>
-            <div class="card" onclick="select(this, 'Betika', '#8dc63f')"><img src="logos/betika.png" alt="Betika"></div>
-            <div class="card" onclick="select(this, 'Premier Bet', '#23fa02')"><img src="logos/premierbet.png" alt="Premier Bet"></div>
-            <div class="card" onclick="select(this, 'LineBet', '#004a34')"><img src="logos/linebet.png" alt="LineBet"></div>
-            <div class="card" onclick="select(this, 'MelBet', '#f7941d')"><img src="logos/melbet.png" alt="MelBet"></div>
-            <div class="card other-btn" onclick="selectOtherPlatform(this)">OTHER</div>
-        </div>
+ const SCRIPT_NAME = "Crash Intercept";
+ 
+ let selected = "";
+ let selectedColor = "";
+ let otherCardElement = null;
+ const topPlatforms = [
+ 'BetKing', 'BetWinner', '22Bet', 'Melbet', 
+ 'BetPawa', 'Hollywoodbets', 'Supabets', 'World Sports Betting',
+ 'BetRaha', 'ChezaCash', 'OdiBets', 'Betika',
+ 'Premier Bet', 'LineBet', 'Mozzart', 'BetBonanza'
+ ];
+ 
+ const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+ function playBeep() {
+ if(audioCtx.state === 'suspended') audioCtx.resume();
+ const oscillator = audioCtx.createOscillator();
+ const gainNode = audioCtx.createGain();
+ oscillator.type = 'square';
+ oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+ gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+ oscillator.connect(gainNode);
+ gainNode.connect(audioCtx.destination);
+ oscillator.start();
+ oscillator.stop(audioCtx.currentTime + 0.05);
+ }
+ function playSfx(type) { playBeep(); }
+ 
+ document.addEventListener('contextmenu', event => event.preventDefault());
+ document.onkeydown = function(e) {
+ if (e.keyCode == 123) return false;
+ if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+ if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+ if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+ if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+ };
+ 
+ window.addEventListener('DOMContentLoaded', () => {
+ const storedEnd = localStorage.getItem('session_end');
+ if (storedEnd && new Date().getTime() < storedEnd) {
+ selected = localStorage.getItem('selected_node');
+ selectedColor = localStorage.getItem('accent_color');
+ if(selected && selectedColor) {
+ document.documentElement.style.setProperty('--accent', selectedColor);
+ document.getElementById('selection-screen').style.display = 'none';
+ startDash(storedEnd);
+ return;
+ }
+ }
+ localStorage.clear();
+ const firstCard = document.querySelector('.card:not(.other-btn)');
+ if (firstCard) select(firstCard, '1XBET', '#ff0033');
+ populateOtherPlatforms();
+ startFingerprintUpdates();
+ });
+ 
+ function populateOtherPlatforms() {
+ const grid = document.getElementById('other-platform-grid');
+ grid.innerHTML = '';
+ topPlatforms.forEach(platform => {
+ const div = document.createElement('div');
+ div.className = 'platform-option';
+ div.innerText = platform.toUpperCase();
+ div.onclick = () => selectOtherPlatformOption(platform, div);
+ grid.appendChild(div);
+ });
+ }
+ 
+ let batteryLevel = 87;
+ function startFingerprintUpdates() {
+ setInterval(() => {
+ batteryLevel = Math.max(5, batteryLevel - (Math.random() * 2));
+ document.getElementById('user-battery').innerText = Math.floor(batteryLevel) + "%";
+ }, 30000);
+ const connTypes = ['4G', '5G', 'LTE', 'FIBER'];
+ setInterval(() => {
+ const newType = connTypes[Math.floor(Math.random() * connTypes.length)];
+ document.getElementById('user-isp').innerText = newType + "_MODEM";
+ }, 45000);
+ document.getElementById('user-ip').innerText = "LOCAL_NODE";
+ document.getElementById('user-ip').classList.remove('blink-red');
+ }
+ 
+ const ua = window.navigator.userAgent;
+ let os = "UNKNOWN_NODE";
+ if (ua.indexOf("Win") != -1) os = "WINDOWS_X64";
+ if (ua.indexOf("Android") != -1) os = "ANDROID_OS";
+ if (ua.indexOf("iPhone") != -1) os = "IOS_MOBILE";
+ if (ua.indexOf("Mac") != -1 && ua.indexOf("iPhone") == -1) os = "MACOS_NODE";
+ document.getElementById('user-os').innerText = os;
+ 
+ if (navigator.getBattery) {
+ navigator.getBattery().then(b => {
+ batteryLevel = Math.round(b.level * 100);
+ document.getElementById('user-battery').innerText = batteryLevel + "%";
+ });
+ }
+ if (navigator.connection) {
+ document.getElementById('user-isp').innerText = navigator.connection.effectiveType.toUpperCase() + "_MODEM";
+ }
+ 
+ function deselectAllCards() {
+ document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+ document.getElementById('other-platform-container').style.display = 'none';
+ document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
+ }
+ 
+ function select(el, name, color) {
+ deselectAllCards();
+ el.classList.add('active');
+ selected = name;
+ selectedColor = color;
+ document.documentElement.setProperty('--accent', color);
+ document.getElementById('activation-ui').style.display = 'block';
+ setTimeout(() => {
+ document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
+ }, 100);
+ }
+ 
+ function selectOtherPlatform(el) {
+ deselectAllCards();
+ el.classList.add('active');
+ otherCardElement = el;
+ document.getElementById('other-platform-container').style.display = 'block';
+ selected = '';
+ selectedColor = '#ff0033';
+ document.documentElement.style.setProperty('--accent', selectedColor);
+ document.getElementById('activation-ui').style.display = 'block';
+ setTimeout(() => {
+ document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
+ }, 100);
+ }
+ 
+ function selectOtherPlatformOption(platform, element) {
+ document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
+ element.classList.add('selected');
+ selected = platform;
+ if (otherCardElement) otherCardElement.classList.add('active');
+ }
+ 
+ // ========== MAIN INITIATION WITH CLOUDFLARE WORKER ==========
+ async function initiate() {
+ const userId = document.getElementById('user-id').value.trim();
+ const key = document.getElementById('license-key').value.trim().toUpperCase();
+ 
+ if (!selected) {
+ alert("Please select a platform.");
+ return;
+ }
+ if (!userId) {
+ playSfx('click');
+ document.getElementById('user-id').style.borderColor = "red";
+ setTimeout(() => document.getElementById('user-id').style.borderColor = "#222", 1000);
+ alert("Please enter your Account ID.");
+ return;
+ }
+ if (!key) {
+ playSfx('click');
+ document.getElementById('license-key').style.borderColor = "red";
+ setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 1000);
+ alert("Please enter your License Key.");
+ return;
+ }
 
-        <div id="other-platform-container" style="display: none; margin-bottom: 20px;">
-            <label style="display:block; font-size:9px; color:#666; margin-bottom:8px; letter-spacing:1px;">SELECT A PLATFORM:</label>
-            <div class="other-platform-grid" id="other-platform-grid"></div>
-        </div>
+ const btn = document.querySelector('#activation-ui .btn-start');
+ btn.disabled = true;
+ btn.innerText = "CONNECTING...";
 
-        <div class="activation-box" id="activation-ui">
-            <input type="text" id="user-id" placeholder="ACCOUNT ID" autocomplete="off">
-            <input type="password" id="license-key" placeholder="LICENSE KEY" autocomplete="off">
-            <button class="btn-start" onclick="initiate()">BYPASS SERVER</button>
-            <button class="btn-buy" onclick="window.location.href='#buy'">🛒 BUY LICENSE KEY</button>
-        </div>
+ try {
+ const response = await fetch(`${API_URL}/api/login`, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ userId, password: key })
+ });
 
-        <div class="fingerprint-box">
-            <div class="box-header">[!] DEVICE_IDENTITY_INTERCEPTED</div>
-            <div class="id-row"><span>IP_ADDRESS:</span> <span id="user-ip" class="blink-red">LOCAL_NODE</span></div>
-            <div class="id-row"><span>NODE_OS:</span> <span id="user-os">DETECTING...</span></div>
-            <div class="id-row"><span>POWER_LVL:</span> <span id="user-battery">--%</span></div>
-            <div class="id-row"><span>CONNECTION:</span> <span id="user-isp">ENCRYPTED</span></div>
-            <div style="font-size: 6px; color: #333; margin-top: 10px; text-align: center;">LOG_ID: AF-NET-99102-X</div>
-        </div>
-    </div>
+ const data = await response.json();
 
-    <div id="terminal-overlay">
-        <div id="term-lines"></div>
-        <div class="term-progress-container">
-            <div class="term-progress-fill" id="term-progress"></div>
-        </div>
-    </div>
+ if (response.status === 401 || data.status === 'error') {
+ btn.disabled = false;
+ btn.innerText = 'BYPASS SERVER';
+ document.getElementById('license-key').style.borderColor = 'red';
+ alert('❌ WRONG LICENSE KEY!');
+ return;
+ }
 
-    <div id="hack-dashboard">
-        <div class="dash-header">
-            <div class="user-count">● <span id="active-users">14,201</span> ACTIVE</div>
-            <div id="timer-txt" style="color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px;">00:00:00</div>
-            <button class="logout-btn" onclick="terminateSession()">DISCONNECT</button>
-        </div>
-        <div class="main-layout">
-            <div class="side-panel">
-                <div><div class="stat-label">LATENCY</div><div class="stat-val" id="lat">18ms</div></div>
-                <div><div class="stat-label">UPLINK</div><div class="stat-val" style="color:#00ff00;">SECURE</div></div>
-                <div><div class="stat-label">PACKETS</div><div class="stat-val" id="pkts">912/s</div></div>
-                <div><div class="stat-label">PEERS</div><div class="stat-val" id="peers">16</div></div>
-            </div>
-            <div class="center-content">
-                <div class="multiplier-circle">
-                    <span id="prediction-val">0.00x</span>
-                    <span style="font-size: 7px; color: #555; margin-top: 10px; letter-spacing: 2px;">NEURAL_SYNC_15S</span>
-                </div>
-                <div class="signal-meter" id="signal-meter">
-                    <div class="signal-bar"></div>
-                    <div class="signal-bar"></div>
-                    <div class="signal-bar"></div>
-                    <div class="signal-bar"></div>
-                </div>
-                <div style="margin-top: 15px; width: 160px; height: 3px; background: #111; border-radius: 2px; overflow: hidden;">
-                    <div id="sync-fill" style="height: 100%; background: var(--accent); width: 0%; box-shadow: 0 0 10px var(--accent);"></div>
-                </div>
-            </div>
-            <div class="side-panel right">
-                <div><div class="stat-label">REGION</div><div class="stat-val">AFR_W</div></div>
-                <div><div class="stat-label">THREAT</div><div class="stat-val" style="color:#00ff00;">LOW</div></div>
-                <div><div class="stat-label">TARGET</div><div class="stat-val" id="node-name">---</div></div>
-            </div>
-        </div>
-        <div class="history-bar" id="history-box"></div>
-    </div>
+ if (data.status === 'authorized') {
+ localStorage.setItem('authToken', data.token);
+ proceedWithBypass(userId, selected, 'Authorized');
+ } else if (data.status === 'pending') {
+ showWaitingScreen(data.authCode, userId);
+ }
+ } catch (error) {
+ btn.disabled = false;
+ btn.innerText = 'BYPASS SERVER';
+ alert('❌ Server is OFFLINE or connection error!');
+ }
+ }
 
-    <div id="verify-modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="document.getElementById('verify-modal').style.display='none'">&times;</span>
-            <div style="color: #fff; margin-bottom: 10px; font-size: 11px; font-weight: bold;">BLOCKCHAIN VERIFICATION</div>
-            <div>Transaction Hash:</div>
-            <div class="modal-hash" id="modal-hash">0x8F3A...B2E1</div>
-            <div>Status: <span style="color:var(--green);">CONFIRMED</span></div>
-            <div style="margin-top:10px; color:#666;">Block: 1847291<br>Timestamp: 2025-03-18 14:22:31 UTC</div>
-        </div>
-    </div>
+ function showWaitingScreen(authCode, userId) {
+ const existingMsg = document.querySelector('#activation-ui .waiting-message');
+ if (existingMsg) existingMsg.remove();
+ 
+ const waitingMsgDiv = document.createElement('div');
+ waitingMsgDiv.className = 'waiting-message';
+ waitingMsgDiv.innerHTML = `
+ <div class="spinner"></div>
+ <div style="font-size:18px; margin: 10px 0;">⏳ WAITING FOR AUTHORIZATION</div>
+ <div class="small">Admin will approve via Telegram</div>
+ <div class="small" style="margin-top: 15px;">Auth Code: <b>${authCode}</b></div>
+ <div class="small" style="margin-top: 5px; color: #666;">User: ${userId}</div>
+ `;
+ document.getElementById('activation-ui').appendChild(waitingMsgDiv);
 
-    <script>
-        // ========== TELEGRAM NOTIFICATION (no backend) ==========
-        const TELEGRAM_BOT_TOKEN = "8255507296:AAHiAASDDcK31NE_jUN3OVJUXuJ9s9RHXhQ";
-        const TELEGRAM_CHAT_ID = "8645990878";
-        const SCRIPT_NAME = "Crash Intercept";
+ pollAuthStatus(authCode, userId);
+ }
 
-        function sendTelegramNotification(userId, platform, licenseType) {
-            const message = `🔔 *NEW ACCESS* 🔔\n\n` +
-                            `📜 *Script:* ${SCRIPT_NAME}\n` +
-                            `👤 *User ID:* ${userId}\n` +
-                            `🎯 *Platform:* ${platform}\n` +
-                            `⏳ *License:* ${licenseType}\n` +
-                            `🕒 *Time:* ${new Date().toLocaleString()}`;
-            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: TELEGRAM_CHAT_ID,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            }).catch(err => console.error("Telegram notify failed", err));
-        }
+ async function pollAuthStatus(authCode, userId) {
+ const maxAttempts = 240;
+ let attempts = 0;
 
-        // ========== NEW LICENSE CODES (changed) ==========
-        const LICENSE_CODES = [
-            { code: "CRASH-12H",    type: "12 Hour" },
-            { code: "NEURAL-24H",   type: "24 Hour" },
-            { code: "INTERCEPT-7D", type: "7 Day" },
-            { code: "INFINITY-X",   type: "Lifetime" }
-        ];
+ const interval = setInterval(async () => {
+ attempts++;
 
-        let selected = "";
-        let selectedColor = "";
-        let otherCardElement = null;
+ try {
+ const response = await fetch(`${API_URL}/api/auth-status/${authCode}`);
+ const data = await response.json();
 
-        const topPlatforms = [
-            'BetKing', 'BetWinner', '22Bet', 'Melbet', 
-            'BetPawa', 'Hollywoodbets', 'Supabets', 'World Sports Betting',
-            'BetRaha', 'ChezaCash', 'OdiBets', 'Betika',
-            'Premier Bet', 'LineBet', 'Mozzart', 'BetBonanza'
-        ];
-
-        // Audio for feedback
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playBeep() {
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.05);
-        }
-        function playSfx(type) { playBeep(); }
-
-        // ===== ANTI-INSPECT & SESSION RESTORE =====
-        document.addEventListener('contextmenu', event => event.preventDefault());
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const storedEnd = localStorage.getItem('session_end');
-            if (storedEnd && new Date().getTime() < storedEnd) {
-                selected = localStorage.getItem('selected_node');
-                selectedColor = localStorage.getItem('accent_color');
-                if(selected && selectedColor) {
-                    document.documentElement.style.setProperty('--accent', selectedColor);
-                    document.getElementById('selection-screen').style.display = 'none';
-                    startDash(storedEnd);
-                    return;
-                }
-            }
-            localStorage.clear();
-            const firstCard = document.querySelector('.card:not(.other-btn)');
-            if (firstCard) select(firstCard, '1XBET', '#ff0033');
-            populateOtherPlatforms();
-            startFingerprintUpdates();
-        });
-
-        function populateOtherPlatforms() {
-            const grid = document.getElementById('other-platform-grid');
-            grid.innerHTML = '';
-            topPlatforms.forEach(platform => {
-                const div = document.createElement('div');
-                div.className = 'platform-option';
-                div.innerText = platform.toUpperCase();
-                div.onclick = () => selectOtherPlatformOption(platform, div);
-                grid.appendChild(div);
-            });
-        }
-
-        let batteryLevel = 87;
-        function startFingerprintUpdates() {
-            setInterval(() => {
-                batteryLevel = Math.max(5, batteryLevel - (Math.random() * 2));
-                document.getElementById('user-battery').innerText = Math.floor(batteryLevel) + "%";
-            }, 30000);
-            const connTypes = ['4G', '5G', 'LTE', 'FIBER'];
-            setInterval(() => {
-                const newType = connTypes[Math.floor(Math.random() * connTypes.length)];
-                document.getElementById('user-isp').innerText = newType + "_MODEM";
-            }, 45000);
-            document.getElementById('user-ip').innerText = "LOCAL_NODE";
-            document.getElementById('user-ip').classList.remove('blink-red');
-        }
-
-        const ua = window.navigator.userAgent;
-        let os = "UNKNOWN_NODE";
-        if (ua.indexOf("Win") != -1) os = "WINDOWS_X64";
-        if (ua.indexOf("Android") != -1) os = "ANDROID_OS";
-        if (ua.indexOf("iPhone") != -1) os = "IOS_MOBILE";
-        if (ua.indexOf("Mac") != -1 && ua.indexOf("iPhone") == -1) os = "MACOS_NODE";
-        document.getElementById('user-os').innerText = os;
-
-        if (navigator.getBattery) {
-            navigator.getBattery().then(b => {
-                batteryLevel = Math.round(b.level * 100);
-                document.getElementById('user-battery').innerText = batteryLevel + "%";
-            });
-        }
-        if (navigator.connection) {
-            document.getElementById('user-isp').innerText = navigator.connection.effectiveType.toUpperCase() + "_MODEM";
-        }
-
-        function deselectAllCards() {
-            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-            document.getElementById('other-platform-container').style.display = 'none';
-            document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
-        }
-
-        function select(el, name, color) {
-            deselectAllCards();
-            el.classList.add('active');
-            selected = name;
-            selectedColor = color;
-            document.documentElement.style.setProperty('--accent', color);
-            document.getElementById('activation-ui').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        }
-
-        function selectOtherPlatform(el) {
-            deselectAllCards();
-            el.classList.add('active');
-            otherCardElement = el;
-            document.getElementById('other-platform-container').style.display = 'block';
-            selected = '';
-            selectedColor = '#ff0033';
-            document.documentElement.style.setProperty('--accent', selectedColor);
-            document.getElementById('activation-ui').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        }
-
-        function selectOtherPlatformOption(platform, element) {
-            document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
-            selected = platform;
-            if (otherCardElement) otherCardElement.classList.add('active');
-        }
-
-        // ========== MAIN INITIATION: LOCAL LICENSE VALIDATION + TELEGRAM ==========
-        function initiate() {
-            const userId = document.getElementById('user-id').value.trim();
-            const key = document.getElementById('license-key').value.trim().toUpperCase();
-
-            if (!selected) {
-                alert("Please select a platform.");
-                return;
-            }
-            if (!userId) {
-                playSfx('click');
-                document.getElementById('user-id').style.borderColor = "red";
-                setTimeout(() => document.getElementById('user-id').style.borderColor = "#222", 1000);
-                alert("Please enter your Account ID.");
-                return;
-            }
-            if (!key) {
-                playSfx('click');
-                document.getElementById('license-key').style.borderColor = "red";
-                setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 1000);
-                alert("Please enter your License Key.");
-                return;
-            }
-
-            const license = LICENSE_CODES.find(l => l.code === key);
-            if (!license) {
-                playSfx('click');
-                alert("ACCESS DENIED: INVALID OR EXPIRED LICENSE KEY.");
-                document.getElementById('license-key').value = '';
-                document.getElementById('license-key').style.borderColor = "red";
-                setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 2000);
-                return;
-            }
-
-            // --- Send Telegram notification ---
-            sendTelegramNotification(userId, selected, license.type);
-
-            const btn = document.querySelector('#activation-ui .btn-start');
-            btn.disabled = true;
-            btn.innerText = "VERIFYING...";
-
-            const existingMsg = document.querySelector('#activation-ui .waiting-message');
-            if (existingMsg) existingMsg.remove();
-
-            const waitingMsgDiv = document.createElement('div');
-            waitingMsgDiv.className = 'waiting-message';
-            waitingMsgDiv.innerHTML = `
-                <div style="font-size:24px;">🔓✨</div>
-                <div>LICENSE VALIDATED</div>
-                <div class="small">Access granted — launching neural core</div>
-            `;
-            document.getElementById('activation-ui').appendChild(waitingMsgDiv);
-
-            setTimeout(() => {
-                waitingMsgDiv.remove();
-                proceedWithBypass(userId, selected, license.type);
-            }, 800);
-        }
-
-        function proceedWithBypass(userId, platform, licenseType) {
-            const endTime = new Date().getTime() + (12 * 60 * 60 * 1000);
-            localStorage.setItem('session_end', endTime);
-            localStorage.setItem('selected_node', selected);
-            localStorage.setItem('accent_color', selectedColor);
-
-            document.getElementById('selection-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('selection-screen').style.display = 'none';
-                document.getElementById('terminal-overlay').style.display = 'flex';
-                runEnhancedTerminal(endTime);
-            }, 500);
-        }
-
-        function runEnhancedTerminal(endTime) {
-            const lines = [
-                "> INITIATING HANDSHAKE...",
-                "> MAPPING " + selected.toUpperCase() + " NODES...",
-                "> INJECTING NEURAL PAYLOAD...",
-                "> BYPASSING FIREWALL ENCRYPTION...",
-                "> CONNECTION SECURED."
-            ];
-            const termLinesDiv = document.getElementById('term-lines');
-            const progressFill = document.getElementById('term-progress');
-            termLinesDiv.innerHTML = '';
-            progressFill.style.width = '0%';
-
-            let delay = 0;
-            lines.forEach((line, index) => {
-                setTimeout(() => {
-                    playBeep();
-                    const div = document.createElement('div');
-                    div.className = 'term-line';
-                    div.innerText = line;
-                    termLinesDiv.appendChild(div);
-                    const progress = ((index + 1) / lines.length) * 100;
-                    progressFill.style.width = progress + '%';
-                    if (index === lines.length - 1) {
-                        setTimeout(() => {
-                            document.getElementById('terminal-overlay').style.display = 'none';
-                            startDash(endTime);
-                        }, 800);
-                    }
-                }, delay);
-                delay += 600;
-            });
-        }
-
-        function startDash(endTime) {
-            document.getElementById('hack-dashboard').style.display = 'flex';
-            document.getElementById('node-name').innerText = selected.toUpperCase();
-
-            setInterval(() => {
-                const now = new Date().getTime();
-                const diff = endTime - now;
-                if (diff <= 0) { 
-                    localStorage.clear(); 
-                    alert("SESSION EXPIRED.");
-                    location.reload(); 
-                    return; 
-                }
-                let h = Math.floor(diff / 3600000);
-                let m = Math.floor(((diff % 3600000) / 60000));
-                let s = Math.floor((diff % 60000) / 1000);
-                document.getElementById('timer-txt').innerText = 
-                    `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            }, 1000);
-
-            setInterval(() => {
-                document.getElementById('active-users').innerText = (14200 + Math.floor(Math.random() * 500)).toLocaleString();
-                document.getElementById('lat').innerText = Math.floor(Math.random() * 12 + 12) + "ms";
-                document.getElementById('pkts').innerText = Math.floor(Math.random() * 300 + 1200) + "/s";
-                document.getElementById('peers').innerText = Math.floor(Math.random() * 13 + 12);
-            }, 3000);
-
-            setInterval(() => {
-                const bars = document.querySelectorAll('.signal-bar');
-                const strength = Math.floor(Math.random() * 4) + 1;
-                bars.forEach((bar, i) => {
-                    if (i < strength) bar.classList.add('active');
-                    else bar.classList.remove('active');
-                });
-            }, 4000);
-
-            loop15();
-            simulateNetworkStruggle();
-        }
-
-        function loop15() {
-            const val = document.getElementById('prediction-val');
-            const progress = document.getElementById('sync-fill');
-            function runCycle() {
-                const now = Date.now();
-                const cycle = 15000;
-                const gameId = Math.floor(now / cycle);
-                let platOffset = 0;
-                for (let i = 0; i < selected.length; i++) {
-                    platOffset += selected.toUpperCase().charCodeAt(i);
-                }
-                let x = Math.sin(gameId + platOffset) * 10000;
-                let fraction = x - Math.floor(x);
-                let predTarget = (fraction < 0.85) ? (fraction * 3.5 + 1.10).toFixed(2) : (fraction * 15 + 2.00).toFixed(2);
-
-                val.innerText = "DECRYPT...";
-                val.classList.add('blink');
-                progress.style.transition = "none";
-                progress.style.width = "0%";
-                setTimeout(() => { 
-                    progress.style.transition = "15s linear"; 
-                    progress.style.width = "100%"; 
-                }, 50);
-                setTimeout(() => {
-                    val.classList.remove('blink');
-                    val.innerText = predTarget + "x";
-                    addHistory(predTarget);
-                }, 4000);
-            }
-            const delayToNextCycle = 15000 - (Date.now() % 15000);
-            val.innerText = "SYNCING...";
-            val.classList.add('blink');
-            setTimeout(() => {
-                runCycle();
-                setInterval(runCycle, 15000);
-            }, delayToNextCycle);
-        }
-
-        function addHistory(val) {
-            const box = document.getElementById('history-box');
-            const item = document.createElement('div');
-            item.className = 'hist-item';
-            let floatVal = parseFloat(val);
-            let textColor = floatVal >= 2.00 ? "var(--accent)" : "#888";
-            item.innerHTML = `<span style="color:${textColor}; font-weight:bold; font-size: 11px;">${val}</span>`;
-            item.onclick = () => showVerify(val);
-            box.prepend(item);
-            if(box.children.length > 10) {
-                box.removeChild(box.lastChild);
-            }
-        }
-
-        function showVerify(val) {
-            const fakeHash = "0x" + Math.random().toString(16).substr(2, 8) + "..." + Math.random().toString(16).substr(2, 8).toUpperCase();
-            document.getElementById('modal-hash').innerText = fakeHash;
-            document.getElementById('verify-modal').style.display = 'flex';
-        }
-
-        function terminateSession() {
-            if(confirm("TERMINATE SECURE CONNECTION?")) { 
-                localStorage.clear(); 
-                location.reload(); 
-            }
-        }
-
-        function simulateNetworkStruggle() {
-            if(document.getElementById('hack-dashboard').style.display === 'flex') {
-                const val = document.getElementById('prediction-val');
-                const originalText = val.innerText;
-                val.style.color = "#ff0033";
-                val.innerText = "FIREWALL DETECTED";
-                val.classList.add('blink');
-                setTimeout(() => {
-                    val.style.color = "";
-                    val.innerText = "REROUTING...";
-                    setTimeout(() => {
-                        val.innerText = originalText;
-                        val.classList.remove('blink');
-                    }, 1000);
-                }, 2000);
-            }
-            const nextGlitch = Math.floor(Math.random() * 45000) + 45000;
-            setTimeout(simulateNetworkStruggle, nextGlitch);
-        }
-
-        setTimeout(() => {
-            if (document.getElementById('hack-dashboard').style.display === 'flex') {
-                simulateNetworkStruggle();
-            }
-        }, 30000);
-    </script>
+ if (data.status === 'approved') {
+ clearInterval(interval);
+ localStorage.setItem('authToken', data.token);
+ document.querySelector('.waiting-message')?.remove();
+ proceedWithBypass(userId, selected, 'Approved');
+ } else if (data.status === 'rejected') {
+ clearInterval(interval);
+ alert('❌ Authorization REJECTED by admin');
+ location.reload();
+ } else if (attempts >= maxAttempts) {
+ clearInterval(interval);
+ alert('⏱️ Timeout - Admin did not respond');
+ location.reload();
+ }
+ } catch (error) {
+ clearInterval(interval);
+ alert('❌ Connection error');
+ location.reload();
+ }
+ }, 5000);
+ }
+ 
+ function proceedWithBypass(userId, platform, licenseType) {
+ const endTime = new Date().getTime() + (12 * 60 * 60 * 1000);
+ localStorage.setItem('session_end', endTime);
+ localStorage.setItem('selected_node', selected);
+ localStorage.setItem('accent_color', selectedColor);
+ document.getElementById('selection-screen').style.opacity = '0';
+ setTimeout(() => {
+ document.getElementById('selection-screen').style.display = 'none';
+ document.getElementById('terminal-overlay').style.display = 'flex';
+ runEnhancedTerminal(endTime);
+ }, 500);
+ }
+ 
+ function runEnhancedTerminal(endTime) {
+ const lines = [
+ "> INITIATING HANDSHAKE...",
+ "> MAPPING " + selected.toUpperCase() + " NODES...",
+ "> INJECTING NEURAL PAYLOAD...",
+ "> BYPASSING FIREWALL ENCRYPTION...",
+ "> CONNECTION SECURED."
+ ];
+ const termLinesDiv = document.getElementById('term-lines');
+ const progressFill = document.getElementById('term-progress');
+ termLinesDiv.innerHTML = '';
+ progressFill.style.width = '0%';
+ let delay = 0;
+ lines.forEach((line, index) => {
+ setTimeout(() => {
+ playBeep();
+ const div = document.createElement('div');
+ div.className = 'term-line';
+ div.innerText = line;
+ termLinesDiv.appendChild(div);
+ const progress = ((index + 1) / lines.length) * 100;
+ progressFill.style.width = progress + '%';
+ if (index === lines.length - 1) {
+ setTimeout(() => {
+ document.getElementById('terminal-overlay').style.display = 'none';
+ startDash(endTime);
+ }, 800);
+ }
+ }, delay);
+ delay += 600;
+ });
+ }
+ 
+ function startDash(endTime) {
+ document.getElementById('hack-dashboard').style.display = 'flex';
+ document.getElementById('node-name').innerText = selected.toUpperCase();
+ setInterval(() => {
+ const now = new Date().getTime();
+ const diff = endTime - now;
+ if (diff <= 0) { 
+ localStorage.clear(); 
+ alert("SESSION EXPIRED.");
+ location.reload(); 
+ return; 
+ }
+ let h = Math.floor(diff / 3600000);
+ let m = Math.floor(((diff % 3600000) / 60000));
+ let s = Math.floor((diff % 60000) / 1000);
+ document.getElementById('timer-txt').innerText = 
+ `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+ }, 1000);
+ setInterval(() => {
+ document.getElementById('active-users').innerText = (14200 + Math.floor(Math.random() * 500)).toLocaleString();
+ document.getElementById('lat').innerText = Math.floor(Math.random() * 12 + 12) + "ms";
+ document.getElementById('pkts').innerText = Math.floor(Math.random() * 300 + 1200) + "/s";
+ document.getElementById('peers').innerText = Math.floor(Math.random() * 13 + 12);
+ }, 3000);
+ setInterval(() => {
+ const bars = document.querySelectorAll('.signal-bar');
+ const strength = Math.floor(Math.random() * 4) + 1;
+ bars.forEach((bar, i) => {
+ if (i < strength) bar.classList.add('active');
+ else bar.classList.remove('active');
+ });
+ }, 4000);
+ loop15();
+ simulateNetworkStruggle();
+ }
+ 
+ function loop15() {
+ const val = document.getElementById('prediction-val');
+ const progress = document.getElementById('sync-fill');
+ function runCycle() {
+ const now = Date.now();
+ const cycle = 15000;
+ const gameId = Math.floor(now / cycle);
+ let platOffset = 0;
+ for (let i = 0; i < selected.length; i++) {
+ platOffset += selected.toUpperCase().charCodeAt(i);
+ }
+ let x = Math.sin(gameId + platOffset) * 10000;
+ let fraction = x - Math.floor(x);
+ let predTarget = (fraction < 0.85) ? (fraction * 3.5 + 1.10).toFixed(2) : (fraction * 15 + 2.00).toFixed(2);
+ val.innerText = "DECRYPT...";
+ val.classList.add('blink');
+ progress.style.transition = "none";
+ progress.style.width = "0%";
+ setTimeout(() => { 
+ progress.style.transition = "15s linear"; 
+ progress.style.width = "100%"; 
+ }, 50);
+ setTimeout(() => {
+ val.classList.remove('blink');
+ val.innerText = predTarget + "x";
+ addHistory(predTarget);
+ }, 4000);
+ }
+ const delayToNextCycle = 15000 - (Date.now() % 15000);
+ val.innerText = "SYNCING...";
+ val.classList.add('blink');
+ setTimeout(() => {
+ runCycle();
+ setInterval(runCycle, 15000);
+ }, delayToNextCycle);
+ }
+ 
+ function addHistory(val) {
+ const box = document.getElementById('history-box');
+ const item = document.createElement('div');
+ item.className = 'hist-item';
+ let floatVal = parseFloat(val);
+ let textColor = floatVal >= 2.00 ? "var(--accent)" : "#888";
+ item.innerHTML = `<span style="color:${textColor}; font-weight:bold; font-size: 11px;">${val}</span>`;
+ item.onclick = () => showVerify(val);
+ box.prepend(item);
+ if(box.children.length > 10) {
+ box.removeChild(box.lastChild);
+ }
+ }
+ 
+ function showVerify(val) {
+ const fakeHash = "0x" + Math.random().toString(16).substr(2, 8) + "..." + Math.random().toString(16).substr(2, 8).toUpperCase();
+ document.getElementById('modal-hash').innerText = fakeHash;
+ document.getElementById('verify-modal').style.display = 'flex';
+ }
+ 
+ function terminateSession() {
+ if(confirm("TERMINATE SECURE CONNECTION?")) { 
+ localStorage.clear(); 
+ location.reload(); 
+ }
+ }
+ 
+ function simulateNetworkStruggle() {
+ if(document.getElementById('hack-dashboard').style.display === 'flex') {
+ const val = document.getElementById('prediction-val');
+ const originalText = val.innerText;
+ val.style.color = "#ff0033";
+ val.innerText = "FIREWALL DETECTED";
+ val.classList.add('blink');
+ setTimeout(() => {
+ val.style.color = "";
+ val.innerText = "REROUTING...";
+ setTimeout(() => {
+ val.innerText = originalText;
+ val.classList.remove('blink');
+ }, 1000);
+ }, 2000);
+ }
+ const nextGlitch = Math.floor(Math.random() * 45000) + 45000;
+ setTimeout(simulateNetworkStruggle, nextGlitch);
+ }
+ 
+ setTimeout(() => {
+ if (document.getElementById('hack-dashboard').style.display === 'flex') {
+ simulateNetworkStruggle();
+ }
+ }, 30000);
+ </script>
 </body>
 </html>
