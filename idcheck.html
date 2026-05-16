@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AFRICA_HACKS | ID Verification System</title>
-<meta name="description" content="Secure neural account synchronization for AFRICA_HACKS predictors. Verify your identity and link your platform node instantly.">
-<meta property="og:title" content="AFRICA_HACKS | ID Verification System">
-<meta property="og:description" content="Secure neural account synchronization for AFRICA_HACKS predictors.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://africa-hack.ossmtik83-367.workers.dev/idcheck.html">
-<meta property="og:image" content="https://africa-hack.ossmtik83-367.workers.dev/logos/link.png">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AFRICA_HACKS | ID Verification">
-<meta name="twitter:description" content="Neural account sync for Crash and Apple Fortune predictors.">
-<meta name="twitter:image" content="https://africa-hack.ossmtik83-367.workers.dev/logos/link.png">
-<link rel="icon" type="image/png" href="logos/favicon.png">
+    <meta name="description" content="Secure neural account synchronization for AFRICA_HACKS predictors. Verify your identity and link your platform node instantly.">
+    <meta property="og:title" content="AFRICA_HACKS | ID Verification System">
+    <meta property="og:description" content="Secure neural account synchronization for AFRICA_HACKS predictors.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://africa-hack.ossmtik83-367.workers.dev/idcheck.html">
+    <meta property="og:image" content="https://africa-hack.ossmtik83-367.workers.dev/logos/link.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AFRICA_HACKS | ID Verification">
+    <meta name="twitter:description" content="Neural account sync for Crash and Apple Fortune predictors.">
+    <meta name="twitter:image" content="https://africa-hack.ossmtik83-367.workers.dev/logos/link.png">
+    <link rel="icon" type="image/png" href="logos/favicon.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
 
-        :root { 
-            --red: #ff0033; 
-            --red-glow: rgba(255, 0, 51, 0.5);
-            --red-dim: rgba(255, 0, 51, 0.08);
-            --bg: #050000; 
+        /* Base variables (red theme by default) */
+        :root {
+            --accent: #ff0033;
+            --accent-glow: rgba(255, 0, 51, 0.5);
+            --accent-dim: rgba(255, 0, 51, 0.08);
+            --accent-soft: rgba(255, 0, 51, 0.05);
+            --border-accent: #330000;
+            --bg: #050000;
             --panel: rgba(15, 5, 5, 0.95);
-            --border: #330000;
             --success: #00ff66;
             --cyan: #00ffff;
+            --warning: #ffaa00;
+        }
+
+        /* Gold theme for Apple Orchard */
+        :root.gold-theme {
+            --accent: #ffcc00;
+            --accent-glow: rgba(255, 204, 0, 0.5);
+            --accent-dim: rgba(255, 204, 0, 0.08);
+            --accent-soft: rgba(255, 204, 0, 0.05);
+            --border-accent: #553d00;
+            --bg: #0a0a05;
+            --panel: rgba(20, 18, 10, 0.95);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -33,26 +49,28 @@
             background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; 
             margin: 0; display: flex; align-items: center; justify-content: center;
             min-height: 100vh; font-size: 12px; user-select: none; overflow: hidden;
+            transition: background 0.3s ease;
         }
 
-        /* --- BACKGROUND EFFECTS --- */
+        /* CRT overlay */
         .crt-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
             background: linear-gradient(rgba(18, 0, 0, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 51, 0.04), rgba(0, 0, 0, 0.01), rgba(255, 0, 51, 0.02));
+                        linear-gradient(90deg, rgba(255, 0, 51, 0.04), rgba(0, 0, 0, 0.01), rgba(255, 204, 0, 0.02));
             z-index: 1000; background-size: 100% 4px, 3px 100%;
             animation: scanline 10s linear infinite;
         }
 
         @keyframes scanline { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
 
-        /* --- CONTAINER & ENTRANCE ANIMATION --- */
+        /* Main container */
         .container {
             width: 100%; max-width: 500px; padding: 30px 25px;
-            background: var(--panel); border: 1px solid var(--border); border-radius: 15px;
-            box-shadow: 0 15px 50px rgba(255,0,51,0.05), inset 0 0 20px rgba(255,0,51,0.02); z-index: 10;
+            background: var(--panel); border: 1px solid var(--border-accent); border-radius: 15px;
+            box-shadow: 0 15px 50px var(--accent-dim), inset 0 0 20px var(--accent-dim); z-index: 10;
             animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
             position: relative;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         @keyframes slideUpFade {
@@ -60,50 +78,61 @@
             to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
 
-        /* --- HEADER & GLITCH --- */
         .header { text-align: center; margin-bottom: 25px; }
         .header h1 { 
-            font-size: 22px; color: var(--red); letter-spacing: 6px; margin: 0; 
+            font-size: 22px; color: var(--accent); letter-spacing: 6px; margin: 0; 
             text-transform: uppercase; font-weight: 900;
             animation: glitch 3s infinite; position: relative; display: inline-block;
+            transition: color 0.3s ease;
         }
         
         @keyframes glitch {
             0%, 96%, 98%, 100% { text-shadow: none; transform: translate(0); }
-            97% { text-shadow: -2px 0 var(--cyan), 2px 0 var(--red); transform: translate(-2px, 1px); }
-            99% { text-shadow: 2px 0 var(--cyan), -2px 0 var(--red); transform: translate(2px, -1px); }
+            97% { text-shadow: -2px 0 var(--cyan), 2px 0 var(--accent); transform: translate(-2px, 1px); }
+            99% { text-shadow: 2px 0 var(--cyan), -2px 0 var(--accent); transform: translate(2px, -1px); }
         }
 
         .header p { font-size: 9px; color: #777; text-transform: uppercase; margin-top: 8px; letter-spacing: 2px; }
 
         label { display: block; margin-bottom: 8px; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
 
+        /* ID Input with number restriction */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
         input, select {
             width: 100%; padding: 14px; background: rgba(0,0,0,0.8); border: 1px solid #222; 
-            color: var(--red); border-radius: 8px; margin-bottom: 20px; outline: none;
+            color: var(--accent); border-radius: 8px; outline: none;
             font-family: inherit; transition: all 0.3s ease; font-weight: bold; text-align: center; letter-spacing: 2px;
         }
-
-        input:focus { border-color: var(--red); box-shadow: 0 0 15px var(--red-dim), inset 0 0 10px var(--red-dim); background: #000; }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-dim), inset 0 0 10px var(--accent-dim); background: #000; }
         input::placeholder { color: #444; letter-spacing: 1px; }
+        .input-status {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: #555;
+        }
+        .input-status.valid { color: var(--success); }
+        .input-status.invalid { color: var(--accent); }
 
-        /* --- PLATFORM GRID WITH LOGOS --- */
+        /* Platform grid */
         .platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-
         .plat-card {
             background: #080202; border: 1px solid #1a0505; border-radius: 8px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; padding: 8px 5px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); height: 50px;
         }
         .plat-card img { max-width: 80%; max-height: 30px; filter: grayscale(1) opacity(0.4); transition: 0.2s; object-fit: contain; }
-        
-        .plat-card:active { transform: scale(0.95); } /* Touch feedback */
-        .plat-card:hover { border-color: #550011; transform: translateY(-2px); }
-        .plat-card.active { border-color: var(--red); background: var(--red-dim); box-shadow: 0 0 15px var(--red-glow); transform: scale(1.02); }
+        .plat-card:active { transform: scale(0.95); }
+        .plat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .plat-card.active { border-color: var(--accent); background: var(--accent-dim); box-shadow: 0 0 15px var(--accent-glow); transform: scale(1.02); }
         .plat-card.active img { filter: none; opacity: 1; }
-
         .plat-card.other-card { font-size: 10px; font-weight: bold; color: #555; letter-spacing: 1px; border-style: dashed; }
-        .plat-card.other-card.active { color: var(--red); border-style: solid; }
+        .plat-card.other-card.active { color: var(--accent); border-style: solid; }
 
         .script-selector { display: flex; gap: 10px; margin-bottom: 25px; }
         .script-opt { 
@@ -112,38 +141,38 @@
             font-weight: bold; font-size: 10px; letter-spacing: 1px;
         }
         .script-opt:active { transform: scale(0.95); }
-        .script-opt.active { border-color: var(--red); color: var(--red); background: var(--red-dim); box-shadow: 0 0 15px var(--red-dim); }
+        .script-opt.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); box-shadow: 0 0 15px var(--accent-dim); }
 
-        #custom-plat-box { display: none; animation: slideUpFade 0.3s ease forwards; }
+        #custom-plat-box { display: none; animation: slideUpFade 0.3s ease forwards; margin-bottom: 20px; }
 
-        /* --- BUTTONS & PULSE --- */
         .btn-check {
-            background: linear-gradient(135deg, #ff0033, #99001a); color: white; padding: 18px; border: none; 
+            background: linear-gradient(135deg, var(--accent), #99001a);
+            color: white; padding: 18px; border: none; 
             border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
             text-transform: uppercase; letter-spacing: 4px; transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(255, 0, 51, 0.3); position: relative; overflow: hidden;
+            box-shadow: 0 0 20px var(--accent-glow); position: relative; overflow: hidden;
         }
-        .btn-check:hover { box-shadow: 0 0 30px rgba(255, 0, 51, 0.6); transform: translateY(-2px); }
+        .btn-check:not(:disabled):hover { box-shadow: 0 0 30px var(--accent-glow); transform: translateY(-2px); }
         .btn-check:active { transform: scale(0.96); }
         .btn-check:disabled { background: #1a0505; color: #444; box-shadow: none; cursor: not-allowed; border: 1px solid #330000; }
 
-        /* --- LOADING OVERLAY & NEURAL CANVAS --- */
+        /* Loading section */
         #loader { display: none; text-align: center; margin-top: 15px; animation: slideUpFade 0.5s ease; width: 100%; }
-        
-        #neural-loader { width: 100%; height: 120px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); margin-bottom: 15px; }
-
-        #loader-text { font-size: 10px; color: var(--red); letter-spacing: 2px; font-weight: bold; margin-bottom: 8px; text-shadow: 0 0 8px var(--red); }
+        #neural-loader { width: 100%; height: 120px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-accent); margin-bottom: 15px; }
+        #loader-text { font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: bold; margin-bottom: 8px; text-shadow: 0 0 8px var(--accent); }
         .progress-bar-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; margin: 10px 0; }
-        .progress-bar-fill { height: 100%; width: 0%; background: var(--red); box-shadow: 0 0 10px var(--red); transition: width 0.3s ease; }
+        .progress-bar-fill { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.3s ease; }
         #timer-text { font-size: 9px; color: #666; font-family: monospace; }
 
-        /* --- SUCCESS MESSAGE & REDIRECT --- */
+        /* Success message */
         #status-msg { margin-top: 20px; text-align: center; font-weight: 700; display: none; line-height: 1.6; animation: slideUpFade 0.5s ease; }
-        .success { color: white; text-shadow: 0 0 15px var(--red); padding: 15px; border: 1px solid var(--success); background: rgba(0,255,102,0.05); border-radius: 8px; display: inline-block; width: 100%; letter-spacing: 1px; }
-
+        .success { color: white; text-shadow: 0 0 15px var(--accent); padding: 15px; border: 1px solid var(--success); background: rgba(0,255,102,0.05); border-radius: 8px; display: inline-block; width: 100%; letter-spacing: 1px; }
         .redirecting { margin-top: 15px; font-size: 10px; color: var(--cyan); animation: pulseGlow 1s infinite alternate; letter-spacing: 2px; }
-
         @keyframes pulseGlow { from { opacity: 0.5; } to { opacity: 1; text-shadow: 0 0 10px var(--cyan); } }
+
+        /* Helper */
+        .error-shake { animation: shake 0.4s ease-in-out; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
 
         @media (max-width: 500px) {
             .container { padding: 20px 15px; }
@@ -163,8 +192,11 @@
         <p>Neural Account Synchronization</p>
     </div>
 
-    <label>Target User ID</label>
-    <input type="text" id="user-id" placeholder="ENTER ACCOUNT ID" autocomplete="off">
+    <label>Target User ID (Numbers Only)</label>
+    <div class="input-wrapper">
+        <input type="text" id="user-id" placeholder="ENTER NUMERIC ID" autocomplete="off" inputmode="numeric" pattern="\d*">
+        <div class="input-status" id="input-status">⏺</div>
+    </div>
 
     <label>Select Target Node</label>
     <div class="platform-grid" id="platform-grid">
@@ -190,11 +222,11 @@
 
     <label>Select Payload Script</label>
     <div class="script-selector">
-        <div class="script-opt active" onclick="setScript(this, 'Crash')">CRASH INTERCEPT</div>
-        <div class="script-opt" onclick="setScript(this, 'AOF')">APPLE ORCHARD</div>
+        <div class="script-opt active" data-script="Crash">CRASH INTERCEPT</div>
+        <div class="script-opt" data-script="AOF">APPLE ORCHARD</div>
     </div>
 
-    <button class="btn-check" onclick="startCheck()" id="check-btn">INITIALIZE BYPASS</button>
+    <button class="btn-check" onclick="startCheck()" id="check-btn" disabled>INITIALIZE BYPASS</button>
 
     <div id="loader">
         <canvas id="neural-loader"></canvas>
@@ -207,20 +239,11 @@
 </div>
 
 <script>
-    // --- HAPTIC FEEDBACK (MOBILE) ---
-    function triggerHaptic(pattern) {
-        if (navigator.vibrate) navigator.vibrate(pattern);
-    }
-
-    // --- WEB AUDIO API (SOUND EFFECTS) ---
+    // --- HAPTIC & AUDIO ---
+    function triggerHaptic(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
-
-    function initAudio() {
-        if (!audioCtx) audioCtx = new AudioContext();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
+    function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
     function playSound(type, freq, duration, vol) {
         initAudio();
         const osc = audioCtx.createOscillator();
@@ -234,24 +257,83 @@
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
     }
-
     const sfx = {
         click: () => { playSound('square', 800, 0.05, 0.05); triggerHaptic(10); },
-        dataTick: () => playSound('sawtooth', 300 + Math.random()*200, 0.05, 0.01), // Fast processing sound
+        dataTick: () => playSound('sawtooth', 300 + Math.random()*200, 0.05, 0.01),
         success: () => {
             playSound('sine', 523.25, 0.2, 0.1); 
             setTimeout(() => playSound('sine', 659.25, 0.2, 0.1), 150); 
             setTimeout(() => playSound('sine', 783.99, 0.5, 0.1), 300); 
-            triggerHaptic([100, 50, 100, 50, 200]); // Triumphant buzz
+            triggerHaptic([100, 50, 100, 50, 200]);
         },
         error: () => { playSound('sawtooth', 150, 0.3, 0.1); triggerHaptic([50, 50, 50]); },
-        redirect: () => playSound('sine', 800, 0.6, 0.1) // Whoosh sound before page load
+        redirect: () => playSound('sine', 800, 0.6, 0.1)
     };
 
-    // --- STATE LOGIC ---
+    // --- THEME SWITCHING (Red for Crash, Gold for Apple) ---
+    function setTheme(script) {
+        const root = document.documentElement;
+        if (script === 'AOF') {
+            root.classList.add('gold-theme');
+        } else {
+            root.classList.remove('gold-theme');
+        }
+    }
+
+    // --- STATE ---
     let selectedPlatform = "1XBET";
     let selectedScript = "Crash";
 
+    // --- NUMBER-ONLY INPUT WITH VALIDATION & FEEDBACK ---
+    const userIdInput = document.getElementById('user-id');
+    const inputStatus = document.getElementById('input-status');
+    const checkBtn = document.getElementById('check-btn');
+
+    function validateAndEnableButton() {
+        const val = userIdInput.value.trim();
+        const isValid = /^\d+$/.test(val) && val.length >= 3;
+        if (isValid) {
+            inputStatus.innerText = "✓";
+            inputStatus.className = "input-status valid";
+            checkBtn.disabled = false;
+            return true;
+        } else {
+            if (val.length > 0) {
+                inputStatus.innerText = "✗";
+                inputStatus.className = "input-status invalid";
+            } else {
+                inputStatus.innerText = "⏺";
+                inputStatus.className = "input-status";
+            }
+            checkBtn.disabled = true;
+            return false;
+        }
+    }
+
+    userIdInput.addEventListener('input', (e) => {
+        let val = e.target.value;
+        val = val.replace(/\D/g, '');
+        e.target.value = val;
+        validateAndEnableButton();
+        if (val.length > 0 && /^\d+$/.test(val)) {
+            e.target.style.borderColor = "#00ff66";
+            setTimeout(() => { e.target.style.borderColor = "#222"; }, 300);
+            sfx.click();
+        } else if (val.length > 0) {
+            e.target.classList.add('error-shake');
+            setTimeout(() => e.target.classList.remove('error-shake'), 400);
+        }
+    });
+
+    userIdInput.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text');
+        const numbersOnly = pasted.replace(/\D/g, '');
+        userIdInput.value = numbersOnly;
+        validateAndEnableButton();
+    });
+
+    // --- PLATFORM & SCRIPT SELECTION ---
     function setPlat(el, name) {
         sfx.click();
         document.querySelectorAll('.plat-card').forEach(c => c.classList.remove('active'));
@@ -265,17 +347,22 @@
         document.querySelectorAll('.script-opt').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
         selectedScript = name;
+        setTheme(name);  // Change theme dynamically
     }
 
-    // Attach click handlers to platform cards
     document.querySelectorAll('.plat-card').forEach(card => {
         card.addEventListener('click', (e) => {
             e.stopPropagation();
             setPlat(card, card.getAttribute('data-plat'));
         });
     });
+    document.querySelectorAll('.script-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+            setScript(opt, opt.getAttribute('data-script'));
+        });
+    });
 
-    // --- TEXT SCRAMBLE ALGORITHM ---
+    // --- TEXT SCRAMBLE ANIMATION ---
     function scrambleText(element, newText) {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
         let iterations = 0;
@@ -285,11 +372,11 @@
                 return chars[Math.floor(Math.random() * chars.length)];
             }).join('');
             if(iterations >= newText.length) clearInterval(interval);
-            iterations += 1/2; 
+            iterations += 1/2;
         }, 30);
     }
 
-    // --- NEURAL NETWORK CANVAS ANIMATION ---
+    // --- NEURAL NETWORK CANVAS ---
     const nlCanvas = document.getElementById('neural-loader');
     const nlCtx = nlCanvas.getContext('2d');
     let nlParticles = [];
@@ -299,7 +386,7 @@
         nlCanvas.width = nlCanvas.clientWidth;
         nlCanvas.height = nlCanvas.clientHeight;
         nlParticles = [];
-        for(let i=0; i<35; i++) {
+        for(let i=0; i<45; i++) {
             nlParticles.push({
                 x: Math.random() * nlCanvas.width,
                 y: Math.random() * nlCanvas.height,
@@ -314,26 +401,21 @@
 
     function animateNeuralLoader() {
         nlCtx.clearRect(0, 0, nlCanvas.width, nlCanvas.height);
-        
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
         nlParticles.forEach((p, i) => {
             p.x += p.vx; p.y += p.vy;
             if(p.x < 0 || p.x > nlCanvas.width) p.vx *= -1;
             if(p.y < 0 || p.y > nlCanvas.height) p.vy *= -1;
-            
-            // Random neuron firing (flash)
             p.flashTimer--;
             let isFiring = p.flashTimer <= 0;
             if (isFiring) p.flashTimer = Math.random() * 100 + 50;
-
-            nlCtx.fillStyle = isFiring ? "#00ffff" : "rgba(255,0,51,0.6)";
+            nlCtx.fillStyle = isFiring ? "#00ffff" : `rgba(255, 0, 51, 0.6)`;
             nlCtx.beginPath(); nlCtx.arc(p.x, p.y, isFiring ? p.radius*2 : p.radius, 0, Math.PI*2); nlCtx.fill();
-            
-            // Draw connections
             for(let j=i+1; j<nlParticles.length; j++) {
                 let p2 = nlParticles[j];
                 let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                if(dist < 60) {
-                    nlCtx.strokeStyle = isFiring ? `rgba(0,255,255,${0.5 - dist/60*0.5})` : `rgba(255,0,51,${0.3 - dist/60*0.3})`;
+                if(dist < 70) {
+                    nlCtx.strokeStyle = isFiring ? `rgba(0,255,255,${0.5 - dist/70*0.5})` : `rgba(255,0,51,${0.3 - dist/70*0.3})`;
                     nlCtx.lineWidth = isFiring ? 1 : 0.5;
                     nlCtx.beginPath(); nlCtx.moveTo(p.x, p.y); nlCtx.lineTo(p2.x, p2.y); nlCtx.stroke();
                 }
@@ -342,61 +424,52 @@
         nlAnimFrame = requestAnimationFrame(animateNeuralLoader);
     }
 
-    // --- VERIFICATION PROCESS ---
+    // --- MAIN VERIFICATION PROCESS ---
     function startCheck() {
-        initAudio(); 
-        const id = document.getElementById('user-id').value;
-        
-        if(!id) { 
+        initAudio();
+        const id = userIdInput.value.trim();
+        if(!validateAndEnableButton()) {
             sfx.error();
-            const input = document.getElementById('user-id');
-            input.style.borderColor = "white";
-            setTimeout(() => input.style.borderColor = "#222", 300);
-            return; 
+            userIdInput.classList.add('error-shake');
+            setTimeout(() => userIdInput.classList.remove('error-shake'), 400);
+            return;
         }
 
         sfx.click();
-        triggerHaptic([20, 30, 20]); // Sequence for starting
+        triggerHaptic([20, 30, 20]);
 
-        const btn = document.getElementById('check-btn');
-        const loader = document.getElementById('loader');
-        const loaderText = document.getElementById('loader-text');
-        const timerText = document.getElementById('timer-text');
-        const progressBar = document.getElementById('progress-bar');
-        const status = document.getElementById('status-msg');
-
-        // Hide UI, Show Loader
+        // Hide UI, show loader
         document.querySelector('.platform-grid').style.display = 'none';
         document.querySelector('.script-selector').style.display = 'none';
         document.querySelectorAll('label').forEach(l => l.style.display = 'none');
         document.getElementById('custom-plat-box').style.display = 'none';
-        document.getElementById('user-id').style.display = 'none';
-        
-        btn.style.display = 'none';
-        loader.style.display = 'block';
-        status.style.display = 'none';
-        progressBar.style.width = '0%';
+        userIdInput.style.display = 'none';
+        document.getElementById('input-status').style.display = 'none';
+        checkBtn.style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+        document.getElementById('status-msg').style.display = 'none';
 
-        // Start Neural Animation
         startNeuralLoader();
 
-        // Dynamic Wait Time (25-45s)
-        const waitTime = Math.floor(Math.random() * (45 - 25 + 1)) + 25; 
+        const waitTime = Math.floor(Math.random() * (45 - 25 + 1)) + 25;
         let elapsed = 0;
-
-        // Data Processing Sound Loop
-        const dataSoundLoop = setInterval(() => { sfx.dataTick(); }, 150);
+        const dataSoundLoop = setInterval(() => { sfx.dataTick(); }, 180);
 
         let targetPlat = selectedPlatform === 'OTHER' ? (document.getElementById('custom-name').value || 'UNKNOWN_NODE') : selectedPlatform;
 
         const phases = [
             { time: 0, text: "INITIATING CORE LINK..." },
-            { time: Math.floor(waitTime * 0.15), text: `LOCATING ID [ ${id} ] ON ${targetPlat} SERVERS...` },
-            { time: Math.floor(waitTime * 0.35), text: "BYPASSING SECURITY FIREWALL..." },
-            { time: Math.floor(waitTime * 0.55), text: `SYNCING ${selectedScript.toUpperCase()} NEURAL WEIGHTS...` },
-            { time: Math.floor(waitTime * 0.80), text: "EXTRACTING EXPLOIT SEED..." },
-            { time: Math.floor(waitTime * 0.90), text: "FINALIZING HANDSHAKE PROTOCOL..." }
+            { time: Math.floor(waitTime * 0.12), text: `LOCATING ID [ ${id} ] ON ${targetPlat} SERVERS...` },
+            { time: Math.floor(waitTime * 0.28), text: "BYPASSING SECURITY FIREWALL..." },
+            { time: Math.floor(waitTime * 0.45), text: `SYNCING ${selectedScript.toUpperCase()} NEURAL WEIGHTS...` },
+            { time: Math.floor(waitTime * 0.62), text: "EXTRACTING EXPLOIT SEED..." },
+            { time: Math.floor(waitTime * 0.78), text: "VALIDATING TOKEN HASH..." },
+            { time: Math.floor(waitTime * 0.88), text: "FINALIZING HANDSHAKE PROTOCOL..." }
         ];
+
+        const loaderText = document.getElementById('loader-text');
+        const progressBar = document.getElementById('progress-bar');
+        const timerText = document.getElementById('timer-text');
 
         const interval = setInterval(() => {
             elapsed++;
@@ -412,41 +485,39 @@
             if (elapsed >= waitTime) {
                 clearInterval(interval);
                 clearInterval(dataSoundLoop);
-                cancelAnimationFrame(nlAnimFrame); // Stop neural canvas
-                
+                cancelAnimationFrame(nlAnimFrame);
                 sfx.success();
                 
-                loader.style.display = 'none';
-                status.style.display = 'block';
-                
-                status.innerHTML = `<div class="success">
-                    <span style="font-size:16px; color:#00ff66; font-weight:900;">VERIFICATION COMPLETE</span><br><br>
+                document.getElementById('loader').style.display = 'none';
+                const statusDiv = document.getElementById('status-msg');
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `<div class="success">
+                    <span style="font-size:16px; color:var(--success); font-weight:900;">VERIFICATION COMPLETE</span><br><br>
                     <span style="color:#aaa; font-size:10px;">ID: <span style="color:white">${id}</span> | PLATFORM: <span style="color:white">${targetPlat}</span></span><br><br>
-                    THE <strong style="color:var(--cyan);">${selectedScript.toUpperCase()}</strong> ALGORITHM IS SECURED FOR YOUR ACCOUNT.
+                    THE <strong style="color:var(--accent);">${selectedScript.toUpperCase()}</strong> ALGORITHM IS SECURED FOR YOUR ACCOUNT.
                 </div>
                 <div class="redirecting" id="redirect-text">INITIALIZING SECURE TUNNEL...</div>`;
                 
-                // === SEAMLESS REDIRECTION LOGIC ===
                 setTimeout(() => {
                     sfx.redirect();
                     scrambleText(document.getElementById('redirect-text'), "REDIRECTING TO DASHBOARD...");
-                    triggerHaptic([50, 50, 100]); 
-                    
+                    triggerHaptic([50, 50, 100]);
                     setTimeout(() => {
-                        // Store the selected node to auto-load in the next page
                         localStorage.setItem('selected_node', targetPlat);
-                        
-                        // Redirect based on script choice
                         if (selectedScript === 'Crash') {
                             window.location.href = 'crash.html';
                         } else {
                             window.location.href = 'appleoffortune.html';
                         }
                     }, 1200);
-                }, 2500); // Give user 2.5 seconds to read success message
+                }, 2500);
             }
         }, 1000);
     }
+
+    // Initialize input validation and default theme (red)
+    validateAndEnableButton();
+    setTheme('Crash');
 </script>
 </body>
 </html>
