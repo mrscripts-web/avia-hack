@@ -21,6 +21,7 @@
             --border-dim: rgba(255, 255, 255, 0.08);
             --glow-red: #ff0033;
             --glow-gold: #ffcc00;
+            --glow-cyan: #00ddff;
             --text-main: #ffffff;
             --text-dim: #777777;
             --whatsapp: #25d366;
@@ -140,7 +141,7 @@
         /* --- DUAL-TONE PORTAL CARDS --- */
         .portal-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 25px; width: 100%; margin-bottom: 80px;
+            gap: 25px; width: 100%; margin-bottom: 30px;
         }
         .card {
             background: var(--panel-bg); border: 1px solid var(--border-dim);
@@ -178,6 +179,46 @@
         .card-apple:hover::before { opacity: 1; }
         .card-apple .card-btn { background: rgba(255,204,0,0.1); border: 1px solid var(--glow-gold); color: var(--glow-gold); }
         .card-apple:hover .card-btn { background: var(--glow-gold); color: #000; box-shadow: 0 0 20px rgba(255,204,0,0.4); }
+
+        /* --- NEW COMPACT BUTTON (ID VERIFICATION) --- */
+        .verify-button-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 80px;
+        }
+        .btn-verify-compact {
+            background: rgba(0, 221, 255, 0.1);
+            border: 1px solid var(--glow-cyan);
+            border-radius: 60px;
+            padding: 14px 32px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: var(--glow-cyan);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 12px rgba(0, 221, 255, 0.2);
+        }
+        .btn-verify-compact:hover {
+            background: var(--glow-cyan);
+            color: #000;
+            box-shadow: 0 0 25px rgba(0, 221, 255, 0.6);
+            transform: translateY(-3px);
+            gap: 18px;
+        }
+        .btn-verify-compact .arrow {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+        .btn-verify-compact:hover .arrow {
+            transform: translateX(4px);
+        }
 
         /* --- PLATFORM WALL --- */
         .platform-section { width: 100%; text-align: center; margin-bottom: 80px; }
@@ -297,17 +338,20 @@
         }
         .f-bottom .eth-hash { color: var(--glow-red); opacity: 0.5; letter-spacing: 1px; }
 
+        /* Responsive */
         @media (max-width: 768px) {
-            .portal-grid, .footer-content { grid-template-columns: 1fr; }
+            .portal-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; gap: 40px; }
             .tier { grid-template-columns: 1fr auto; padding: 15px 20px; }
             .tier-duration { display: none; }
-            .footer-content { text-align: center; gap: 40px; }
+            .footer-content { text-align: center; }
             .f-brand p, .f-brand .enc-text { margin: 0 auto; text-align: center; }
             .f-brand img { align-self: center; }
             .f-links h4 { justify-content: center; }
             .f-links a { justify-content: center; }
             .status-box { max-width: 320px; margin: 0 auto; text-align: left; }
             .f-bottom { flex-direction: column; gap: 10px; text-align: center; }
+            .btn-verify-compact { font-size: 11px; padding: 10px 24px; }
         }
     </style>
 </head>
@@ -328,6 +372,7 @@
         <a href="https://t.me/africa_hacks" class="social-link tg">TELEGRAM_CHANNEL</a>
     </div>
 
+    <!-- Two main predictor cards -->
     <div class="portal-grid">
         <a href="crash.html" class="card card-crash">
             <span class="card-icon">🚀</span>
@@ -340,6 +385,13 @@
             <div class="card-title">Apple Fortune</div>
             <div class="card-desc">Orchard grid predictive logic.<br>Cell mapping active.</div>
             <div class="card-btn">INITIALIZE_ENGINE</div>
+        </a>
+    </div>
+
+    <!-- NEW COMPACT BUTTON FOR ID VERIFICATION -->
+    <div class="verify-button-wrapper">
+        <a href="idcheck.html" class="btn-verify-compact">
+            ID VERIFICATION <span class="arrow">→</span>
         </a>
     </div>
 
