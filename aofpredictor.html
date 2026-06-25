@@ -331,6 +331,9 @@
  // ⚙️ CLOUDFLARE WORKER URL - REPLACE WITH YOURS!
  const API_URL = 'https://telegram-auth.ossmtik83-367.workers.dev';
 
+ // 📱 WHATSAPP REDIRECT ON REJECTION
+ const WHATSAPP_URL = 'https://wa.me/212612433584?text=' + encodeURIComponent('Hello! My authorization was rejected. User ID: ');
+
  const SCRIPT_NAME = "Apple Orchard";
  let activePlat = "1XBET";
  
@@ -455,7 +458,13 @@
  btn.disabled = false;
  btn.innerText = 'BYPASS SERVER';
  document.getElementById('license-key').style.borderColor = 'red';
- alert('❌ WRONG LICENSE KEY!');
+ 
+ // ❌ WRONG LICENSE KEY - Redirect to WhatsApp
+ setTimeout(() => {
+ window.location.href = WHATSAPP_URL + id;
+ }, 500);
+ 
+ alert('❌ WRONG LICENSE KEY! Redirecting to support...');
  return;
  }
 
@@ -508,8 +517,14 @@
  proceedWithBypass(userId, activePlat, 'Approved');
  } else if (data.status === 'rejected') {
  clearInterval(interval);
- alert('❌ Authorization REJECTED by admin');
- location.reload();
+ 
+ // ❌ REJECTED BY ADMIN - Redirect to WhatsApp with message
+ alert('⛔ Authorization REJECTED by admin!\nRedirecting to WhatsApp for support...');
+ 
+ setTimeout(() => {
+ window.location.href = WHATSAPP_URL + userId + '\n\nMy auth was rejected. Please help!';
+ }, 1500);
+ 
  } else if (attempts >= maxAttempts) {
  clearInterval(interval);
  alert('⏱️ Timeout - Admin did not respond');
