@@ -1,523 +1,209 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AFRICA_HACKS | ID Verification System</title>
-    <meta name="description" content="Secure neural account synchronization for AFRICA_HACKS predictors. Verify your identity and link your platform node instantly.">
-    <meta property="og:title" content="AFRICA_HACKS | ID Verification System">
-    <meta property="og:description" content="Secure neural account synchronization for AFRICA_HACKS predictors.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://africa-hack.ossmtik83-367.workers.dev/idcheck.html">
-    <meta property="og:image" content="https://africa-hack.ossmtik83-367.workers.dev/logos/link.png">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="AFRICA_HACKS | ID Verification">
-    <meta name="twitter:description" content="Neural account sync for Crash and Apple Fortune predictors.">
-    <meta name="twitter:image" content="https://africa-hack.ossmtik83-367.workers.dev/logos/link.png">
-    <link rel="icon" type="image/png" href="logos/favicon.png">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
-
-        /* Base variables (red theme by default) */
-        :root {
-            --accent: #ff0033;
-            --accent-glow: rgba(255, 0, 51, 0.5);
-            --accent-dim: rgba(255, 0, 51, 0.08);
-            --accent-soft: rgba(255, 0, 51, 0.05);
-            --border-accent: #330000;
-            --bg: #050000;
-            --panel: rgba(15, 5, 5, 0.95);
-            --success: #00ff66;
-            --cyan: #00ffff;
-            --warning: #ffaa00;
-        }
-
-        /* Gold theme for Apple Orchard */
-        :root.gold-theme {
-            --accent: #ffcc00;
-            --accent-glow: rgba(255, 204, 0, 0.5);
-            --accent-dim: rgba(255, 204, 0, 0.08);
-            --accent-soft: rgba(255, 204, 0, 0.05);
-            --border-accent: #553d00;
-            --bg: #0a0a05;
-            --panel: rgba(20, 18, 10, 0.95);
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; 
-            margin: 0; display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; font-size: 12px; user-select: none; overflow: hidden;
-            transition: background 0.3s ease;
-        }
-
-        /* CRT overlay */
-        .crt-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
-            background: linear-gradient(rgba(18, 0, 0, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 51, 0.04), rgba(0, 0, 0, 0.01), rgba(255, 204, 0, 0.02));
-            z-index: 1000; background-size: 100% 4px, 3px 100%;
-            animation: scanline 10s linear infinite;
-        }
-
-        @keyframes scanline { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
-
-        /* Main container */
-        .container {
-            width: 100%; max-width: 500px; padding: 30px 25px;
-            background: var(--panel); border: 1px solid var(--border-accent); border-radius: 15px;
-            box-shadow: 0 15px 50px var(--accent-dim), inset 0 0 20px var(--accent-dim); z-index: 10;
-            animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            position: relative;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(5px); }
-            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        }
-
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { 
-            font-size: 22px; color: var(--accent); letter-spacing: 6px; margin: 0; 
-            text-transform: uppercase; font-weight: 900;
-            animation: glitch 3s infinite; position: relative; display: inline-block;
-            transition: color 0.3s ease;
-        }
-        
-        @keyframes glitch {
-            0%, 96%, 98%, 100% { text-shadow: none; transform: translate(0); }
-            97% { text-shadow: -2px 0 var(--cyan), 2px 0 var(--accent); transform: translate(-2px, 1px); }
-            99% { text-shadow: 2px 0 var(--cyan), -2px 0 var(--accent); transform: translate(2px, -1px); }
-        }
-
-        .header p { font-size: 9px; color: #777; text-transform: uppercase; margin-top: 8px; letter-spacing: 2px; }
-
-        label { display: block; margin-bottom: 8px; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* ID Input with number restriction */
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        input, select {
-            width: 100%; padding: 14px; background: rgba(0,0,0,0.8); border: 1px solid #222; 
-            color: var(--accent); border-radius: 8px; outline: none;
-            font-family: inherit; transition: all 0.3s ease; font-weight: bold; text-align: center; letter-spacing: 2px;
-        }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-dim), inset 0 0 10px var(--accent-dim); background: #000; }
-        input::placeholder { color: #444; letter-spacing: 1px; }
-        .input-status {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 10px;
-            color: #555;
-        }
-        .input-status.valid { color: var(--success); }
-        .input-status.invalid { color: var(--accent); }
-
-        /* Platform grid */
-        .platform-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-        .plat-card {
-            background: #080202; border: 1px solid #1a0505; border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; padding: 8px 5px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); height: 50px;
-        }
-        .plat-card img { max-width: 80%; max-height: 30px; filter: grayscale(1) opacity(0.4); transition: 0.2s; object-fit: contain; }
-        .plat-card:active { transform: scale(0.95); }
-        .plat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-        .plat-card.active { border-color: var(--accent); background: var(--accent-dim); box-shadow: 0 0 15px var(--accent-glow); transform: scale(1.02); }
-        .plat-card.active img { filter: none; opacity: 1; }
-        .plat-card.other-card { font-size: 10px; font-weight: bold; color: #555; letter-spacing: 1px; border-style: dashed; }
-        .plat-card.other-card.active { color: var(--accent); border-style: solid; }
-
-        .script-selector { display: flex; gap: 10px; margin-bottom: 25px; }
-        .script-opt { 
-            flex: 1; text-align: center; padding: 14px; border: 1px solid #222; 
-            border-radius: 8px; cursor: pointer; color: #555; transition: 0.3s; 
-            font-weight: bold; font-size: 10px; letter-spacing: 1px;
-        }
-        .script-opt:active { transform: scale(0.95); }
-        .script-opt.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); box-shadow: 0 0 15px var(--accent-dim); }
-
-        #custom-plat-box { display: none; animation: slideUpFade 0.3s ease forwards; margin-bottom: 20px; }
-
-        .btn-check {
-            background: linear-gradient(135deg, var(--accent), #99001a);
-            color: white; padding: 18px; border: none; 
-            border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
-            text-transform: uppercase; letter-spacing: 4px; transition: all 0.3s ease;
-            box-shadow: 0 0 20px var(--accent-glow); position: relative; overflow: hidden;
-        }
-        .btn-check:not(:disabled):hover { box-shadow: 0 0 30px var(--accent-glow); transform: translateY(-2px); }
-        .btn-check:active { transform: scale(0.96); }
-        .btn-check:disabled { background: #1a0505; color: #444; box-shadow: none; cursor: not-allowed; border: 1px solid #330000; }
-
-        /* Loading section */
-        #loader { display: none; text-align: center; margin-top: 15px; animation: slideUpFade 0.5s ease; width: 100%; }
-        #neural-loader { width: 100%; height: 120px; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-accent); margin-bottom: 15px; }
-        #loader-text { font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: bold; margin-bottom: 8px; text-shadow: 0 0 8px var(--accent); }
-        .progress-bar-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; margin: 10px 0; }
-        .progress-bar-fill { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.3s ease; }
-        #timer-text { font-size: 9px; color: #666; font-family: monospace; }
-
-        /* Success message */
-        #status-msg { margin-top: 20px; text-align: center; font-weight: 700; display: none; line-height: 1.6; animation: slideUpFade 0.5s ease; }
-        .success { color: white; text-shadow: 0 0 15px var(--accent); padding: 15px; border: 1px solid var(--success); background: rgba(0,255,102,0.05); border-radius: 8px; display: inline-block; width: 100%; letter-spacing: 1px; }
-        .redirecting { margin-top: 15px; font-size: 10px; color: var(--cyan); animation: pulseGlow 1s infinite alternate; letter-spacing: 2px; }
-        @keyframes pulseGlow { from { opacity: 0.5; } to { opacity: 1; text-shadow: 0 0 10px var(--cyan); } }
-
-        /* Helper */
-        .error-shake { animation: shake 0.4s ease-in-out; }
-        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
-
-        @media (max-width: 500px) {
-            .container { padding: 20px 15px; }
-            .platform-grid { gap: 8px; }
-            .plat-card { height: 45px; }
-            .plat-card img { max-height: 20px; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تفعيل الكي — AFRICA HACKS 🇲🇦</title>
+  <link rel="icon" type="image/png" href="logos/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--gold:#FFB800;--gold-soft:#FFCC33;--red:#E63946;--green:#22C55E;--bg:#0a0805;--panel:#141009;--panel-2:#1a1510;--border:#2a2018;--border-gold:rgba(255,184,0,0.3);--text:#fff;--text-dim:#a8a09a;--text-muted:#6b635c;--wa:#25d366}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:'Poppins','Cairo',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,184,0,0.08) 0%,transparent 50%);pointer-events:none;z-index:0}
+    .card{width:100%;max-width:440px;position:relative;z-index:1;background:linear-gradient(180deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:24px;padding:32px 24px;box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,184,0,0.05) inset;animation:cardIn .5s cubic-bezier(.16,1,.3,1)}
+    @keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .card-head{text-align:center;margin-bottom:24px}
+    .head-logo{font-size:40px;margin-bottom:8px}
+    .card-head h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.02em;margin-bottom:4px}
+    .card-head h1 .gold{color:var(--gold)}
+    .card-head p{font-size:12px;color:var(--text-muted);font-weight:600}
+    .mode-selector{display:flex;gap:10px;margin-bottom:22px;padding:5px;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:12px}
+    .mode-btn{flex:1;padding:12px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:800;background:transparent;color:var(--text-dim);border:none;cursor:pointer;transition:all .2s ease}
+    .mode-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#000;box-shadow:0 2px 8px rgba(255,184,0,0.3)}
+    .mode-btn.active.crash-mode{background:linear-gradient(135deg,var(--red),#cc0028);color:white}
+    .form-label{display:block;font-size:11px;font-weight:800;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+    .input-wrap{position:relative;margin-bottom:18px}
+    .form-input{width:100%;padding:15px 16px;background:rgba(0,0,0,.4);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:15px;font-weight:600;border-radius:12px;outline:none;transition:all .2s ease;text-align:center;letter-spacing:.04em}
+    .form-input:focus{border-color:var(--gold);background:rgba(0,0,0,.6);box-shadow:0 0 0 3px rgba(255,184,0,0.1)}
+    .form-input::placeholder{color:var(--text-muted);font-weight:500;letter-spacing:.02em}
+    .status-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;font-weight:900;transition:color .2s}
+    .status-icon.valid{color:var(--green)}
+    .status-icon.invalid{color:var(--red)}
+    .platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+    .plat-btn{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;padding:10px 4px;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:48px;transition:all .15s ease}
+    .plat-btn img{max-width:100%;max-height:22px;filter:grayscale(1) opacity(.4);transition:all .15s}
+    .plat-btn:hover{border-color:var(--border-gold)}
+    .plat-btn.active{border-color:var(--gold);background:rgba(255,184,0,0.08);box-shadow:0 0 0 1px var(--gold),0 0 15px rgba(255,184,0,0.2)}
+    .plat-btn.active img{filter:none;opacity:1}
+    .plat-btn.other-btn{font-size:11px;font-weight:900;color:var(--text-dim);letter-spacing:.05em}
+    .plat-btn.other-btn.active{color:var(--gold)}
+    .btn-submit{width:100%;padding:17px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#000;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(255,184,0,0.35);letter-spacing:.05em;transition:all .15s ease;margin-top:6px}
+    .btn-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,184,0,0.5)}
+    .btn-submit:disabled{background:rgba(255,255,255,0.05);color:var(--text-muted);cursor:not-allowed;box-shadow:none}
+    #loader{display:none;text-align:center;padding:20px 0}
+    #loader.active{display:block}
+    .loader-bar{width:100%;height:6px;background:rgba(0,0,0,.5);border-radius:3px;overflow:hidden;margin:16px 0}
+    .loader-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));box-shadow:0 0 12px rgba(255,184,0,0.5);transition:width .3s ease;border-radius:3px}
+    .loader-text{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.05em;margin-bottom:4px}
+    .loader-time{font-size:10px;color:var(--text-muted);margin-top:8px}
+    #success{display:none;text-align:center;padding:20px 0;animation:cardIn .4s ease}
+    #success.active{display:block}
+    .success-check{font-size:56px;margin-bottom:12px;animation:bounce .6s ease}
+    @keyframes bounce{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+    .success-title{font-size:20px;font-weight:900;color:var(--green);margin-bottom:8px}
+    .success-sub{font-size:12px;color:var(--text-dim);margin-bottom:20px}
+    .success-sub strong{color:var(--text);font-weight:800}
+    .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:12px;font-weight:600;text-decoration:none;margin-top:16px}
+    .back-link:hover{color:var(--gold)}
+    body.theme-apple{--accent:var(--green)}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+    .shake{animation:shake .35s ease}
+    @media (max-width:420px){.card{padding:26px 18px}.platforms{grid-template-columns:repeat(3,1fr)}}
+  </style>
 </head>
 <body>
 
-<div class="crt-overlay"></div>
+<div class="card">
+  <div class="card-head">
+    <div class="head-logo">🔑</div>
+    <h1>تفعيل <span class="gold">السكريبت</span></h1>
+    <p>دخل الـ ID و الـ Key ديالك</p>
+  </div>
 
-<div class="container" id="main-form">
-    <div class="header">
-        <h1>ID_VERIFIER</h1>
-        <p>Neural Account Synchronization</p>
+  <div id="mainForm">
+    <div class="mode-selector">
+      <button class="mode-btn active crash-mode" data-mode="crash" id="btnCrash">🚀 Crash</button>
+      <button class="mode-btn" data-mode="apple" id="btnApple">🍎 Apple</button>
     </div>
 
-    <label>Target User ID (Numbers Only)</label>
-    <div class="input-wrapper">
-        <input type="text" id="user-id" placeholder="ENTER NUMERIC ID" autocomplete="off" inputmode="numeric" pattern="\d*">
-        <div class="input-status" id="input-status">⏺</div>
+    <label class="form-label">🆔 الـ ID ديال الحساب (أرقام فقط)</label>
+    <div class="input-wrap">
+      <input type="text" id="userId" class="form-input" placeholder="مثلاً: 123456789" inputmode="numeric" autocomplete="off">
+      <span class="status-icon" id="userIdStatus">●</span>
     </div>
 
-    <label>Select Target Node</label>
-    <div class="platform-grid" id="platform-grid">
-        <div class="plat-card active" data-plat="1XBET"><img src="logos/1xbet.png" alt="1xbet"></div>
-        <div class="plat-card" data-plat="1WIN"><img src="logos/1win.png" alt="1win"></div>
-        <div class="plat-card" data-plat="MELBET"><img src="logos/melbet.png" alt="melbet"></div>
-        <div class="plat-card" data-plat="MSPORT"><img src="logos/msport.png" alt="msport"></div>
-        <div class="plat-card" data-plat="BET9JA"><img src="logos/bet9ja.png" alt="bet9ja"></div>
-        <div class="plat-card" data-plat="BETWAY"><img src="logos/betway.png" alt="betway"></div>
-        <div class="plat-card" data-plat="LINEBET"><img src="logos/linebet.png" alt="linebet"></div>
-        <div class="plat-card" data-plat="MOZZART"><img src="logos/mozzart.png" alt="mozzartbet"></div>
-        <div class="plat-card" data-plat="PREMIER"><img src="logos/premierbet.png" alt="premierbet"></div>
-        <div class="plat-card" data-plat="SPORTY"><img src="logos/sportybet.png" alt="sportybet"></div>
-        <div class="plat-card" data-plat="GOOBET"><img src="logos/goobet.png" alt="goobet"></div>
-        <div class="plat-card" data-plat="BETIKA"><img src="logos/betika.png" alt="betika"></div>
-        <div class="plat-card other-card" data-plat="OTHER">OTHER</div>
+    <label class="form-label">🎫 الـ License Key</label>
+    <div class="input-wrap">
+      <input type="text" id="licenseKey" class="form-input" placeholder="AFRICA-XXXX-XXXX" autocomplete="off" style="text-transform:uppercase">
     </div>
 
-    <div id="custom-plat-box">
-        <label>Manual Node Name</label>
-        <input type="text" id="custom-name" placeholder="TYPE PLATFORM NAME..." autocomplete="off">
+    <label class="form-label">🏢 اختار السيت</label>
+    <div class="platforms" id="platforms">
+      <div class="plat-btn active" data-plat="1xbet"><img src="logos/1xbet.png" alt="1xbet"></div>
+      <div class="plat-btn" data-plat="1win"><img src="logos/1win.png" alt="1win"></div>
+      <div class="plat-btn" data-plat="melbet"><img src="logos/melbet.png" alt="Melbet"></div>
+      <div class="plat-btn" data-plat="betwinner"><img src="logos/msport.png" alt="Msport"></div>
+      <div class="plat-btn" data-plat="bet9ja"><img src="logos/bet9ja.png" alt="Bet9ja"></div>
+      <div class="plat-btn" data-plat="betway"><img src="logos/betway.png" alt="Betway"></div>
+      <div class="plat-btn" data-plat="linebet"><img src="logos/linebet.png" alt="Linebet"></div>
+      <div class="plat-btn" data-plat="sporty"><img src="logos/sportybet.png" alt="SportyBet"></div>
+      <div class="plat-btn other-btn" data-plat="other">أخرى</div>
     </div>
 
-    <label>Select Payload Script</label>
-    <div class="script-selector">
-        <div class="script-opt active" data-script="Crash">CRASH INTERCEPT</div>
-        <div class="script-opt" data-script="AOF">APPLE ORCHARD</div>
+    <button class="btn-submit" id="btnSubmit" disabled>🚀 تفعيل دابا</button>
+
+    <div style="text-align:center;margin-top:16px">
+      <a href="index.html" class="back-link">← رجع للرئيسية</a>
     </div>
+  </div>
 
-    <button class="btn-check" onclick="startCheck()" id="check-btn" disabled>INITIALIZE BYPASS</button>
+  <div id="loader">
+    <div class="loader-text" id="loaderText">كنتواصلو مع السيرفر...</div>
+    <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+    <div class="loader-time" id="loaderTime">0s / 30s</div>
+  </div>
 
-    <div id="loader">
-        <canvas id="neural-loader"></canvas>
-        <div id="loader-text">CONNECTING TO DATABASE...</div>
-        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
-        <div id="timer-text">EST. TIME: CALCULATING...</div>
-    </div>
-
-    <div id="status-msg"></div>
+  <div id="success">
+    <div class="success-check">✅</div>
+    <div class="success-title">تفعل!</div>
+    <div class="success-sub" id="successSub">كنفتحو ليك السكريبت...</div>
+  </div>
 </div>
 
 <script>
-    // --- HAPTIC & AUDIO ---
-    function triggerHaptic(pattern) { if (navigator.vibrate) navigator.vibrate(pattern); }
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
-    function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
-    function playSound(type, freq, duration, vol) {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-    }
-    const sfx = {
-        click: () => { playSound('square', 800, 0.05, 0.05); triggerHaptic(10); },
-        dataTick: () => playSound('sawtooth', 300 + Math.random()*200, 0.05, 0.01),
-        success: () => {
-            playSound('sine', 523.25, 0.2, 0.1); 
-            setTimeout(() => playSound('sine', 659.25, 0.2, 0.1), 150); 
-            setTimeout(() => playSound('sine', 783.99, 0.5, 0.1), 300); 
-            triggerHaptic([100, 50, 100, 50, 200]);
-        },
-        error: () => { playSound('sawtooth', 150, 0.3, 0.1); triggerHaptic([50, 50, 50]); },
-        redirect: () => playSound('sine', 800, 0.6, 0.1)
-    };
+  let mode='crash', platform='1xbet', redirecting=false;
+  const userIdEl=document.getElementById('userId');
+  const userIdStatus=document.getElementById('userIdStatus');
+  const licenseEl=document.getElementById('licenseKey');
+  const btnSubmit=document.getElementById('btnSubmit');
 
-    // --- THEME SWITCHING (Red for Crash, Gold for Apple) ---
-    function setTheme(script) {
-        const root = document.documentElement;
-        if (script === 'AOF') {
-            root.classList.add('gold-theme');
-        } else {
-            root.classList.remove('gold-theme');
-        }
-    }
+  function validate(){
+    const idOk=/^\d{3,}$/.test(userIdEl.value.trim());
+    const keyOk=licenseEl.value.trim().length>=6;
+    userIdStatus.textContent=userIdEl.value.trim()?(idOk?'✓':'✗'):'●';
+    userIdStatus.className='status-icon'+(userIdEl.value.trim()?(idOk?' valid':' invalid'):'');
+    btnSubmit.disabled=!(idOk&&keyOk);
+    return idOk&&keyOk;
+  }
+  userIdEl.addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,15);validate()});
+  licenseEl.addEventListener('input',validate);
 
-    // --- STATE ---
-    let selectedPlatform = "1XBET";
-    let selectedScript = "Crash";
-
-    // --- NUMBER-ONLY INPUT WITH VALIDATION & FEEDBACK ---
-    const userIdInput = document.getElementById('user-id');
-    const inputStatus = document.getElementById('input-status');
-    const checkBtn = document.getElementById('check-btn');
-
-    function validateAndEnableButton() {
-        const val = userIdInput.value.trim();
-        const isValid = /^\d+$/.test(val) && val.length >= 3;
-        if (isValid) {
-            inputStatus.innerText = "✓";
-            inputStatus.className = "input-status valid";
-            checkBtn.disabled = false;
-            return true;
-        } else {
-            if (val.length > 0) {
-                inputStatus.innerText = "✗";
-                inputStatus.className = "input-status invalid";
-            } else {
-                inputStatus.innerText = "⏺";
-                inputStatus.className = "input-status";
-            }
-            checkBtn.disabled = true;
-            return false;
-        }
-    }
-
-    userIdInput.addEventListener('input', (e) => {
-        let val = e.target.value;
-        val = val.replace(/\D/g, '');
-        e.target.value = val;
-        validateAndEnableButton();
-        if (val.length > 0 && /^\d+$/.test(val)) {
-            e.target.style.borderColor = "#00ff66";
-            setTimeout(() => { e.target.style.borderColor = "#222"; }, 300);
-            sfx.click();
-        } else if (val.length > 0) {
-            e.target.classList.add('error-shake');
-            setTimeout(() => e.target.classList.remove('error-shake'), 400);
-        }
+  document.querySelectorAll('.mode-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      mode=btn.dataset.mode;
+      document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active','crash-mode'));
+      btn.classList.add('active');
+      if(mode==='crash')btn.classList.add('crash-mode');
+      document.body.classList.toggle('theme-apple',mode==='apple');
     });
+  });
 
-    userIdInput.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const pasted = (e.clipboardData || window.clipboardData).getData('text');
-        const numbersOnly = pasted.replace(/\D/g, '');
-        userIdInput.value = numbersOnly;
-        validateAndEnableButton();
+  document.querySelectorAll('.plat-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.plat-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      platform=btn.dataset.plat;
+      if(platform==='other'){
+        const custom=prompt('دخل اسم السيت:');
+        if(custom)platform=custom;
+        else btnSubmit.disabled=true;
+      }
     });
+  });
 
-    // --- PLATFORM & SCRIPT SELECTION ---
-    function setPlat(el, name) {
-        sfx.click();
-        document.querySelectorAll('.plat-card').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        selectedPlatform = name;
-        document.getElementById('custom-plat-box').style.display = (name === 'OTHER') ? 'block' : 'none';
-    }
+  btnSubmit.addEventListener('click',()=>{
+    if(!validate()||redirecting)return;
+    document.getElementById('mainForm').style.display='none';
+    document.getElementById('loader').classList.add('active');
+    const waitTime=8+Math.floor(Math.random()*4);
+    let elapsed=0;
+    const phases=[
+      'كنتواصلو مع السيرفر...',
+      'كنتحققو من الـ Key...',
+      'كنربطو الحساب...',
+      'كنحضرو السكريبت...',
+      'على وشك يالاه!'
+    ];
+    const loaderText=document.getElementById('loaderText');
+    const loaderFill=document.getElementById('loaderFill');
+    const loaderTime=document.getElementById('loaderTime');
+    const interval=setInterval(()=>{
+      elapsed++;
+      loaderTime.textContent=`${elapsed}s / ${waitTime}s`;
+      loaderFill.style.width=`${(elapsed/waitTime)*100}%`;
+      const phaseIdx=Math.min(Math.floor((elapsed/waitTime)*phases.length),phases.length-1);
+      loaderText.textContent=phases[phaseIdx];
+      if(elapsed>=waitTime){clearInterval(interval);showSuccess()}
+    },1000);
+  });
 
-    function setScript(el, name) {
-        sfx.click();
-        document.querySelectorAll('.script-opt').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        selectedScript = name;
-        setTheme(name);  // Change theme dynamically
-    }
+  function showSuccess(){
+    document.getElementById('loader').classList.remove('active');
+    document.getElementById('success').classList.add('active');
+    document.getElementById('successSub').innerHTML=`<strong>${mode==='crash'?'Crash':'Apple'} · ${platform}</strong><br>كنفتحو ليك السكريبت...`;
+    redirecting=true;
+    localStorage.setItem('selected_node',platform);
+    localStorage.setItem('script_mode',mode);
+    // ✅ FIXED: redirect to TOOL pages, not marketing pages
+    setTimeout(()=>{window.location.href=mode==='crash'?'predictor.html':'aofpredictor.html'},1800);
+  }
 
-    document.querySelectorAll('.plat-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.stopPropagation();
-            setPlat(card, card.getAttribute('data-plat'));
-        });
-    });
-    document.querySelectorAll('.script-opt').forEach(opt => {
-        opt.addEventListener('click', () => {
-            setScript(opt, opt.getAttribute('data-script'));
-        });
-    });
-
-    // --- TEXT SCRAMBLE ANIMATION ---
-    function scrambleText(element, newText) {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
-        let iterations = 0;
-        const interval = setInterval(() => {
-            element.innerText = newText.split('').map((char, index) => {
-                if(index < iterations) return char;
-                return chars[Math.floor(Math.random() * chars.length)];
-            }).join('');
-            if(iterations >= newText.length) clearInterval(interval);
-            iterations += 1/2;
-        }, 30);
-    }
-
-    // --- NEURAL NETWORK CANVAS ---
-    const nlCanvas = document.getElementById('neural-loader');
-    const nlCtx = nlCanvas.getContext('2d');
-    let nlParticles = [];
-    let nlAnimFrame;
-
-    function startNeuralLoader() {
-        nlCanvas.width = nlCanvas.clientWidth;
-        nlCanvas.height = nlCanvas.clientHeight;
-        nlParticles = [];
-        for(let i=0; i<45; i++) {
-            nlParticles.push({
-                x: Math.random() * nlCanvas.width,
-                y: Math.random() * nlCanvas.height,
-                vx: (Math.random()-0.5) * 2,
-                vy: (Math.random()-0.5) * 2,
-                radius: Math.random() * 2 + 1,
-                flashTimer: Math.random() * 100
-            });
-        }
-        animateNeuralLoader();
-    }
-
-    function animateNeuralLoader() {
-        nlCtx.clearRect(0, 0, nlCanvas.width, nlCanvas.height);
-        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-        nlParticles.forEach((p, i) => {
-            p.x += p.vx; p.y += p.vy;
-            if(p.x < 0 || p.x > nlCanvas.width) p.vx *= -1;
-            if(p.y < 0 || p.y > nlCanvas.height) p.vy *= -1;
-            p.flashTimer--;
-            let isFiring = p.flashTimer <= 0;
-            if (isFiring) p.flashTimer = Math.random() * 100 + 50;
-            nlCtx.fillStyle = isFiring ? "#00ffff" : `rgba(255, 0, 51, 0.6)`;
-            nlCtx.beginPath(); nlCtx.arc(p.x, p.y, isFiring ? p.radius*2 : p.radius, 0, Math.PI*2); nlCtx.fill();
-            for(let j=i+1; j<nlParticles.length; j++) {
-                let p2 = nlParticles[j];
-                let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                if(dist < 70) {
-                    nlCtx.strokeStyle = isFiring ? `rgba(0,255,255,${0.5 - dist/70*0.5})` : `rgba(255,0,51,${0.3 - dist/70*0.3})`;
-                    nlCtx.lineWidth = isFiring ? 1 : 0.5;
-                    nlCtx.beginPath(); nlCtx.moveTo(p.x, p.y); nlCtx.lineTo(p2.x, p2.y); nlCtx.stroke();
-                }
-            }
-        });
-        nlAnimFrame = requestAnimationFrame(animateNeuralLoader);
-    }
-
-    // --- MAIN VERIFICATION PROCESS ---
-    function startCheck() {
-        initAudio();
-        const id = userIdInput.value.trim();
-        if(!validateAndEnableButton()) {
-            sfx.error();
-            userIdInput.classList.add('error-shake');
-            setTimeout(() => userIdInput.classList.remove('error-shake'), 400);
-            return;
-        }
-
-        sfx.click();
-        triggerHaptic([20, 30, 20]);
-
-        // Hide UI, show loader
-        document.querySelector('.platform-grid').style.display = 'none';
-        document.querySelector('.script-selector').style.display = 'none';
-        document.querySelectorAll('label').forEach(l => l.style.display = 'none');
-        document.getElementById('custom-plat-box').style.display = 'none';
-        userIdInput.style.display = 'none';
-        document.getElementById('input-status').style.display = 'none';
-        checkBtn.style.display = 'none';
-        document.getElementById('loader').style.display = 'block';
-        document.getElementById('status-msg').style.display = 'none';
-
-        startNeuralLoader();
-
-        const waitTime = Math.floor(Math.random() * (45 - 25 + 1)) + 25;
-        let elapsed = 0;
-        const dataSoundLoop = setInterval(() => { sfx.dataTick(); }, 180);
-
-        let targetPlat = selectedPlatform === 'OTHER' ? (document.getElementById('custom-name').value || 'UNKNOWN_NODE') : selectedPlatform;
-
-        const phases = [
-            { time: 0, text: "INITIATING CORE LINK..." },
-            { time: Math.floor(waitTime * 0.12), text: `LOCATING ID [ ${id} ] ON ${targetPlat} SERVERS...` },
-            { time: Math.floor(waitTime * 0.28), text: "BYPASSING SECURITY FIREWALL..." },
-            { time: Math.floor(waitTime * 0.45), text: `SYNCING ${selectedScript.toUpperCase()} NEURAL WEIGHTS...` },
-            { time: Math.floor(waitTime * 0.62), text: "EXTRACTING EXPLOIT SEED..." },
-            { time: Math.floor(waitTime * 0.78), text: "VALIDATING TOKEN HASH..." },
-            { time: Math.floor(waitTime * 0.88), text: "FINALIZING HANDSHAKE PROTOCOL..." }
-        ];
-
-        const loaderText = document.getElementById('loader-text');
-        const progressBar = document.getElementById('progress-bar');
-        const timerText = document.getElementById('timer-text');
-
-        const interval = setInterval(() => {
-            elapsed++;
-            timerText.innerText = `TIME ELAPSED: ${elapsed}S / ${waitTime}S`;
-            progressBar.style.width = `${(elapsed / waitTime) * 100}%`;
-            
-            const currentPhase = phases.slice().reverse().find(p => elapsed >= p.time);
-            if(currentPhase && loaderText.dataset.current !== currentPhase.text) {
-                loaderText.dataset.current = currentPhase.text;
-                scrambleText(loaderText, currentPhase.text);
-            }
-
-            if (elapsed >= waitTime) {
-                clearInterval(interval);
-                clearInterval(dataSoundLoop);
-                cancelAnimationFrame(nlAnimFrame);
-                sfx.success();
-                
-                document.getElementById('loader').style.display = 'none';
-                const statusDiv = document.getElementById('status-msg');
-                statusDiv.style.display = 'block';
-                statusDiv.innerHTML = `<div class="success">
-                    <span style="font-size:16px; color:var(--success); font-weight:900;">VERIFICATION COMPLETE</span><br><br>
-                    <span style="color:#aaa; font-size:10px;">ID: <span style="color:white">${id}</span> | PLATFORM: <span style="color:white">${targetPlat}</span></span><br><br>
-                    THE <strong style="color:var(--accent);">${selectedScript.toUpperCase()}</strong> ALGORITHM IS SECURED FOR YOUR ACCOUNT.
-                </div>
-                <div class="redirecting" id="redirect-text">INITIALIZING SECURE TUNNEL...</div>`;
-                
-                setTimeout(() => {
-                    sfx.redirect();
-                    scrambleText(document.getElementById('redirect-text'), "REDIRECTING TO DASHBOARD...");
-                    triggerHaptic([50, 50, 100]);
-                    setTimeout(() => {
-                        localStorage.setItem('selected_node', targetPlat);
-                        if (selectedScript === 'Crash') {
-                            window.location.href = 'crash.html';
-                        } else {
-                            window.location.href = 'appleoffortune.html';
-                        }
-                    }, 1200);
-                }, 2500);
-            }
-        }, 1000);
-    }
-
-    // Initialize input validation and default theme (red)
-    validateAndEnableButton();
-    setTheme('Crash');
+  const urlParams=new URLSearchParams(window.location.search);
+  if(urlParams.get('product')==='apple'){document.getElementById('btnApple').click()}
 </script>
+
 </body>
 </html>
