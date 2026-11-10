@@ -1,620 +1,665 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="ltr">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <title>AFRICA HACKS | Neural Link v8.2</title>
- <style>
- /* ===== ORIGINAL STYLES (fully restored) ===== */
- :root { --accent: #ff0033; --bg: #010101; }
- body { background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; }
- body::before {
- content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
- background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
- linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
- z-index: 200; background-size: 100% 2px, 3px 100%; pointer-events: none;
- }
- #selection-screen { max-width: 450px; margin: 0 auto; padding: 20px; text-align: center; height: 100vh; overflow-y: auto; position: relative; z-index: 10; }
- .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
- .card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 12px; border-radius: 4px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
- .card img { width: 100%; max-width: 60px; filter: grayscale(1) opacity(0.3); transition: 0.3s; }
- .card.other-btn { font-size: 12px; font-weight: bold; color: #888; letter-spacing: 1px; grid-column: 2; }
- .card:hover { border-color: #333; transform: translateY(-2px); box-shadow: 0 5px 10px rgba(255,0,51,0.2); }
- .card.active { border-color: var(--accent); background: rgba(255,0,51,0.05); box-shadow: 0 0 15px rgba(255,0,51,0.2); }
- .card.active img { filter: none; opacity: 1; transform: scale(1.1); }
- .card.active.other-btn { color: var(--accent); }
- .other-platform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 15px 0; max-height: 200px; overflow-y: auto; padding: 5px; border: 1px solid #222; border-radius: 8px; background: #080808; }
- .platform-option { background: #111; border: 1px solid #333; padding: 10px 5px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #aaa; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; }
- .platform-option:hover { border-color: var(--accent); color: #fff; background: #1a1a1a; }
- .platform-option.selected { border-color: var(--accent); background: rgba(255,0,51,0.1); color: var(--accent); box-shadow: 0 0 10px rgba(255,0,51,0.3); }
- .activation-box { background: #050505; border: 1px solid #111; padding: 20px; border-radius: 8px; margin-bottom: 20px; animation: slideUp 0.3s ease-out; }
- input[type="text"], input[type="password"] { width: 85%; padding: 12px; background: #000; border: 1px solid #222; color: var(--accent); text-align: center; letter-spacing: 4px; border-radius: 4px; margin-bottom: 15px; outline: none; font-family: monospace; font-weight: bold; }
- input[type="text"]:focus, input[type="password"]:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,51,0.2); }
- .btn-start { background: var(--accent); color: white; padding: 14px; border: none; border-radius: 4px; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 2px; transition: 0.3s; }
- .btn-start:hover { box-shadow: 0 0 20px var(--accent); }
- .btn-buy { background: #111; color: #888; border: 1px solid #222; padding: 10px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 8px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
- .btn-buy:hover { background: #222; color: white; }
- .fingerprint-box { background: rgba(255, 0, 0, 0.03); border: 1px solid #1a0000; padding: 15px; margin-top: 20px; text-align: left; border-radius: 4px; }
- .box-header { font-size: 8px; color: var(--accent); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
- .id-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 4px; color: #555; }
- .id-row span:last-child { color: #aaa; font-weight: bold; }
- .blink-red { animation: blinker 1s linear infinite; color: var(--accent) !important; }
- #terminal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 100; display: none; flex-direction: column; align-items: center; justify-content: center; }
- .term-line { color: var(--accent); margin-bottom: 4px; width: 280px; text-shadow: 0 0 5px var(--accent); }
- .term-progress-container { width: 280px; height: 2px; background: #222; margin-top: 15px; border-radius: 2px; overflow: hidden; }
- .term-progress-fill { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.3s ease; }
- #hack-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 50; display: none; flex-direction: column; }
- .dash-header { height: 45px; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; background: #050505; }
- .main-layout { display: flex; flex: 1; overflow: hidden; }
- .side-panel { width: 80px; border-right: 1px solid #111; padding: 15px 10px; display: flex; flex-direction: column; gap: 15px; background: #020202; }
- .side-panel.right { border-right: none; border-left: 1px solid #111; }
- .center-content { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
- .multiplier-circle { width: 190px; height: 190px; border: 1px solid #111; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: inset 0 0 40px rgba(0,0,0,0.8); background: #050505; }
- #prediction-val { font-size: 44px; color: white; text-shadow: 0 0 15px var(--accent); transition: 0.3s; }
- .signal-meter { display: flex; gap: 3px; align-items: center; justify-content: center; margin-top: 5px; }
- .signal-bar { width: 6px; height: 12px; background: #222; border-radius: 1px; transition: 0.2s; }
- .signal-bar.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
- .history-bar { height: 70px; border-top: 1px solid #111; display: flex; align-items: center; gap: 10px; padding: 0 15px; overflow-x: auto; background: #020202; }
- .hist-item { min-width: 45px; height: 45px; border: 1px solid #1a1a1a; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; animation: popIn 0.3s ease-out; cursor: pointer; transition: 0.2s; }
- .hist-item:hover { border-color: var(--accent); transform: scale(1.1); }
- .logout-btn { background: #111; color: #888; border: 1px solid #333; padding: 6px 12px; font-size: 8px; border-radius: 3px; cursor: pointer; font-weight: bold; transition: 0.3s; letter-spacing: 1px; }
- .logout-btn:hover { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
- .stat-label { font-size: 7px; color: #555; letter-spacing: 1px; margin-bottom: 4px; }
- .stat-val { font-size: 11px; color: var(--accent); font-weight: bold; text-shadow: 0 0 8px rgba(255,0,51,0.4); }
- .blink { animation: fast-blink 0.2s infinite; color: #fff !important; text-shadow: 0 0 10px #fff !important; }
- @keyframes blinker { 50% { opacity: 0.3; } }
- @keyframes fast-blink { 50% { opacity: 0.3; } }
- @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
- @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
- #verify-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 300; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
- .modal-content { background: #0a0a0a; border: 1px solid var(--accent); padding: 20px; width: 85%; max-width: 320px; border-radius: 8px; box-shadow: 0 0 30px rgba(255,0,51,0.3); font-size: 10px; color: #ccc; position: relative; animation: slideIn 0.3s ease-out; }
- .close-btn { color: #888; position: absolute; right: 12px; top: 10px; cursor: pointer; font-size: 18px; }
- .close-btn:hover { color: #fff; }
- .modal-hash { color: var(--accent); word-break: break-all; font-size: 9px; margin: 10px 0; }
- @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
- .waiting-message {
- background: rgba(0,0,0,0.85);
- border: 2px solid #ffcc00;
- border-radius: 8px;
- padding: 20px 15px;
- margin: 15px auto;
- text-align: center;
- font-size: 14px;
- font-weight: bold;
- letter-spacing: 2px;
- color: #ffcc00;
- box-shadow: 0 0 20px rgba(255,204,0,0.3);
- backdrop-filter: blur(5px);
- }
- .waiting-message .spinner {
- width: 30px;
- height: 30px;
- border: 3px solid rgba(255,204,0,0.3);
- border-top-color: #ffcc00;
- border-radius: 50%;
- animation: spin 1s linear infinite;
- margin: 0 auto 10px;
- }
- @keyframes spin { to { transform: rotate(360deg); } }
- .waiting-message .small {
- font-size: 10px;
- color: #aaa;
- margin-top: 8px;
- }
- </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Crash Predictor — AFRICA HACKS 🇲🇦</title>
+  <link rel="icon" type="image/png" href="logos/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --gold:#FFB800;--gold-soft:#FFCC33;--gold-dim:rgba(255,184,0,0.08);
+      --red:#E63946;--red-glow:rgba(230,57,70,0.4);--red-dim:rgba(230,57,70,0.1);
+      --green:#22C55E;--green-glow:rgba(34,197,94,0.4);
+      --bg:#0a0805;--panel:#141009;--panel-2:#1a1510;--panel-3:#221a11;
+      --border:#2a2018;--border-gold:rgba(255,184,0,0.3);--border-red:rgba(230,57,70,0.35);
+      --text:#fff;--text-dim:#a8a09a;--text-muted:#6b635c;--wa:#25d366;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:'Poppins','Cairo',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;overflow-x:hidden;min-height:100vh;-webkit-font-smoothing:antialiased}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(230,57,70,0.12) 0%,transparent 45%),radial-gradient(ellipse at 80% 100%,rgba(255,184,0,0.08) 0%,transparent 45%);pointer-events:none;z-index:0}
+    .wrap{max-width:520px;margin:0 auto;padding:24px 18px;position:relative;z-index:1}
+
+    /* NAV */
+    .nav{max-width:520px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800;font-size:15px}
+    .logo-img{width:28px;height:28px;border-radius:7px;object-fit:cover;box-shadow:0 0 16px rgba(230,57,70,0.5)}
+    .logo .gold{color:var(--gold)}
+    .nav-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:999px;font-family:inherit;font-size:12px;font-weight:700;text-decoration:none;background:var(--wa);color:#fff;box-shadow:0 0 12px rgba(37,211,102,0.4)}
+    .nav-btn:hover{box-shadow:0 0 18px rgba(37,211,102,0.6)}
+
+    /* SELECTION SCREEN */
+    #selection-screen{position:relative;z-index:2;padding:0 18px 40px;max-width:480px;margin:0 auto}
+    .select-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:22px;padding:28px 22px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(230,57,70,0.08) inset;position:relative;overflow:hidden}
+    .select-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(230,57,70,0.6),transparent)}
+    .select-head{text-align:center;margin-bottom:24px}
+    .select-icon{font-size:44px;margin-bottom:10px;display:block;filter:drop-shadow(0 0 20px rgba(230,57,70,0.5))}
+    .select-head h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.02em;margin-bottom:4px}
+    .select-head h1 .red{color:var(--red);text-shadow:0 0 24px var(--red-glow)}
+    .select-head p{font-size:12px;color:var(--text-muted);font-weight:600}
+
+    .form-label{display:block;font-size:11px;font-weight:900;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;margin-top:18px}
+    .form-label:first-of-type{margin-top:0}
+
+    .platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .plat-btn{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:10px;padding:10px 4px;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:46px;transition:all .15s ease}
+    .plat-btn img{max-width:100%;max-height:20px;filter:grayscale(1) opacity(.4);transition:all .15s}
+    .plat-btn:hover{border-color:var(--border-red)}
+    .plat-btn.active{border-color:var(--red);background:rgba(230,57,70,0.1);box-shadow:0 0 0 1px var(--red),0 0 15px rgba(230,57,70,0.25)}
+    .plat-btn.active img{filter:none;opacity:1}
+    .plat-btn.other-btn{font-size:10px;font-weight:900;color:var(--text-dim);letter-spacing:.03em}
+    .plat-btn.other-btn.active{color:var(--red)}
+
+    .input-wrap{position:relative}
+    .form-input{width:100%;padding:14px 16px;background:rgba(0,0,0,.45);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:15px;font-weight:600;border-radius:12px;outline:none;transition:all .2s ease;text-align:center;letter-spacing:.04em}
+    .form-input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(230,57,70,0.1)}
+    .form-input::placeholder{color:var(--text-muted);font-weight:500}
+    .input-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text-muted)}
+    .input-icon.valid{color:var(--green)}
+    .input-icon.invalid{color:var(--red)}
+
+    .btn-submit{width:100%;padding:17px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:900;background:linear-gradient(135deg,var(--red),#b81d28);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(230,57,70,0.4),0 0 0 1px rgba(230,57,70,0.5) inset;letter-spacing:.03em;transition:all .15s ease;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(230,57,70,0.6)}
+    .btn-submit:disabled{background:rgba(255,255,255,0.05);color:var(--text-muted);cursor:not-allowed;box-shadow:none}
+
+    .helper-link{display:block;text-align:center;font-size:12px;color:var(--text-muted);text-decoration:none;margin-top:16px;font-weight:600}
+    .helper-link:hover{color:var(--gold)}
+
+    .fingerprint{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:20px;font-size:10px;color:var(--text-muted);font-weight:700;letter-spacing:.03em}
+    .fp-row{display:flex;justify-content:space-between;padding:4px 0}
+    .fp-row span:last-child{color:var(--text);font-weight:800}
+
+    .error-msg{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.35);color:#FF6B7A;padding:12px 14px;border-radius:10px;font-size:12px;font-weight:700;margin-top:14px;text-align:center;display:none;animation:shake .4s ease}
+    .error-msg.show{display:block}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+    /* TERMINAL OVERLAY */
+    #terminal{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    #terminal.active{display:flex}
+    .term-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:20px;padding:28px 24px;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+    .term-icon{font-size:44px;margin-bottom:14px;animation:pulseGold 1.6s infinite}
+    @keyframes pulseGold{0%,100%{filter:drop-shadow(0 0 8px rgba(255,184,0,0.4))}50%{filter:drop-shadow(0 0 20px rgba(255,184,0,0.8))}}
+    .term-title{font-size:16px;font-weight:900;margin-bottom:20px;color:var(--gold)}
+    .term-lines{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:12px;padding:14px;height:130px;overflow:hidden;text-align:left;margin-bottom:16px}
+    .term-line{font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:6px;font-family:'Courier New',monospace;animation:logIn .3s ease}
+    .term-line .ok{color:var(--green)}
+    .term-line .warn{color:var(--gold)}
+    .term-line .err{color:var(--red)}
+    @keyframes logIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+    .term-progress{width:100%;height:6px;background:rgba(0,0,0,0.5);border-radius:3px;overflow:hidden;margin-bottom:10px}
+    .term-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));box-shadow:0 0 12px rgba(255,184,0,0.6);transition:width .3s ease}
+    .term-status{font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:.05em}
+
+    /* WAITING SCREEN */
+    #waiting{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    #waiting.active{display:flex}
+    .waiting-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:32px 24px;width:100%;max-width:380px;text-align:center}
+    .waiting-spinner{width:44px;height:44px;border:3px solid rgba(255,184,0,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .waiting-title{font-size:16px;font-weight:900;color:var(--gold);margin-bottom:8px}
+    .waiting-sub{font-size:12px;color:var(--text-dim);line-height:1.7;margin-bottom:16px}
+    .waiting-code{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:'Courier New',monospace;font-size:16px;font-weight:900;color:var(--gold);letter-spacing:.15em;margin-bottom:12px}
+    .waiting-hint{font-size:10px;color:var(--text-muted);font-weight:700;letter-spacing:.05em}
+
+    /* DASHBOARD */
+    #dashboard{display:none;position:relative;z-index:2;padding:16px 18px 40px;max-width:520px;margin:0 auto}
+    #dashboard.active{display:block;animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    .dash-head{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
+    .dh-left{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800}
+    .dh-live{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s infinite}
+    @keyframes blink{50%{opacity:.3}}
+    .dh-plat{color:var(--gold)}
+    .dh-timer{font-family:'Courier New',monospace;font-size:14px;font-weight:900;color:var(--text);letter-spacing:.03em}
+    .dh-exit{padding:6px 12px;border-radius:8px;background:rgba(230,57,70,0.15);border:1px solid rgba(230,57,70,0.35);color:#FF6B7A;font-family:inherit;font-size:11px;font-weight:900;cursor:pointer;transition:all .15s}
+    .dh-exit:hover{background:rgba(230,57,70,0.3);color:#fff}
+
+    .predict-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border-red);border-radius:20px;padding:28px 22px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(230,57,70,0.08) inset}
+    .predict-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);opacity:0.6}
+    .predict-label{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px}
+    .predict-value{font-family:'Poppins',sans-serif;font-size:72px;font-weight:900;line-height:1;letter-spacing:-.03em;color:var(--gold);text-shadow:0 0 40px rgba(255,184,0,0.5);transition:all .3s ease;min-height:72px;display:flex;align-items:center;justify-content:center}
+    .predict-value.syncing{font-size:28px;color:var(--text-muted);letter-spacing:.1em;animation:blink 1s infinite}
+    .predict-value.danger{color:var(--red);text-shadow:0 0 40px var(--red-glow)}
+    .predict-value.safe{color:var(--green);text-shadow:0 0 40px var(--green-glow)}
+    .predict-status{font-size:11px;font-weight:700;color:var(--text-muted);margin-top:10px;letter-spacing:.05em}
+    .predict-sync{width:100%;height:4px;background:rgba(0,0,0,0.5);border-radius:2px;overflow:hidden;margin-top:18px}
+    .predict-sync-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));box-shadow:0 0 10px rgba(255,184,0,0.5);border-radius:2px;transition:width .2s linear}
+
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .stat-box{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center}
+    .stat-val{font-family:'Poppins',sans-serif;font-size:16px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:4px}
+    .stat-lbl{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+
+    .hist-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px}
+    .hist-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .hist-title{font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px}
+    .hist-title::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green)}
+    .hist-count{font-size:11px;font-weight:800;color:var(--text-muted)}
+    .hist-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+    .hist-list::-webkit-scrollbar{display:none}
+    .hist-item{flex-shrink:0;min-width:60px;padding:10px 8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s;animation:popIn .4s ease}
+    .hist-item:hover{border-color:var(--gold);transform:scale(1.05)}
+    .hist-val{font-family:'Poppins',sans-serif;font-size:14px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:4px}
+    .hist-val.green{color:var(--green)}
+    .hist-val.red{color:var(--red)}
+    .hist-round{font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:.05em}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+    .hist-empty{text-align:center;font-size:12px;color:var(--text-muted);font-weight:700;padding:12px 0}
+
+    /* VERIFY MODAL */
+    #verify-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:900;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+    #verify-modal.active{display:flex}
+    .modal-box{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border-gold);border-radius:16px;padding:22px;width:100%;max-width:340px;position:relative}
+    .modal-close{position:absolute;top:12px;right:16px;font-size:22px;font-weight:300;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:inherit}
+    .modal-close:hover{color:var(--text)}
+    .modal-title{font-size:13px;font-weight:900;color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+    .modal-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px}
+    .modal-row:last-child{border-bottom:none}
+    .modal-lbl{color:var(--text-muted);font-weight:700}
+    .modal-val{color:var(--text);font-weight:800;word-break:break-all;text-align:right;max-width:60%}
+    .modal-val.gold{color:var(--gold)}
+    .modal-val.green{color:var(--green)}
+
+    /* FLOAT WA */
+    .float-wa{position:fixed;bottom:18px;right:16px;width:54px;height:54px;border-radius:50%;background:var(--wa);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(37,211,102,0.5),0 0 0 4px rgba(37,211,102,0.2);z-index:200;text-decoration:none;animation:floatWa 2.5s infinite}
+    @keyframes floatWa{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .float-wa svg{width:26px;height:26px;fill:#fff}
+  </style>
 </head>
 <body>
- <div id="selection-screen">
- <h2 style="font-size: 9px; letter-spacing: 3px; color: #444;">AFRICA_SECURE_GATE v8.2</h2>
- <div class="grid">
- <div class="card" onclick="select(this, 'SportyBet', '#ff0033')"><img src="logos/sportybet.png" alt="SportyBet"></div>
- <div class="card" onclick="select(this, '1Win', '#007bff')"><img src="logos/1win.png" alt="1Win"></div>
- <div class="card" onclick="select(this, 'Betway', '#00ff00')"><img src="logos/betway.png" alt="Betway"></div>
- <div class="card" onclick="select(this, '1xBet', '#00acee')"><img src="logos/1xbet.png" alt="1xBet"></div>
- <div class="card" onclick="select(this, 'Bet9ja', '#008d36')"><img src="logos/bet9ja.png" alt="Bet9ja"></div>
- <div class="card" onclick="select(this, 'MSport', '#ffc107')"><img src="logos/msport.png" alt="MSport"></div>
- <div class="card" onclick="select(this, 'goobet', '#022cfa')"><img src="logos/goobet.png" alt="Goobet"></div>
- <div class="card" onclick="select(this, 'Mozzart', '#2d3291')"><img src="logos/mozzart.png" alt="MozzartBet"></div>
- <div class="card" onclick="select(this, 'Betika', '#8dc63f')"><img src="logos/betika.png" alt="Betika"></div>
- <div class="card" onclick="select(this, 'Premier Bet', '#23fa02')"><img src="logos/premierbet.png" alt="Premier Bet"></div>
- <div class="card" onclick="select(this, 'LineBet', '#004a34')"><img src="logos/linebet.png" alt="LineBet"></div>
- <div class="card" onclick="select(this, 'MelBet', '#f7941d')"><img src="logos/melbet.png" alt="MelBet"></div>
- <div class="card other-btn" onclick="selectOtherPlatform(this)">OTHER</div>
- </div>
- <div id="other-platform-container" style="display: none; margin-bottom: 20px;">
- <label style="display:block; font-size:9px; color:#666; margin-bottom:8px; letter-spacing:1px;">SELECT A PLATFORM:</label>
- <div class="other-platform-grid" id="other-platform-grid"></div>
- </div>
- <div class="activation-box" id="activation-ui">
- <input type="text" id="user-id" placeholder="ACCOUNT ID" autocomplete="off">
- <input type="password" id="license-key" placeholder="LICENSE KEY" autocomplete="off">
- <button class="btn-start" onclick="initiate()">BYPASS SERVER</button>
- <button class="btn-buy" onclick="window.location.href='#buy'">🛒 BUY LICENSE KEY</button>
- </div>
- <div class="fingerprint-box">
- <div class="box-header">[!] DEVICE_IDENTITY_INTERCEPTED</div>
- <div class="id-row"><span>IP_ADDRESS:</span> <span id="user-ip" class="blink-red">LOCAL_NODE</span></div>
- <div class="id-row"><span>NODE_OS:</span> <span id="user-os">DETECTING...</span></div>
- <div class="id-row"><span>POWER_LVL:</span> <span id="user-battery">--%</span></div>
- <div class="id-row"><span>CONNECTION:</span> <span id="user-isp">ENCRYPTED</span></div>
- <div style="font-size: 6px; color: #333; margin-top: 10px; text-align: center;">LOG_ID: AF-NET-99102-X</div>
- </div>
- </div>
- <div id="terminal-overlay">
- <div id="term-lines"></div>
- <div class="term-progress-container">
- <div class="term-progress-fill" id="term-progress"></div>
- </div>
- </div>
- <div id="hack-dashboard">
- <div class="dash-header">
- <div class="user-count">👁 <span id="active-users">14,201</span> ACTIVE</div>
- <div id="timer-txt" style="color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px;">00:00:00</div>
- <button class="logout-btn" onclick="terminateSession()">DISCONNECT</button>
- </div>
- <div class="main-layout">
- <div class="side-panel">
- <div><div class="stat-label">LATENCY</div><div class="stat-val" id="lat">18ms</div></div>
- <div><div class="stat-label">UPLINK</div><div class="stat-val" style="color:#00ff00;">SECURE</div></div>
- <div><div class="stat-label">PACKETS</div><div class="stat-val" id="pkts">912/s</div></div>
- <div><div class="stat-label">PEERS</div><div class="stat-val" id="peers">16</div></div>
- </div>
- <div class="center-content">
- <div class="multiplier-circle">
- <span id="prediction-val">0.00x</span>
- <span style="font-size: 7px; color: #555; margin-top: 10px; letter-spacing: 2px;">NEURAL_SYNC_15S</span>
- </div>
- <div class="signal-meter" id="signal-meter">
- <div class="signal-bar"></div>
- <div class="signal-bar"></div>
- <div class="signal-bar"></div>
- <div class="signal-bar"></div>
- </div>
- <div style="margin-top: 15px; width: 160px; height: 3px; background: #111; border-radius: 2px; overflow: hidden;">
- <div id="sync-fill" style="height: 100%; background: var(--accent); width: 0%; box-shadow: 0 0 10px var(--accent);"></div>
- </div>
- </div>
- <div class="side-panel right">
- <div><div class="stat-label">REGION</div><div class="stat-val">AFR_W</div></div>
- <div><div class="stat-label">THREAT</div><div class="stat-val" style="color:#00ff00;">LOW</div></div>
- <div><div class="stat-label">TARGET</div><div class="stat-val" id="node-name">---</div></div>
- </div>
- </div>
- <div class="history-bar" id="history-box"></div>
- </div>
- <div id="verify-modal">
- <div class="modal-content">
- <span class="close-btn" onclick="document.getElementById('verify-modal').style.display='none'">&times;</span>
- <div style="color: #fff; margin-bottom: 10px; font-size: 11px; font-weight: bold;">BLOCKCHAIN VERIFICATION</div>
- <div>Transaction Hash:</div>
- <div class="modal-hash" id="modal-hash">0x8F3A...B2E1</div>
- <div>Status: <span style="color:var(--green);">CONFIRMED</span></div>
- <div style="margin-top:10px; color:#666;">Block: 1847291<br>Timestamp: 2025-03-18 14:22:31 UTC</div>
- </div>
- </div>
- <script>
- // ⚙️ CLOUDFLARE WORKER URL - REPLACE WITH YOURS!
- const API_URL = 'https://telegram-auth.ossmtik83-367.workers.dev';
 
- const SCRIPT_NAME = "Crash Intercept";
- 
- let selected = "";
- let selectedColor = "";
- let otherCardElement = null;
- const topPlatforms = [
- 'BetKing', 'BetWinner', '22Bet', 'Melbet', 
- 'BetPawa', 'Hollywoodbets', 'Supabets', 'World Sports Betting',
- 'BetRaha', 'ChezaCash', 'OdiBets', 'Betika',
- 'Premier Bet', 'LineBet', 'Mozzart', 'BetBonanza'
- ];
- 
- const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
- function playBeep() {
- if(audioCtx.state === 'suspended') audioCtx.resume();
- const oscillator = audioCtx.createOscillator();
- const gainNode = audioCtx.createGain();
- oscillator.type = 'square';
- oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
- gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
- oscillator.connect(gainNode);
- gainNode.connect(audioCtx.destination);
- oscillator.start();
- oscillator.stop(audioCtx.currentTime + 0.05);
- }
- function playSfx(type) { playBeep(); }
- 
- document.addEventListener('contextmenu', event => event.preventDefault());
- document.onkeydown = function(e) {
- if (e.keyCode == 123) return false;
- if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
- if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
- if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
- if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
- };
- 
- window.addEventListener('DOMContentLoaded', () => {
- const storedEnd = localStorage.getItem('session_end');
- if (storedEnd && new Date().getTime() < storedEnd) {
- selected = localStorage.getItem('selected_node');
- selectedColor = localStorage.getItem('accent_color');
- if(selected && selectedColor) {
- document.documentElement.style.setProperty('--accent', selectedColor);
- document.getElementById('selection-screen').style.display = 'none';
- startDash(storedEnd);
- return;
- }
- }
- localStorage.clear();
- const firstCard = document.querySelector('.card:not(.other-btn)');
- if (firstCard) select(firstCard, '1XBET', '#ff0033');
- populateOtherPlatforms();
- startFingerprintUpdates();
- });
- 
- function populateOtherPlatforms() {
- const grid = document.getElementById('other-platform-grid');
- grid.innerHTML = '';
- topPlatforms.forEach(platform => {
- const div = document.createElement('div');
- div.className = 'platform-option';
- div.innerText = platform.toUpperCase();
- div.onclick = () => selectOtherPlatformOption(platform, div);
- grid.appendChild(div);
- });
- }
- 
- let batteryLevel = 87;
- function startFingerprintUpdates() {
- setInterval(() => {
- batteryLevel = Math.max(5, batteryLevel - (Math.random() * 2));
- document.getElementById('user-battery').innerText = Math.floor(batteryLevel) + "%";
- }, 30000);
- const connTypes = ['4G', '5G', 'LTE', 'FIBER'];
- setInterval(() => {
- const newType = connTypes[Math.floor(Math.random() * connTypes.length)];
- document.getElementById('user-isp').innerText = newType + "_MODEM";
- }, 45000);
- document.getElementById('user-ip').innerText = "LOCAL_NODE";
- document.getElementById('user-ip').classList.remove('blink-red');
- }
- 
- const ua = window.navigator.userAgent;
- let os = "UNKNOWN_NODE";
- if (ua.indexOf("Win") != -1) os = "WINDOWS_X64";
- if (ua.indexOf("Android") != -1) os = "ANDROID_OS";
- if (ua.indexOf("iPhone") != -1) os = "IOS_MOBILE";
- if (ua.indexOf("Mac") != -1 && ua.indexOf("iPhone") == -1) os = "MACOS_NODE";
- document.getElementById('user-os').innerText = os;
- 
- if (navigator.getBattery) {
- navigator.getBattery().then(b => {
- batteryLevel = Math.round(b.level * 100);
- document.getElementById('user-battery').innerText = batteryLevel + "%";
- });
- }
- if (navigator.connection) {
- document.getElementById('user-isp').innerText = navigator.connection.effectiveType.toUpperCase() + "_MODEM";
- }
- 
- function deselectAllCards() {
- document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
- document.getElementById('other-platform-container').style.display = 'none';
- document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
- }
- 
- function select(el, name, color) {
- deselectAllCards();
- el.classList.add('active');
- selected = name;
- selectedColor = color;
- document.documentElement.setProperty('--accent', color);
- document.getElementById('activation-ui').style.display = 'block';
- setTimeout(() => {
- document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
- }, 100);
- }
- 
- function selectOtherPlatform(el) {
- deselectAllCards();
- el.classList.add('active');
- otherCardElement = el;
- document.getElementById('other-platform-container').style.display = 'block';
- selected = '';
- selectedColor = '#ff0033';
- document.documentElement.style.setProperty('--accent', selectedColor);
- document.getElementById('activation-ui').style.display = 'block';
- setTimeout(() => {
- document.getElementById('activation-ui').scrollIntoView({ behavior: 'smooth' });
- }, 100);
- }
- 
- function selectOtherPlatformOption(platform, element) {
- document.querySelectorAll('.platform-option').forEach(opt => opt.classList.remove('selected'));
- element.classList.add('selected');
- selected = platform;
- if (otherCardElement) otherCardElement.classList.add('active');
- }
- 
- // ========== MAIN INITIATION WITH CLOUDFLARE WORKER ==========
- async function initiate() {
- const userId = document.getElementById('user-id').value.trim();
- const key = document.getElementById('license-key').value.trim().toUpperCase();
- 
- if (!selected) {
- alert("Please select a platform.");
- return;
- }
- if (!userId) {
- playSfx('click');
- document.getElementById('user-id').style.borderColor = "red";
- setTimeout(() => document.getElementById('user-id').style.borderColor = "#222", 1000);
- alert("Please enter your Account ID.");
- return;
- }
- if (!key) {
- playSfx('click');
- document.getElementById('license-key').style.borderColor = "red";
- setTimeout(() => document.getElementById('license-key').style.borderColor = "#222", 1000);
- alert("Please enter your License Key.");
- return;
- }
+<nav class="nav">
+  <a href="index.html" class="logo">
+    <img src="logos/Africa.png" alt="" class="logo-img" onerror="this.style.display='none'">
+    <span>AFRICA<span class="gold">_HACKS</span> 🇲🇦</span>
+  </a>
+  <a href="https://wa.me/212612433584?text=slm%20khoya%20b4it%20help%20crash" class="nav-btn" target="_blank" rel="noopener">💬 واتساب</a>
+</nav>
 
- const btn = document.querySelector('#activation-ui .btn-start');
- btn.disabled = true;
- btn.innerText = "CONNECTING...";
+<div id="selection-screen">
+  <div class="select-card">
+    <div class="select-head">
+      <span class="select-icon">🚀</span>
+      <h1>افتح <span class="red">السيرفر</span></h1>
+      <p>دخل الـ ID و الـ Key ديالك</p>
+    </div>
 
- try {
- const response = await fetch(`${API_URL}/api/login`, {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ userId, password: key })
- });
+    <label class="form-label">🏢 اختار السيت</label>
+    <div class="platforms" id="platforms">
+      <div class="plat-btn active" data-plat="1XBET"><img src="logos/1xbet.png" alt="1xbet"></div>
+      <div class="plat-btn" data-plat="1WIN"><img src="logos/1win.png" alt="1win"></div>
+      <div class="plat-btn" data-plat="MELBET"><img src="logos/melbet.png" alt="Melbet"></div>
+      <div class="plat-btn" data-plat="MSPORT"><img src="logos/msport.png" alt="Msport"></div>
+      <div class="plat-btn" data-plat="BET9JA"><img src="logos/bet9ja.png" alt="Bet9ja"></div>
+      <div class="plat-btn" data-plat="BETWAY"><img src="logos/betway.png" alt="Betway"></div>
+      <div class="plat-btn" data-plat="LINEBET"><img src="logos/linebet.png" alt="Linebet"></div>
+      <div class="plat-btn" data-plat="MOZZART"><img src="logos/mozzart.png" alt="Mozzart"></div>
+      <div class="plat-btn" data-plat="PREMIER"><img src="logos/premierbet.png" alt="Premier"></div>
+      <div class="plat-btn" data-plat="SPORTY"><img src="logos/sportybet.png" alt="Sporty"></div>
+      <div class="plat-btn" data-plat="GOOBET"><img src="logos/goobet.png" alt="Goobet"></div>
+      <div class="plat-btn other-btn" data-plat="OTHER">أخرى</div>
+    </div>
 
- const data = await response.json();
+    <label class="form-label">🆔 الـ ID ديال الحساب</label>
+    <div class="input-wrap">
+      <input type="text" id="user-id" class="form-input" placeholder="123456789" inputmode="numeric" autocomplete="off">
+      <span class="input-icon" id="id-icon">●</span>
+    </div>
 
- if (response.status === 401 || data.status === 'error') {
- btn.disabled = false;
- btn.innerText = 'BYPASS SERVER';
- document.getElementById('license-key').style.borderColor = 'red';
- alert('❌ WRONG LICENSE KEY!');
- return;
- }
+    <label class="form-label">🎫 الـ License Key</label>
+    <div class="input-wrap">
+      <input type="text" id="license-key" class="form-input" placeholder="AFRICA-XXXX-XXXX" autocomplete="off" style="text-transform:uppercase">
+    </div>
 
- if (data.status === 'authorized') {
- localStorage.setItem('authToken', data.token);
- proceedWithBypass(userId, selected, 'Authorized');
- } else if (data.status === 'pending') {
- showWaitingScreen(data.authCode, userId);
- }
- } catch (error) {
- btn.disabled = false;
- btn.innerText = 'BYPASS SERVER';
- alert('❌ Server is OFFLINE or connection error!');
- }
- }
+    <button class="btn-submit" id="bypass-btn">🚀 افتح السيرفر</button>
+    <div class="error-msg" id="error-msg"></div>
 
- function showWaitingScreen(authCode, userId) {
- const existingMsg = document.querySelector('#activation-ui .waiting-message');
- if (existingMsg) existingMsg.remove();
- 
- const waitingMsgDiv = document.createElement('div');
- waitingMsgDiv.className = 'waiting-message';
- waitingMsgDiv.innerHTML = `
- <div class="spinner"></div>
- <div style="font-size:18px; margin: 10px 0;">⏳ WAITING FOR AUTHORIZATION</div>
- <div class="small">Admin will approve via Telegram</div>
- <div class="small" style="margin-top: 15px;">Auth Code: <b>${authCode}</b></div>
- <div class="small" style="margin-top: 5px; color: #666;">User: ${userId}</div>
- `;
- document.getElementById('activation-ui').appendChild(waitingMsgDiv);
+    <div class="fingerprint">
+      <div class="fp-row"><span>OS</span><span id="fp-os">detecting...</span></div>
+      <div class="fp-row"><span>اتصال</span><span id="fp-conn">secure</span></div>
+      <div class="fp-row"><span>منطقة</span><span>AFR_W</span></div>
+    </div>
 
- pollAuthStatus(authCode, userId);
- }
+    <a href="https://wa.me/212612433584" class="helper-link" target="_blank" rel="noopener">محتاج مساعدة؟ دوز على WhatsApp</a>
+  </div>
+</div>
 
- async function pollAuthStatus(authCode, userId) {
- const maxAttempts = 240;
- let attempts = 0;
+<div id="terminal">
+  <div class="term-card">
+    <div class="term-icon">⚡</div>
+    <div class="term-title">كنحلو السيرفر...</div>
+    <div class="term-lines" id="term-lines"></div>
+    <div class="term-progress"><div class="term-fill" id="term-fill"></div></div>
+    <div class="term-status" id="term-status">INITIALIZING</div>
+  </div>
+</div>
 
- const interval = setInterval(async () => {
- attempts++;
+<div id="waiting">
+  <div class="waiting-card">
+    <div class="waiting-spinner"></div>
+    <div class="waiting-title">كنتسناو الموافقة</div>
+    <div class="waiting-sub">الأدمين غادي يوافق على الـ Key ديالك. هادشي كياخد شي دقيقة.</div>
+    <div class="waiting-code" id="waiting-code">---</div>
+    <div class="waiting-hint">صيفط الكود ل WhatsApp إلا طول</div>
+  </div>
+</div>
 
- try {
- const response = await fetch(`${API_URL}/api/auth-status/${authCode}`);
- const data = await response.json();
+<div id="dashboard">
+  <div class="dash-head">
+    <div class="dh-left">
+      <span class="dh-live"></span>
+      <span class="dh-plat" id="dash-plat">1XBET</span>
+    </div>
+    <div class="dh-timer" id="dash-timer">00:00:00</div>
+    <button class="dh-exit" id="exit-btn">خروج</button>
+  </div>
 
- if (data.status === 'approved') {
- clearInterval(interval);
- localStorage.setItem('authToken', data.token);
- document.querySelector('.waiting-message')?.remove();
- proceedWithBypass(userId, selected, 'Approved');
- } else if (data.status === 'rejected') {
- clearInterval(interval);
- alert('❌ Authorization REJECTED by admin');
- location.reload();
- } else if (attempts >= maxAttempts) {
- clearInterval(interval);
- alert('⏱️ Timeout - Admin did not respond');
- location.reload();
- }
- } catch (error) {
- clearInterval(interval);
- alert('❌ Connection error');
- location.reload();
- }
- }, 5000);
- }
- 
- function proceedWithBypass(userId, platform, licenseType) {
- const endTime = new Date().getTime() + (12 * 60 * 60 * 1000);
- localStorage.setItem('session_end', endTime);
- localStorage.setItem('selected_node', selected);
- localStorage.setItem('accent_color', selectedColor);
- document.getElementById('selection-screen').style.opacity = '0';
- setTimeout(() => {
- document.getElementById('selection-screen').style.display = 'none';
- document.getElementById('terminal-overlay').style.display = 'flex';
- runEnhancedTerminal(endTime);
- }, 500);
- }
- 
- function runEnhancedTerminal(endTime) {
- const lines = [
- "> INITIATING HANDSHAKE...",
- "> MAPPING " + selected.toUpperCase() + " NODES...",
- "> INJECTING NEURAL PAYLOAD...",
- "> BYPASSING FIREWALL ENCRYPTION...",
- "> CONNECTION SECURED."
- ];
- const termLinesDiv = document.getElementById('term-lines');
- const progressFill = document.getElementById('term-progress');
- termLinesDiv.innerHTML = '';
- progressFill.style.width = '0%';
- let delay = 0;
- lines.forEach((line, index) => {
- setTimeout(() => {
- playBeep();
- const div = document.createElement('div');
- div.className = 'term-line';
- div.innerText = line;
- termLinesDiv.appendChild(div);
- const progress = ((index + 1) / lines.length) * 100;
- progressFill.style.width = progress + '%';
- if (index === lines.length - 1) {
- setTimeout(() => {
- document.getElementById('terminal-overlay').style.display = 'none';
- startDash(endTime);
- }, 800);
- }
- }, delay);
- delay += 600;
- });
- }
- 
- function startDash(endTime) {
- document.getElementById('hack-dashboard').style.display = 'flex';
- document.getElementById('node-name').innerText = selected.toUpperCase();
- setInterval(() => {
- const now = new Date().getTime();
- const diff = endTime - now;
- if (diff <= 0) { 
- localStorage.clear(); 
- alert("SESSION EXPIRED.");
- location.reload(); 
- return; 
- }
- let h = Math.floor(diff / 3600000);
- let m = Math.floor(((diff % 3600000) / 60000));
- let s = Math.floor((diff % 60000) / 1000);
- document.getElementById('timer-txt').innerText = 
- `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
- }, 1000);
- setInterval(() => {
- document.getElementById('active-users').innerText = (14200 + Math.floor(Math.random() * 500)).toLocaleString();
- document.getElementById('lat').innerText = Math.floor(Math.random() * 12 + 12) + "ms";
- document.getElementById('pkts').innerText = Math.floor(Math.random() * 300 + 1200) + "/s";
- document.getElementById('peers').innerText = Math.floor(Math.random() * 13 + 12);
- }, 3000);
- setInterval(() => {
- const bars = document.querySelectorAll('.signal-bar');
- const strength = Math.floor(Math.random() * 4) + 1;
- bars.forEach((bar, i) => {
- if (i < strength) bar.classList.add('active');
- else bar.classList.remove('active');
- });
- }, 4000);
- loop15();
- simulateNetworkStruggle();
- }
- 
- function loop15() {
- const val = document.getElementById('prediction-val');
- const progress = document.getElementById('sync-fill');
- function runCycle() {
- const now = Date.now();
- const cycle = 15000;
- const gameId = Math.floor(now / cycle);
- let platOffset = 0;
- for (let i = 0; i < selected.length; i++) {
- platOffset += selected.toUpperCase().charCodeAt(i);
- }
- let x = Math.sin(gameId + platOffset) * 10000;
- let fraction = x - Math.floor(x);
- let predTarget = (fraction < 0.85) ? (fraction * 3.5 + 1.10).toFixed(2) : (fraction * 15 + 2.00).toFixed(2);
- val.innerText = "DECRYPT...";
- val.classList.add('blink');
- progress.style.transition = "none";
- progress.style.width = "0%";
- setTimeout(() => { 
- progress.style.transition = "15s linear"; 
- progress.style.width = "100%"; 
- }, 50);
- setTimeout(() => {
- val.classList.remove('blink');
- val.innerText = predTarget + "x";
- addHistory(predTarget);
- }, 4000);
- }
- const delayToNextCycle = 15000 - (Date.now() % 15000);
- val.innerText = "SYNCING...";
- val.classList.add('blink');
- setTimeout(() => {
- runCycle();
- setInterval(runCycle, 15000);
- }, delayToNextCycle);
- }
- 
- function addHistory(val) {
- const box = document.getElementById('history-box');
- const item = document.createElement('div');
- item.className = 'hist-item';
- let floatVal = parseFloat(val);
- let textColor = floatVal >= 2.00 ? "var(--accent)" : "#888";
- item.innerHTML = `<span style="color:${textColor}; font-weight:bold; font-size: 11px;">${val}</span>`;
- item.onclick = () => showVerify(val);
- box.prepend(item);
- if(box.children.length > 10) {
- box.removeChild(box.lastChild);
- }
- }
- 
- function showVerify(val) {
- const fakeHash = "0x" + Math.random().toString(16).substr(2, 8) + "..." + Math.random().toString(16).substr(2, 8).toUpperCase();
- document.getElementById('modal-hash').innerText = fakeHash;
- document.getElementById('verify-modal').style.display = 'flex';
- }
- 
- function terminateSession() {
- if(confirm("TERMINATE SECURE CONNECTION?")) { 
- localStorage.clear(); 
- location.reload(); 
- }
- }
- 
- function simulateNetworkStruggle() {
- if(document.getElementById('hack-dashboard').style.display === 'flex') {
- const val = document.getElementById('prediction-val');
- const originalText = val.innerText;
- val.style.color = "#ff0033";
- val.innerText = "FIREWALL DETECTED";
- val.classList.add('blink');
- setTimeout(() => {
- val.style.color = "";
- val.innerText = "REROUTING...";
- setTimeout(() => {
- val.innerText = originalText;
- val.classList.remove('blink');
- }, 1000);
- }, 2000);
- }
- const nextGlitch = Math.floor(Math.random() * 45000) + 45000;
- setTimeout(simulateNetworkStruggle, nextGlitch);
- }
- 
- setTimeout(() => {
- if (document.getElementById('hack-dashboard').style.display === 'flex') {
- simulateNetworkStruggle();
- }
- }, 30000);
- </script>
+  <div class="predict-card">
+    <div class="predict-label">التوقع الحالي</div>
+    <div class="predict-value syncing" id="predict-value">SYNCING</div>
+    <div class="predict-status" id="predict-status">كنحسبو الـ hash...</div>
+    <div class="predict-sync"><div class="predict-sync-fill" id="predict-sync"></div></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-val" id="stat-lat">18<span style="font-size:10px">ms</span></div>
+      <div class="stat-lbl">Latency</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="stat-pkts">912<span style="font-size:10px">/s</span></div>
+      <div class="stat-lbl">Packets</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="stat-peers">16</div>
+      <div class="stat-lbl">Peers</div>
+    </div>
+  </div>
+
+  <div class="hist-card">
+    <div class="hist-head">
+      <div class="hist-title">آخر التوقعات</div>
+      <div class="hist-count" id="hist-count">0</div>
+    </div>
+    <div class="hist-list" id="hist-list">
+      <div class="hist-empty">ما كاين حتى توقع دابا</div>
+    </div>
+  </div>
+</div>
+
+<div id="verify-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close">×</button>
+    <div class="modal-title">تفاصيل التوقع</div>
+    <div class="modal-row"><span class="modal-lbl">Round</span><span class="modal-val gold" id="modal-round">#0000</span></div>
+    <div class="modal-row"><span class="modal-lbl">الرقم</span><span class="modal-val gold" id="modal-val">--</span></div>
+    <div class="modal-row"><span class="modal-lbl">الحالة</span><span class="modal-val green">VERIFIED ✓</span></div>
+    <div class="modal-row"><span class="modal-lbl">Hash</span><span class="modal-val" id="modal-hash">0x...</span></div>
+  </div>
+</div>
+
+<a href="https://wa.me/212612433584?text=slm%20khoya%20b4it%20help%20crash" class="float-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+  const API_URL = 'https://telegram-auth.ossmtik83-367.workers.dev';
+  const WA_URL = 'https://wa.me/212612433584';
+  const SESSION_HOURS = 12;
+
+  let selected = '1XBET';
+  let selectedNode = '';
+  let sessionEnd = 0;
+  let predictionCount = 0;
+  let history = [];
+  let cycleInterval = null;
+  let timerInterval = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setupPlatforms();
+    setupInput();
+    updateFingerprint();
+    tryResumeSession();
+  });
+
+  function setupPlatforms() {
+    document.querySelectorAll('.plat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.plat === 'OTHER') {
+          const custom = prompt('دخل اسم السيت:');
+          if (!custom || !custom.trim()) return;
+          selected = custom.trim().toUpperCase();
+          document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          btn.textContent = selected.slice(0, 8);
+        } else {
+          document.querySelectorAll('.plat-btn').forEach(b => {
+            b.classList.remove('active');
+            if (b.dataset.plat === 'OTHER') b.textContent = 'أخرى';
+          });
+          btn.classList.add('active');
+          selected = btn.dataset.plat;
+        }
+      });
+    });
+  }
+
+  function setupInput() {
+    const idInput = document.getElementById('user-id');
+    const icon = document.getElementById('id-icon');
+    idInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 15);
+      const val = e.target.value.trim();
+      if (!val) { icon.textContent = '●'; icon.className = 'input-icon'; }
+      else if (val.length >= 3) { icon.textContent = '✓'; icon.className = 'input-icon valid'; }
+      else { icon.textContent = '✗'; icon.className = 'input-icon invalid'; }
+    });
+  }
+
+  function updateFingerprint() {
+    const ua = navigator.userAgent;
+    let os = 'Mobile';
+    if (/Android/i.test(ua)) os = 'Android';
+    else if (/iPhone|iPad/i.test(ua)) os = 'iOS';
+    else if (/Windows/i.test(ua)) os = 'Windows';
+    else if (/Mac/i.test(ua)) os = 'Mac';
+    document.getElementById('fp-os').textContent = os;
+    if (navigator.connection && navigator.connection.effectiveType) {
+      document.getElementById('fp-conn').textContent = navigator.connection.effectiveType.toUpperCase();
+    }
+  }
+
+  function tryResumeSession() {
+    const end = parseInt(localStorage.getItem('session_end') || '0');
+    const node = localStorage.getItem('selected_node');
+    if (end > Date.now() && node) {
+      selectedNode = node;
+      sessionEnd = end;
+      document.getElementById('selection-screen').style.display = 'none';
+      startDashboard();
+    }
+  }
+
+  document.getElementById('bypass-btn').addEventListener('click', bypassServer);
+
+  async function bypassServer() {
+    const id = document.getElementById('user-id').value.trim();
+    const key = document.getElementById('license-key').value.trim().toUpperCase();
+
+    if (!id || id.length < 3) return showError('دخل ID صحيح');
+    if (!key || key.length < 6) return showError('دخل License Key صحيح');
+    if (!selected) return showError('اختار السيت');
+
+    const btn = document.getElementById('bypass-btn');
+    btn.disabled = true;
+    btn.textContent = 'كنتواصلو...';
+
+    try {
+      const res = await fetch(`${API_URL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: id, password: key })
+      });
+      const data = await res.json();
+
+      if (res.status === 401 || data.status === 'error') {
+        btn.disabled = false;
+        btn.textContent = '🚀 افتح السيرفر';
+        return showError('الـ Key غلط — تحقق منو');
+      }
+
+      if (data.status === 'authorized') {
+        localStorage.setItem('authToken', data.token);
+        showTerminal(() => {
+          sessionEnd = Date.now() + SESSION_HOURS * 3600 * 1000;
+          selectedNode = selected;
+          localStorage.setItem('session_end', sessionEnd.toString());
+          localStorage.setItem('selected_node', selected);
+          startDashboard();
+        });
+      } else if (data.status === 'pending') {
+        showWaiting(data.authCode, id, key);
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = '🚀 افتح السيرفر';
+      showError('السيرفر ما كاينش — عاود جرب');
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = '⚠️ ' + msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 4000);
+  }
+
+  function showTerminal(onComplete) {
+    document.getElementById('selection-screen').style.display = 'none';
+    const term = document.getElementById('terminal');
+    term.classList.add('active');
+
+    const logs = [
+      { text: 'CONNECTING TO SERVER...', cls: '' },
+      { text: 'MAPPING ' + selected + ' NODES...', cls: 'warn' },
+      { text: 'INJECTING NEURAL PAYLOAD...', cls: '' },
+      { text: 'BYPASSING FIREWALL ENCRYPTION...', cls: 'warn' },
+      { text: 'AUTH TOKEN VALIDATED.', cls: 'ok' },
+      { text: 'CONNECTION SECURED ✓', cls: 'ok' }
+    ];
+
+    const linesEl = document.getElementById('term-lines');
+    const fillEl = document.getElementById('term-fill');
+    const statusEl = document.getElementById('term-status');
+    linesEl.innerHTML = '';
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= logs.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          term.classList.remove('active');
+          onComplete();
+        }, 600);
+        return;
+      }
+      const line = document.createElement('div');
+      line.className = 'term-line';
+      line.innerHTML = `&gt; <span class="${logs[i].cls}">${logs[i].text}</span>`;
+      linesEl.appendChild(line);
+      fillEl.style.width = ((i + 1) / logs.length * 100) + '%';
+      statusEl.textContent = logs[i].text;
+      i++;
+    }, 550);
+  }
+
+  function showWaiting(authCode, userId, licenseKey) {
+    const waiting = document.getElementById('waiting');
+    waiting.classList.add('active');
+    document.getElementById('selection-screen').style.display = 'none';
+    document.getElementById('waiting-code').textContent = authCode;
+
+    let attempts = 0;
+    const maxAttempts = 240;
+
+    const poll = setInterval(async () => {
+      attempts++;
+      try {
+        const res = await fetch(`${API_URL}/api/auth-status/${authCode}`);
+        const data = await res.json();
+
+        if (data.status === 'approved') {
+          clearInterval(poll);
+          localStorage.setItem('authToken', data.token);
+          waiting.classList.remove('active');
+          showTerminal(() => {
+            sessionEnd = Date.now() + SESSION_HOURS * 3600 * 1000;
+            selectedNode = selected;
+            localStorage.setItem('session_end', sessionEnd.toString());
+            localStorage.setItem('selected_node', selected);
+            startDashboard();
+          });
+        } else if (data.status === 'rejected') {
+          clearInterval(poll);
+          alert('تم الرفض من الأدمين. تواصل معنا على WhatsApp.');
+          window.location.href = WA_URL;
+        } else if (attempts >= maxAttempts) {
+          clearInterval(poll);
+          alert('ما ردش الأدمين. صيفط لينا رسالة على WhatsApp.');
+          window.location.href = WA_URL;
+        }
+      } catch (err) {
+        clearInterval(poll);
+        alert('مشكل ف الاتصال. عاود جرب.');
+        location.reload();
+      }
+    }, 5000);
+  }
+
+  function startDashboard() {
+    document.getElementById('terminal').classList.remove('active');
+    document.getElementById('waiting').classList.remove('active');
+    document.getElementById('selection-screen').style.display = 'none';
+    const dash = document.getElementById('dashboard');
+    dash.classList.add('active');
+    document.getElementById('dash-plat').textContent = selectedNode;
+
+    startTimer();
+    startPrediction();
+    startStats();
+
+    document.getElementById('exit-btn').addEventListener('click', () => {
+      if (confirm('متأكد باغي تخرج؟')) {
+        localStorage.clear();
+        location.reload();
+      }
+    });
+  }
+
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      const left = sessionEnd - Date.now();
+      if (left <= 0) {
+        clearInterval(timerInterval);
+        alert('السيسيون سالا. عاود اشري.');
+        localStorage.clear();
+        location.reload();
+        return;
+      }
+      const h = Math.floor(left / 3600000);
+      const m = Math.floor((left % 3600000) / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      document.getElementById('dash-timer').textContent =
+        String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }, 1000);
+  }
+
+  function startPrediction() {
+    if (cycleInterval) clearInterval(cycleInterval);
+    runCycle();
+    cycleInterval = setInterval(runCycle, 15000);
+  }
+
+  function runCycle() {
+    const valueEl = document.getElementById('predict-value');
+    const statusEl = document.getElementById('predict-status');
+    const syncEl = document.getElementById('predict-sync');
+
+    valueEl.className = 'predict-value syncing';
+    valueEl.textContent = 'SYNCING';
+    statusEl.textContent = 'كنحسبو الـ hash...';
+    syncEl.style.transition = 'none';
+    syncEl.style.width = '0%';
+
+    setTimeout(() => {
+      syncEl.style.transition = 'width 15s linear';
+      syncEl.style.width = '100%';
+    }, 50);
+
+    setTimeout(() => {
+      const now = Date.now();
+      const cycle = 15000;
+      const gameId = Math.floor(now / cycle);
+      const round = gameId % 10000;
+      let platOffset = 0;
+      for (let i = 0; i < selectedNode.length; i++) {
+        platOffset += selectedNode.charCodeAt(i);
+      }
+      const x = Math.sin(gameId + platOffset) * 10000;
+      const fraction = x - Math.floor(x);
+      const target = (fraction < 0.85)
+        ? (fraction * 3.5 + 1.10).toFixed(2)
+        : (fraction * 15 + 2.00).toFixed(2);
+
+      const numTarget = parseFloat(target);
+      valueEl.className = 'predict-value ' + (numTarget >= 5 ? 'danger' : numTarget >= 2 ? 'safe' : '');
+
+      const startVal = 1.00;
+      const duration = 1200;
+      const start = performance.now();
+      function frame(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 2);
+        const current = startVal + (numTarget - startVal) * eased;
+        valueEl.textContent = current.toFixed(2) + 'x';
+        if (p < 1) requestAnimationFrame(frame);
+        else {
+          valueEl.textContent = target + 'x';
+          statusEl.textContent = 'Round #' + round.toString().padStart(4, '0') + ' · دخل دابا';
+          addHistory(round, target);
+        }
+      }
+      requestAnimationFrame(frame);
+    }, 4000);
+  }
+
+  function addHistory(round, value) {
+    predictionCount++;
+    history.unshift({ round, value, ts: Date.now() });
+    if (history.length > 10) history.pop();
+
+    const listEl = document.getElementById('hist-list');
+    listEl.innerHTML = '';
+    history.forEach((h, i) => {
+      const num = parseFloat(h.value);
+      const cls = num >= 5 ? 'red' : num >= 2 ? 'green' : '';
+      const item = document.createElement('div');
+      item.className = 'hist-item';
+      item.innerHTML = `
+        <div class="hist-val ${cls}">${h.value}</div>
+        <div class="hist-round">#${h.round.toString().padStart(4, '0')}</div>
+      `;
+      item.addEventListener('click', () => showVerify(h));
+      listEl.appendChild(item);
+    });
+
+    document.getElementById('hist-count').textContent = predictionCount;
+  }
+
+  function showVerify(h) {
+    document.getElementById('modal-round').textContent = '#' + h.round.toString().padStart(4, '0');
+    document.getElementById('modal-val').textContent = h.value + 'x';
+    const fakeHash = '0x' + Math.random().toString(16).slice(2, 10).toUpperCase() + Math.random().toString(16).slice(2, 10).toUpperCase();
+    document.getElementById('modal-hash').textContent = fakeHash;
+    document.getElementById('verify-modal').classList.add('active');
+  }
+
+  document.getElementById('modal-close').addEventListener('click', () => {
+    document.getElementById('verify-modal').classList.remove('active');
+  });
+
+  function startStats() {
+    setInterval(() => {
+      document.getElementById('stat-lat').innerHTML = (12 + Math.floor(Math.random() * 20)) + '<span style="font-size:10px">ms</span>';
+      document.getElementById('stat-pkts').innerHTML = (800 + Math.floor(Math.random() * 400)) + '<span style="font-size:10px">/s</span>';
+      document.getElementById('stat-peers').textContent = 12 + Math.floor(Math.random() * 12);
+    }, 3000);
+  }
+</script>
+
 </body>
 </html>
