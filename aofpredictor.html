@@ -1,661 +1,645 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="ltr">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <title>AFRICA HACKS | Neural Orchard v8.5</title>
- <style>
- @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;900&display=swap');
- :root { 
- --gold: #ffcc00; 
- --gold-glow: rgba(255, 204, 0, 0.4);
- --gold-dim: rgba(255, 204, 0, 0.05);
- --bg: #0b0f07; 
- --panel: rgba(20, 24, 15, 0.95);
- --border: #2a1f0a;
- }
- * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
- 
- body { 
- background: var(--bg); color: white; font-family: 'JetBrains Mono', monospace; 
- margin: 0; overflow: hidden; height: 100vh; font-size: 10px; user-select: none; 
- }
- #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; opacity: 0.6; }
- 
- .crt-overlay {
- position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
- background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
- linear-gradient(90deg, rgba(255, 204, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
- z-index: 1000; background-size: 100% 4px, 3px 100%;
- animation: scanline 8s linear infinite;
- }
- #selection-screen { 
- max-width: 450px; margin: 0 auto; padding: 20px; text-align: center;
- height: 100vh; overflow-y: auto; position: relative; z-index: 10;
- animation: fadeIn 0.8s ease-out;
- }
- .glitch-title {
- font-size: 20px; font-weight: 900; letter-spacing: 8px; color: var(--gold);
- position: relative; display: inline-block;
- animation: textGlitch 4s infinite;
- }
- .logo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 25px 0; perspective: 1000px; }
- 
- .card { 
- background: #050505; border: 1px solid #111; padding: 10px; border-radius: 8px; 
- cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
- height: 50px; display: flex; align-items: center; justify-content: center; 
- opacity: 0; animation: cardPop 0.6s forwards ease-out;
- }
- .card:nth-child(1) { animation-delay: 0.1s; }
- .card:nth-child(2) { animation-delay: 0.15s; }
- .card:nth-child(3) { animation-delay: 0.2s; }
- .card:nth-child(4) { animation-delay: 0.25s; }
- .card:nth-child(5) { animation-delay: 0.3s; }
- .card:nth-child(6) { animation-delay: 0.35s; }
- .card:nth-child(7) { animation-delay: 0.4s; }
- .card:nth-child(8) { animation-delay: 0.45s; }
- .card:nth-child(9) { animation-delay: 0.5s; }
- .card:nth-child(10) { animation-delay: 0.55s; }
- .card:nth-child(11) { animation-delay: 0.6s; }
- .card:nth-child(12) { animation-delay: 0.65s; }
- .card img { width: 100%; max-height: 25px; filter: grayscale(1) opacity(0.4); transition: 0.3s; }
- .card:hover { transform: translateY(-3px) scale(1.02); border-color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
- .card.active { 
- border-color: var(--gold); background: var(--gold-dim); 
- box-shadow: 0 0 20px var(--gold-glow); transform: scale(1.05); 
- }
- .card.active img { filter: drop-shadow(0 0 5px var(--gold)); opacity: 1; }
- .card.other-btn { font-size: 8px; color: #444; border-style: dashed; }
- .card.active.other-btn { color: var(--gold); border-style: solid; }
- .activation-box { 
- background: var(--panel); border: 1px solid var(--border); padding: 25px; 
- border-radius: 15px; margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
- }
- input { 
- width: 100%; padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid #222; 
- color: var(--gold); text-align: center; border-radius: 8px; 
- margin-bottom: 12px; outline: none; font-family: inherit; font-weight: bold;
- transition: 0.3s; letter-spacing: 1px;
- }
- input:focus { border-color: var(--gold); box-shadow: inset 0 0 10px var(--gold-dim), 0 0 15px var(--gold-glow); background: #000; }
- .btn-main { 
- background: var(--gold); color: black; padding: 18px; border: none; 
- border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; 
- text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
- animation: pulseGlow 2.5s infinite; position: relative; overflow: hidden;
- }
- .btn-main:active { transform: scale(0.96); }
- #terminal { 
- position: fixed; inset: 0; background: #020202; z-index: 500; 
- display: none; flex-direction: column; align-items: center; justify-content: center; 
- }
- .term-log { color: var(--gold); font-size: 10px; margin: 4px; opacity: 0; animation: logIn 0.3s forwards; text-shadow: 0 0 8px var(--gold); letter-spacing: 1px; width: 100%; }
- .bar-wrap { width: 280px; height: 3px; background: #111; margin-top: 30px; position: relative; overflow: hidden; border-radius: 2px; }
- .bar-fill { height: 100%; width: 0%; background: var(--gold); box-shadow: 0 0 15px var(--gold); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
- #dashboard { 
- position: fixed; inset: 0; background: var(--bg); z-index: 100; 
- display: none; flex-direction: column; animation: dashEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
- }
- .header { height: 60px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(5,7,4,0.8); backdrop-filter: blur(10px); }
- 
- .viewport {
- flex: 1; margin: 20px; border: 1px solid var(--border); border-radius: 20px;
- background: var(--panel); display: flex; flex-direction: column; align-items: center; padding: 15px;
- box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.6); position: relative; overflow: hidden;
- }
- .viewport::before {
- content: ''; position: absolute; left: 0; top: 100%; width: 100%; height: 10px;
- background: linear-gradient(to bottom, transparent, var(--gold)); opacity: 0; z-index: 2; pointer-events: none;
- }
- .viewport.scanning::before { animation: radarSweep 1.5s ease-in-out; }
- .grid {
- display: grid; grid-template-columns: 40px repeat(5, 1fr);
- grid-template-rows: repeat(10, 1fr);
- gap: 6px; width: 100%; max-width: 380px; height: 100%; z-index: 3;
- }
- .row-lbl { display: flex; align-items: center; justify-content: center; color: #444; font-size: 9px; font-weight: 900; transition: color 0.3s; }
- .row-lbl.active { color: var(--gold); text-shadow: 0 0 5px var(--gold); }
- 
- .cell { 
- background: rgba(0,0,0,0.4); border: 1px solid #1a1a1a; border-radius: 6px; 
- display: flex; align-items: center; justify-content: center; font-size: 20px;
- transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden;
- }
- .cell.radar-hit { background: rgba(255,204,0,0.2); border-color: var(--gold); box-shadow: inset 0 0 10px var(--gold-glow); transition: 0.1s; }
- .cell.safe { 
- background: var(--gold-dim); border-color: var(--gold); 
- box-shadow: 0 0 20px var(--gold-glow), inset 0 0 10px var(--gold-glow); transform: scale(1.05); z-index: 5;
- }
-
- /* ============================================ */
- /* WHATSAPP & TELEGRAM FLOATING BUTTONS */
- /* ============================================ */
- .social-float-container {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 9999;
-}
-
-.social-float {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    transition: all 0.3s ease;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-.social-float:hover {
-    transform: scale(1.15);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
-}
-
-.social-float svg {
-    width: 28px;
-    height: 28px;
-    fill: white;
-}
-
-/* WhatsApp Button */
-.whatsapp-float {
-    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
-    animation: floatPulse 2s infinite;
-}
-
-.whatsapp-float:hover {
-    background: linear-gradient(135deg, #128c7e 0%, #075e54 100%);
-    box-shadow: 0 6px 25px rgba(37, 211, 102, 0.5);
-}
-
-/* Telegram Button */
-.telegram-float {
-    background: linear-gradient(135deg, #0088cc 0%, #005f8c 100%);
-    animation: floatPulse 2s infinite;
-    animation-delay: 0.5s;
-}
-
-.telegram-float:hover {
-    background: linear-gradient(135deg, #005f8c 0%, #003d57 100%);
-    box-shadow: 0 6px 25px rgba(0, 136, 204, 0.5);
-}
-
-@keyframes floatPulse {
-    0%, 100% {
-        transform: translateY(0);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Apple of Fortune Predictor — AFRICA HACKS 🇲🇦</title>
+  <link rel="icon" type="image/png" href="logos/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --gold:#FFB800;--gold-soft:#FFCC33;--gold-dim:rgba(255,184,0,0.08);
+      --red:#E63946;--red-glow:rgba(230,57,70,0.4);
+      --green:#22C55E;--green-glow:rgba(34,197,94,0.4);--green-dim:rgba(34,197,94,0.1);
+      --bg:#0a0805;--panel:#141009;--panel-2:#1a1510;--panel-3:#221a11;
+      --border:#2a2018;--border-gold:rgba(255,184,0,0.3);--border-green:rgba(34,197,94,0.35);
+      --text:#fff;--text-dim:#a8a09a;--text-muted:#6b635c;--wa:#25d366;
     }
-    50% {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
-    }
-}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:'Poppins','Cairo',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;overflow-x:hidden;min-height:100vh;-webkit-font-smoothing:antialiased}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(255,184,0,0.1) 0%,transparent 45%),radial-gradient(ellipse at 80% 100%,rgba(34,197,94,0.08) 0%,transparent 45%);pointer-events:none;z-index:0}
+    .wrap{max-width:520px;margin:0 auto;padding:24px 18px;position:relative;z-index:1}
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .social-float-container {
-        bottom: 18px;
-        right: 18px;
-        gap: 10px;
-    }
-    
-    .social-float {
-        width: 48px;
-        height: 48px;
-    }
-    
-    .social-float svg {
-        width: 24px;
-        height: 24px;
-    }
-}
- /* ============================================ */
+    .nav{max-width:520px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--text);font-weight:800;font-size:15px}
+    .logo-img{width:28px;height:28px;border-radius:7px;object-fit:cover;box-shadow:0 0 16px rgba(255,184,0,0.5)}
+    .logo .gold{color:var(--gold)}
+    .nav-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:999px;font-family:inherit;font-size:12px;font-weight:700;text-decoration:none;background:var(--wa);color:#fff;box-shadow:0 0 12px rgba(37,211,102,0.4)}
 
- @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); filter: blur(5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
- @keyframes logIn { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
- @keyframes dashEntrance { from { opacity: 0; transform: scale(1.1); filter: blur(15px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
- @keyframes applePop { 
- 0% { transform: scale(0) translateY(10px) rotate(-45deg); opacity: 0; } 
- 60% { transform: scale(1.3) translateY(-5px) rotate(10deg); opacity: 1; filter: drop-shadow(0 0 10px var(--gold)); } 
- 100% { transform: scale(1) translateY(0) rotate(0); filter: drop-shadow(0 0 5px var(--gold)); } 
- }
- @keyframes scanline { 0% { background-position: 0 0; } 100% { background-position: 0 100vh; } }
- @keyframes cardPop { 0% { opacity: 0; transform: translateY(20px) rotateX(-20deg); } 100% { opacity: 1; transform: translateY(0) rotateX(0); } }
- @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 10px var(--gold-glow); } 50% { box-shadow: 0 0 25px var(--gold), 0 0 40px var(--gold-glow); } }
- @keyframes radarSweep { 0% { top: 100%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: -10px; opacity: 0; } }
- @keyframes textGlitch {
- 0%, 96%, 98%, 100% { transform: translate(0); text-shadow: none; }
- 97% { transform: translate(-2px, 1px); text-shadow: -2px 0 red, 2px 0 cyan; }
- 99% { transform: translate(2px, -1px); text-shadow: 2px 0 red, -2px 0 cyan; }
- }
- @keyframes spin { to { transform: rotate(360deg); } }
- .apple-anim { animation: applePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
- .waiting-message {
- background: rgba(0,0,0,0.85); border: 2px solid #ffcc00; border-radius: 8px;
- padding: 20px 15px; margin: 15px auto; text-align: center;
- font-size: 14px; font-weight: bold; letter-spacing: 2px; color: #ffcc00;
- box-shadow: 0 0 20px rgba(255,204,0,0.3); backdrop-filter: blur(5px);
- }
- .waiting-message .spinner {
- width: 30px; height: 30px; border: 3px solid rgba(255,204,0,0.3);
- border-top-color: #ffcc00; border-radius: 50%;
- animation: spin 1s linear infinite; margin: 0 auto 10px;
- }
- .waiting-message .small { font-size: 10px; color: #aaa; margin-top: 8px; }
- </style>
+    #selection-screen{position:relative;z-index:2;padding:0 18px 40px;max-width:480px;margin:0 auto}
+    .select-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:22px;padding:28px 22px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(34,197,94,0.08) inset;position:relative;overflow:hidden}
+    .select-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(34,197,94,0.6),transparent)}
+    .select-head{text-align:center;margin-bottom:24px}
+    .select-icon{font-size:44px;margin-bottom:10px;display:block;filter:drop-shadow(0 0 20px rgba(34,197,94,0.5))}
+    .select-head h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.02em;margin-bottom:4px}
+    .select-head h1 .green{color:var(--green);text-shadow:0 0 24px var(--green-glow)}
+    .select-head p{font-size:12px;color:var(--text-muted);font-weight:600}
+
+    .form-label{display:block;font-size:11px;font-weight:900;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;margin-top:18px}
+    .form-label:first-of-type{margin-top:0}
+
+    .platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .plat-btn{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:10px;padding:10px 4px;cursor:pointer;display:flex;align-items:center;justify-content:center;min-height:46px;transition:all .15s ease}
+    .plat-btn img{max-width:100%;max-height:20px;filter:grayscale(1) opacity(.4);transition:all .15s}
+    .plat-btn.active{border-color:var(--green);background:rgba(34,197,94,0.1);box-shadow:0 0 0 1px var(--green),0 0 15px rgba(34,197,94,0.25)}
+    .plat-btn.active img{filter:none;opacity:1}
+    .plat-btn.other-btn{font-size:10px;font-weight:900;color:var(--text-dim)}
+    .plat-btn.other-btn.active{color:var(--green)}
+
+    .input-wrap{position:relative}
+    .form-input{width:100%;padding:14px 16px;background:rgba(0,0,0,.45);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:15px;font-weight:600;border-radius:12px;outline:none;transition:all .2s ease;text-align:center;letter-spacing:.04em}
+    .form-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,0.1)}
+    .form-input::placeholder{color:var(--text-muted);font-weight:500}
+    .input-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text-muted)}
+    .input-icon.valid{color:var(--green)}
+    .input-icon.invalid{color:var(--red)}
+
+    .btn-submit{width:100%;padding:17px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:900;background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(34,197,94,0.4),0 0 0 1px rgba(34,197,94,0.5) inset;letter-spacing:.03em;transition:all .15s ease;margin-top:22px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(34,197,94,0.6)}
+    .btn-submit:disabled{background:rgba(255,255,255,0.05);color:var(--text-muted);cursor:not-allowed;box-shadow:none}
+
+    .helper-link{display:block;text-align:center;font-size:12px;color:var(--text-muted);text-decoration:none;margin-top:16px;font-weight:600}
+    .helper-link:hover{color:var(--gold)}
+
+    .fingerprint{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-top:20px;font-size:10px;color:var(--text-muted);font-weight:700}
+    .fp-row{display:flex;justify-content:space-between;padding:4px 0}
+    .fp-row span:last-child{color:var(--text);font-weight:800}
+
+    .error-msg{background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.35);color:#FF6B7A;padding:12px 14px;border-radius:10px;font-size:12px;font-weight:700;margin-top:14px;text-align:center;display:none;animation:shake .4s ease}
+    .error-msg.show{display:block}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+    #terminal{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    #terminal.active{display:flex}
+    .term-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:20px;padding:28px 24px;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+    .term-icon{font-size:44px;margin-bottom:14px;animation:pulseGreen 1.6s infinite}
+    @keyframes pulseGreen{0%,100%{filter:drop-shadow(0 0 8px rgba(34,197,94,0.4))}50%{filter:drop-shadow(0 0 20px rgba(34,197,94,0.8))}}
+    .term-title{font-size:16px;font-weight:900;margin-bottom:20px;color:var(--green)}
+    .term-lines{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:12px;padding:14px;height:130px;overflow:hidden;text-align:left;margin-bottom:16px}
+    .term-line{font-size:11px;font-weight:700;color:var(--text-dim);margin-bottom:6px;font-family:'Courier New',monospace;animation:logIn .3s ease}
+    .term-line .ok{color:var(--green)}
+    .term-line .warn{color:var(--gold)}
+    @keyframes logIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+    .term-progress{width:100%;height:6px;background:rgba(0,0,0,0.5);border-radius:3px;overflow:hidden;margin-bottom:10px}
+    .term-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),#16a34a);box-shadow:0 0 12px rgba(34,197,94,0.6);transition:width .3s ease}
+    .term-status{font-size:11px;color:var(--text-muted);font-weight:700}
+
+    #waiting{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    #waiting.active{display:flex}
+    .waiting-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid rgba(255,184,0,0.3);border-radius:20px;padding:32px 24px;width:100%;max-width:380px;text-align:center}
+    .waiting-spinner{width:44px;height:44px;border:3px solid rgba(255,184,0,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .waiting-title{font-size:16px;font-weight:900;color:var(--gold);margin-bottom:8px}
+    .waiting-sub{font-size:12px;color:var(--text-dim);line-height:1.7;margin-bottom:16px}
+    .waiting-code{background:rgba(0,0,0,0.5);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:'Courier New',monospace;font-size:16px;font-weight:900;color:var(--gold);letter-spacing:.15em;margin-bottom:12px}
+    .waiting-hint{font-size:10px;color:var(--text-muted);font-weight:700}
+
+    #dashboard{display:none;position:relative;z-index:2;padding:16px 18px 40px;max-width:520px;margin:0 auto}
+    #dashboard.active{display:block;animation:fadeIn .4s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    .dash-head{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
+    .dh-left{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800}
+    .dh-live{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s infinite}
+    @keyframes blink{50%{opacity:.3}}
+    .dh-plat{color:var(--gold)}
+    .dh-timer{font-family:'Courier New',monospace;font-size:14px;font-weight:900;color:var(--text);letter-spacing:.03em}
+    .dh-exit{padding:6px 12px;border-radius:8px;background:rgba(230,57,70,0.15);border:1px solid rgba(230,57,70,0.35);color:#FF6B7A;font-family:inherit;font-size:11px;font-weight:900;cursor:pointer}
+    .dh-exit:hover{background:rgba(230,57,70,0.3);color:#fff}
+
+    .grid-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border-green);border-radius:20px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(34,197,94,0.06) inset}
+    .grid-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);opacity:0.6}
+    .grid-label{font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;text-align:center}
+    .aof-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px}
+    .acell{aspect-ratio:1;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .3s ease;position:relative;overflow:hidden}
+    .acell.scanning{background:rgba(255,184,0,0.15);border-color:var(--gold);animation:scanPulse .4s ease}
+    @keyframes scanPulse{50%{transform:scale(1.08)}}
+    .acell.safe{background:var(--green-dim);border-color:var(--green);box-shadow:0 0 12px rgba(34,197,94,0.4);color:var(--green);animation:reveal .4s ease}
+    .acell.bomb{background:rgba(230,57,70,0.06);border-color:rgba(230,57,70,0.25);color:rgba(230,57,70,0.7)}
+    @keyframes reveal{0%{transform:scale(.5)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+    .mult-display{text-align:center;padding:16px 12px 4px}
+    .mult-label{font-size:10px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+    .mult-value{font-family:'Poppins',sans-serif;font-size:32px;font-weight:900;color:var(--green);text-shadow:0 0 30px var(--green-glow);letter-spacing:-.02em;line-height:1}
+
+    .gen-btn{width:100%;padding:18px;border-radius:14px;font-family:inherit;font-size:16px;font-weight:900;background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(34,197,94,0.4),0 0 0 1px rgba(34,197,94,0.5) inset;letter-spacing:.03em;transition:all .15s ease;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 30px rgba(34,197,94,0.6)}
+    .gen-btn:disabled{background:rgba(255,255,255,0.05);color:var(--text-muted);cursor:not-allowed;box-shadow:none}
+    .gen-btn.scanning{background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#000}
+
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+    .stat-box{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center}
+    .stat-val{font-family:'Poppins',sans-serif;font-size:16px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:4px}
+    .stat-lbl{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+
+    .hist-card{background:linear-gradient(160deg,var(--panel-2),var(--panel));border:1px solid var(--border);border-radius:16px;padding:16px}
+    .hist-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .hist-title{font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px}
+    .hist-title::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green)}
+    .hist-list{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+    .hist-list::-webkit-scrollbar{display:none}
+    .hist-item{flex-shrink:0;min-width:60px;padding:10px 8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;text-align:center;animation:popIn .4s ease}
+    .hist-val{font-family:'Poppins',sans-serif;font-size:13px;font-weight:900;color:var(--green);line-height:1;margin-bottom:4px}
+    .hist-round{font-size:9px;font-weight:700;color:var(--text-muted)}
+    @keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+    .hist-empty{text-align:center;font-size:12px;color:var(--text-muted);font-weight:700;padding:12px 0;width:100%}
+
+    .float-wa{position:fixed;bottom:18px;right:16px;width:54px;height:54px;border-radius:50%;background:var(--wa);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(37,211,102,0.5),0 0 0 4px rgba(37,211,102,0.2);z-index:200;text-decoration:none;animation:floatWa 2.5s infinite}
+    @keyframes floatWa{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .float-wa svg{width:26px;height:26px;fill:#fff}
+  </style>
 </head>
 <body>
-<canvas id="bg-canvas"></canvas>
-<div class="crt-overlay"></div>
 
-<!-- ============================================ -->
-<!-- WHATSAPP & TELEGRAM FLOATING BUTTONS -->
-<!-- ============================================ -->
-<div class="social-float-container">
-    
-    <!-- WhatsApp Button -->
-    <a href="https://wa.me/212612433584" 
-       class="social-float whatsapp-float" 
-       target="_blank" 
-       rel="noopener noreferrer" 
-       aria-label="Contact us on WhatsApp"
-       title="Chat on WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-    </a>
-
-    <!-- Telegram Button -->
-    <a href="https://t.me/africa_hacks" 
-       class="social-float telegram-float" 
-       target="_blank" 
-       rel="noopener noreferrer" 
-       aria-label="Contact us on Telegram"
-       title="Join our Telegram">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-        </svg>
-    </a>
-
-</div>
-<!-- ============================================ -->
+<nav class="nav">
+  <a href="index.html" class="logo">
+    <img src="logos/Africa.png" alt="" class="logo-img" onerror="this.style.display='none'">
+    <span>AFRICA<span class="gold">_HACKS</span> 🇲🇦</span>
+  </a>
+  <a href="https://wa.me/212612433584?text=slm%20khoya%20b4it%20help%20apple" class="nav-btn" target="_blank" rel="noopener">💬 واتساب</a>
+</nav>
 
 <div id="selection-screen">
- <div style="margin-top: 50px;">
- <div class="glitch-title">Apple of fortune predictor</div>
- <div style="font-size: 8px; color: #777; margin-top: 10px; letter-spacing: 4px;">BY AFRICA_HACKS V8.5</div>
- </div>
- <div class="logo-grid">
- <div class="card active" onclick="setPlat(this, '1XBET')"><img src="logos/1xbet.png" alt="1X"></div>
- <div class="card" onclick="setPlat(this, '1WIN')"><img src="logos/1win.png" alt="1W"></div>
- <div class="card" onclick="setPlat(this, 'MELBET')"><img src="logos/melbet.png" alt="MB"></div>
- <div class="card" onclick="setPlat(this, 'MSPORT')"><img src="logos/msport.png" alt="MS"></div>
- <div class="card" onclick="setPlat(this, 'BET9JA')"><img src="logos/bet9ja.png" alt="B9"></div>
- <div class="card" onclick="setPlat(this, 'BETWAY')"><img src="logos/betway.png" alt="BW"></div>
- <div class="card" onclick="setPlat(this, 'LINEBET')"><img src="logos/linebet.png" alt="LB"></div>
- <div class="card" onclick="setPlat(this, 'MOZZART')"><img src="logos/mozzart.png" alt="MZ"></div>
- <div class="card" onclick="setPlat(this, 'PREMIER')"><img src="logos/premierbet.png" alt="PR"></div>
- <div class="card" onclick="setPlat(this, 'SPORTY')"><img src="logos/sportybet.png" alt="SP"></div>
- <div class="card" onclick="setPlat(this, 'GOOBET')"><img src="logos/goobet.png" alt="GB"></div>
- <div class="card other-btn" onclick="setPlat(this, 'OTHER')">OTHER</div>
- </div>
- <div class="activation-box">
- <input type="text" id="user-id" placeholder="ACCOUNT ID">
- <input type="password" id="license-key" placeholder="LICENSE KEY">
- <button class="btn-main" id="bypass-btn" onclick="startBypass()">BYPASS SERVER</button>
- </div>
+  <div class="select-card">
+    <div class="select-head">
+      <span class="select-icon">🍎</span>
+      <h1>افتح <span class="green">السيرفر</span></h1>
+      <p>دخل الـ ID و الـ Key ديالك</p>
+    </div>
+
+    <label class="form-label">🏢 اختار السيت</label>
+    <div class="platforms" id="platforms">
+      <div class="plat-btn active" data-plat="1XBET"><img src="logos/1xbet.png" alt="1xbet"></div>
+      <div class="plat-btn" data-plat="1WIN"><img src="logos/1win.png" alt="1win"></div>
+      <div class="plat-btn" data-plat="MELBET"><img src="logos/melbet.png" alt="Melbet"></div>
+      <div class="plat-btn" data-plat="MSPORT"><img src="logos/msport.png" alt="Msport"></div>
+      <div class="plat-btn" data-plat="BET9JA"><img src="logos/bet9ja.png" alt="Bet9ja"></div>
+      <div class="plat-btn" data-plat="BETWAY"><img src="logos/betway.png" alt="Betway"></div>
+      <div class="plat-btn" data-plat="LINEBET"><img src="logos/linebet.png" alt="Linebet"></div>
+      <div class="plat-btn" data-plat="MOZZART"><img src="logos/mozzart.png" alt="Mozzart"></div>
+      <div class="plat-btn" data-plat="PREMIER"><img src="logos/premierbet.png" alt="Premier"></div>
+      <div class="plat-btn" data-plat="SPORTY"><img src="logos/sportybet.png" alt="Sporty"></div>
+      <div class="plat-btn" data-plat="GOOBET"><img src="logos/goobet.png" alt="Goobet"></div>
+      <div class="plat-btn other-btn" data-plat="OTHER">أخرى</div>
+    </div>
+
+    <label class="form-label">🆔 الـ ID ديال الحساب</label>
+    <div class="input-wrap">
+      <input type="text" id="user-id" class="form-input" placeholder="123456789" inputmode="numeric" autocomplete="off">
+      <span class="input-icon" id="id-icon">●</span>
+    </div>
+
+    <label class="form-label">🎫 الـ License Key</label>
+    <div class="input-wrap">
+      <input type="text" id="license-key" class="form-input" placeholder="AFRICA-XXXX-XXXX" autocomplete="off" style="text-transform:uppercase">
+    </div>
+
+    <button class="btn-submit" id="bypass-btn">🍎 افتح السيرفر</button>
+    <div class="error-msg" id="error-msg"></div>
+
+    <div class="fingerprint">
+      <div class="fp-row"><span>OS</span><span id="fp-os">detecting...</span></div>
+      <div class="fp-row"><span>اتصال</span><span id="fp-conn">secure</span></div>
+      <div class="fp-row"><span>منطقة</span><span>AFR_W</span></div>
+    </div>
+
+    <a href="https://wa.me/212612433584" class="helper-link" target="_blank" rel="noopener">محتاج مساعدة؟ دوز على WhatsApp</a>
+  </div>
 </div>
+
 <div id="terminal">
- <div id="log-box" style="width: 280px; display: flex; flex-direction: column; gap: 2px;"></div>
- <div class="bar-wrap"><div class="bar-fill" id="progress"></div></div>
+  <div class="term-card">
+    <div class="term-icon">⚡</div>
+    <div class="term-title">كنحلو السيرفر...</div>
+    <div class="term-lines" id="term-lines"></div>
+    <div class="term-progress"><div class="term-fill" id="term-fill"></div></div>
+    <div class="term-status" id="term-status">INITIALIZING</div>
+  </div>
 </div>
+
+<div id="waiting">
+  <div class="waiting-card">
+    <div class="waiting-spinner"></div>
+    <div class="waiting-title">كنتسناو الموافقة</div>
+    <div class="waiting-sub">الأدمين غادي يوافق على الـ Key ديالك. هادشي كياخد شي دقيقة.</div>
+    <div class="waiting-code" id="waiting-code">---</div>
+    <div class="waiting-hint">صيفط الكود ل WhatsApp إلا طول</div>
+  </div>
+</div>
+
 <div id="dashboard">
- <div class="header">
- <div><span style="color:var(--gold); font-weight:900;">SYNC:</span> <span id="sync-plat">1XBET</span></div>
- <div id="sync-id" style="color:#888; font-size:9px; font-family: monospace;">ID: --------</div>
- </div>
- <div class="viewport" id="app-viewport">
- <div class="grid" id="game-grid"></div>
- </div>
- <button class="btn-main" id="predict-btn" style="width:calc(100% - 40px); margin: 0 auto 30px;" onclick="runPrediction()">GENERATE PATH</button>
+  <div class="dash-head">
+    <div class="dh-left">
+      <span class="dh-live"></span>
+      <span class="dh-plat" id="dash-plat">1XBET</span>
+    </div>
+    <div class="dh-timer" id="dash-timer">00:00:00</div>
+    <button class="dh-exit" id="exit-btn">خروج</button>
+  </div>
+
+  <div class="grid-card">
+    <div class="grid-label">الخريطة ديال التفاح</div>
+    <div class="aof-grid" id="aof-grid"></div>
+    <div class="mult-display">
+      <div class="mult-label">المضاعف لو خرجت دابا</div>
+      <div class="mult-value" id="mult-value">x 1.00</div>
+    </div>
+  </div>
+
+  <button class="gen-btn" id="gen-btn">🍎 كشف الخريطة</button>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-val" id="stat-lat">18<span style="font-size:10px">ms</span></div>
+      <div class="stat-lbl">Latency</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="stat-round">0</div>
+      <div class="stat-lbl">Rounds</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="stat-peers">16</div>
+      <div class="stat-lbl">Peers</div>
+    </div>
+  </div>
+
+  <div class="hist-card">
+    <div class="hist-head">
+      <div class="hist-title">آخر الخرائط</div>
+    </div>
+    <div class="hist-list" id="hist-list">
+      <div class="hist-empty">ما كاين حتى خريطة دابا</div>
+    </div>
+  </div>
 </div>
+
+<a href="https://wa.me/212612433584?text=slm%20khoya%20b4it%20help%20apple" class="float-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
 <script>
- // ⚙️ CLOUDFLARE WORKER URL - REPLACE WITH YOURS!
- const API_URL = 'https://telegram-auth.ossmtik83-367.workers.dev';
+  const API_URL = 'https://telegram-auth.ossmtik83-367.workers.dev';
+  const WA_URL = 'https://wa.me/212612433584';
+  const SESSION_HOURS = 12;
 
- // 📱 WHATSAPP REDIRECT ON REJECTION
- const WHATSAPP_URL = 'https://wa.me/212612433584?text=' + encodeURIComponent('Hello! My authorization was rejected. User ID: ');
+  const MULTIPLIERS = [1.23, 1.54, 1.93, 2.41, 4.02, 6.71, 11.18, 27.97, 69.93];
 
- const SCRIPT_NAME = "Apple Orchard";
- let activePlat = "1XBET";
- 
- const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
- function playSfx(type) {
- if (!audioCtx) return;
- const osc = audioCtx.createOscillator();
- const gain = audioCtx.createGain();
- osc.connect(gain);
- gain.connect(audioCtx.destination);
- if (type === 'click') {
- osc.frequency.setValueAtTime(800, audioCtx.currentTime);
- osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
- gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
- gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
- osc.start(); osc.stop(audioCtx.currentTime + 0.1);
- }
- }
+  let selected = '1XBET';
+  let selectedNode = '';
+  let sessionEnd = 0;
+  let roundCount = 0;
+  let history = [];
+  let timerInterval = null;
+  let gridCells = [];
 
- const canvas = document.getElementById('bg-canvas');
- const ctx = canvas.getContext('2d');
- let particles = [];
- let mouse = { x: null, y: null };
+  document.addEventListener('DOMContentLoaded', () => {
+    setupPlatforms();
+    setupInput();
+    updateFingerprint();
+    buildGrid();
+    tryResumeSession();
+  });
 
- window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
- window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+  function setupPlatforms() {
+    document.querySelectorAll('.plat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.plat === 'OTHER') {
+          const custom = prompt('دخل اسم السيت:');
+          if (!custom || !custom.trim()) return;
+          selected = custom.trim().toUpperCase();
+          document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          btn.textContent = selected.slice(0, 8);
+        } else {
+          document.querySelectorAll('.plat-btn').forEach(b => {
+            b.classList.remove('active');
+            if (b.dataset.plat === 'OTHER') b.textContent = 'أخرى';
+          });
+          btn.classList.add('active');
+          selected = btn.dataset.plat;
+        }
+      });
+    });
+  }
 
- function initBg() {
- canvas.width = window.innerWidth;
- canvas.height = window.innerHeight;
- particles = [];
- const count = window.innerWidth < 600 ? 30 : 60;
- for(let i = 0; i < count; i++) {
- particles.push({
- x: Math.random() * canvas.width, y: Math.random() * canvas.height,
- vx: (Math.random()-0.5) * 0.5, vy: (Math.random()-0.5) * 0.5,
- size: Math.random() * 1.5 + 0.5
- });
- }
- }
+  function setupInput() {
+    const idInput = document.getElementById('user-id');
+    const icon = document.getElementById('id-icon');
+    idInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 15);
+      const val = e.target.value.trim();
+      if (!val) { icon.textContent = '●'; icon.className = 'input-icon'; }
+      else if (val.length >= 3) { icon.textContent = '✓'; icon.className = 'input-icon valid'; }
+      else { icon.textContent = '✗'; icon.className = 'input-icon invalid'; }
+    });
+  }
 
- function animateBg() {
- ctx.clearRect(0, 0, canvas.width, canvas.height);
- particles.forEach((p, i) => {
- p.x += p.vx; p.y += p.vy;
- if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
- if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
- ctx.fillStyle = "rgba(255,204,0,0.5)";
- ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
- for(let j = i+1; j < particles.length; j++) {
- const p2 = particles[j];
- const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
- if(dist < 80) {
- ctx.strokeStyle = `rgba(255,204,0,${0.2 - dist/80 * 0.2})`;
- ctx.lineWidth = 0.5;
- ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
- }
- }
- });
- requestAnimationFrame(animateBg);
- }
+  function updateFingerprint() {
+    const ua = navigator.userAgent;
+    let os = 'Mobile';
+    if (/Android/i.test(ua)) os = 'Android';
+    else if (/iPhone|iPad/i.test(ua)) os = 'iOS';
+    else if (/Windows/i.test(ua)) os = 'Windows';
+    else if (/Mac/i.test(ua)) os = 'Mac';
+    document.getElementById('fp-os').textContent = os;
+    if (navigator.connection && navigator.connection.effectiveType) {
+      document.getElementById('fp-conn').textContent = navigator.connection.effectiveType.toUpperCase();
+    }
+  }
 
- function setPlat(el, name) {
- playSfx('click');
- document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
- el.classList.add('active');
- activePlat = name;
- if(name === 'OTHER') {
- const custom = prompt("Enter Custom Platform Name:");
- if(custom) activePlat = custom.toUpperCase();
- }
- }
+  function buildGrid() {
+    const grid = document.getElementById('aof-grid');
+    grid.innerHTML = '';
+    gridCells = [];
+    for (let i = 0; i < 50; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'acell';
+      grid.appendChild(cell);
+      gridCells.push(cell);
+    }
+  }
 
- function scrambleText(elementId, finalStr) {
- const el = document.getElementById(elementId);
- const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
- let iterations = 0;
- const interval = setInterval(() => {
- el.innerText = "ID: " + finalStr.split('').map((char, index) => {
- if(index < iterations) return char;
- return chars[Math.floor(Math.random() * chars.length)];
- }).join('');
- if(iterations >= finalStr.length) clearInterval(interval);
- iterations += 1/3;
- }, 30);
- }
+  function tryResumeSession() {
+    const end = parseInt(localStorage.getItem('session_end') || '0');
+    const node = localStorage.getItem('selected_node');
+    if (end > Date.now() && node) {
+      selectedNode = node;
+      sessionEnd = end;
+      document.getElementById('selection-screen').style.display = 'none';
+      startDashboard();
+    }
+  }
 
- async function startBypass() {
- const id = document.getElementById('user-id').value.trim();
- const key = document.getElementById('license-key').value.trim().toUpperCase();
- 
- document.getElementById('user-id').style.borderColor = "#222";
- document.getElementById('license-key').style.borderColor = "#222";
- 
- if(!id) {
- playSfx('click');
- document.getElementById('user-id').style.borderColor = "red";
- alert("Please enter your Account ID.");
- return;
- }
- if(!key) {
- playSfx('click');
- document.getElementById('license-key').style.borderColor = "red";
- alert("Please enter your License Key.");
- return;
- }
+  document.getElementById('bypass-btn').addEventListener('click', bypassServer);
 
- const btn = document.getElementById('bypass-btn');
- btn.disabled = true;
- btn.innerText = "CONNECTING...";
+  async function bypassServer() {
+    const id = document.getElementById('user-id').value.trim();
+    const key = document.getElementById('license-key').value.trim().toUpperCase();
 
- try {
- const response = await fetch(`${API_URL}/api/login`, {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ userId: id, password: key })
- });
+    if (!id || id.length < 3) return showError('دخل ID صحيح');
+    if (!key || key.length < 6) return showError('دخل License Key صحيح');
+    if (!selected) return showError('اختار السيت');
 
- const data = await response.json();
+    const btn = document.getElementById('bypass-btn');
+    btn.disabled = true;
+    btn.textContent = 'كنتواصلو...';
 
- if (response.status === 401 || data.status === 'error') {
- btn.disabled = false;
- btn.innerText = 'BYPASS SERVER';
- document.getElementById('license-key').style.borderColor = 'red';
- 
- // ❌ WRONG LICENSE KEY - Redirect to WhatsApp
- setTimeout(() => {
- window.location.href = WHATSAPP_URL + id;
- }, 500);
- 
- alert('❌ WRONG LICENSE KEY! Redirecting to support...');
- return;
- }
+    try {
+      const res = await fetch(`${API_URL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: id, password: key })
+      });
+      const data = await res.json();
 
- if (data.status === 'authorized') {
- localStorage.setItem('authToken', data.token);
- proceedWithBypass(id, activePlat, 'Authorized');
- } else if (data.status === 'pending') {
- showWaitingScreen(data.authCode, id);
- }
- } catch (error) {
- btn.disabled = false;
- btn.innerText = 'BYPASS SERVER';
- alert('❌ Server is OFFLINE or connection error!');
- }
- }
+      if (res.status === 401 || data.status === 'error') {
+        btn.disabled = false;
+        btn.textContent = '🍎 افتح السيرفر';
+        return showError('الـ Key غلط — تحقق منو');
+      }
 
- function showWaitingScreen(authCode, userId) {
- const existingMsg = document.querySelector('.activation-box .waiting-message');
- if (existingMsg) existingMsg.remove();
- 
- const waitingMsgDiv = document.createElement('div');
- waitingMsgDiv.className = 'waiting-message';
- waitingMsgDiv.innerHTML = `
- <div class="spinner"></div>
- <div style="font-size:18px; margin: 10px 0;">⏳ WAITING FOR AUTHORIZATION</div>
- <div class="small">Admin will approve via Telegram</div>
- <div class="small" style="margin-top: 15px;">Auth Code: <b>${authCode}</b></div>
- <div class="small" style="margin-top: 5px; color: #666;">User: ${userId}</div>
- `;
- document.querySelector('.activation-box').appendChild(waitingMsgDiv);
+      if (data.status === 'authorized') {
+        localStorage.setItem('authToken', data.token);
+        showTerminal(() => {
+          sessionEnd = Date.now() + SESSION_HOURS * 3600 * 1000;
+          selectedNode = selected;
+          localStorage.setItem('session_end', sessionEnd.toString());
+          localStorage.setItem('selected_node', selected);
+          startDashboard();
+        });
+      } else if (data.status === 'pending') {
+        showWaiting(data.authCode, id, key);
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = '🍎 افتح السيرفر';
+      showError('السيرفر ما كاينش — عاود جرب');
+    }
+  }
 
- pollAuthStatus(authCode, userId);
- }
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = '⚠️ ' + msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 4000);
+  }
 
- async function pollAuthStatus(authCode, userId) {
- const maxAttempts = 240;
- let attempts = 0;
+  function showTerminal(onComplete) {
+    document.getElementById('selection-screen').style.display = 'none';
+    const term = document.getElementById('terminal');
+    term.classList.add('active');
 
- const interval = setInterval(async () => {
- attempts++;
+    const logs = [
+      { text: 'CONNECTING TO SERVER...', cls: '' },
+      { text: 'MAPPING ' + selected + ' NODES...', cls: 'warn' },
+      { text: 'INJECTING NEURAL PAYLOAD...', cls: '' },
+      { text: 'BYPASSING FIREWALL ENCRYPTION...', cls: 'warn' },
+      { text: 'AUTH TOKEN VALIDATED.', cls: 'ok' },
+      { text: 'CONNECTION SECURED ✓', cls: 'ok' }
+    ];
 
- try {
- const response = await fetch(`${API_URL}/api/auth-status/${authCode}`);
- const data = await response.json();
+    const linesEl = document.getElementById('term-lines');
+    const fillEl = document.getElementById('term-fill');
+    const statusEl = document.getElementById('term-status');
+    linesEl.innerHTML = '';
 
- if (data.status === 'approved') {
- clearInterval(interval);
- localStorage.setItem('authToken', data.token);
- document.querySelector('.waiting-message')?.remove();
- proceedWithBypass(userId, activePlat, 'Approved');
- } else if (data.status === 'rejected') {
- clearInterval(interval);
- 
- // ❌ REJECTED BY ADMIN - Redirect to WhatsApp with message
- alert('⛔ Authorization REJECTED by admin!\nRedirecting to WhatsApp for support...');
- 
- setTimeout(() => {
- window.location.href = WHATSAPP_URL + userId + '\n\nMy auth was rejected. Please help!';
- }, 1500);
- 
- } else if (attempts >= maxAttempts) {
- clearInterval(interval);
- alert('⏱️ Timeout - Admin did not respond');
- location.reload();
- }
- } catch (error) {
- clearInterval(interval);
- alert('❌ Connection error');
- location.reload();
- }
- }, 5000);
- }
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= logs.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          term.classList.remove('active');
+          onComplete();
+        }, 600);
+        return;
+      }
+      const line = document.createElement('div');
+      line.className = 'term-line';
+      line.innerHTML = `&gt; <span class="${logs[i].cls}">${logs[i].text}</span>`;
+      linesEl.appendChild(line);
+      fillEl.style.width = ((i + 1) / logs.length * 100) + '%';
+      statusEl.textContent = logs[i].text;
+      i++;
+    }, 550);
+  }
 
- function proceedWithBypass(userId, platform, licenseType) {
- playSfx('click');
- document.getElementById('selection-screen').style.display = 'none';
- document.getElementById('terminal').style.display = 'flex';
- 
- const logs = [
- "INITIATING CORE_LINK...", "BYPASSING SECURE_GATE_V4...",
- "INJECTING NEURAL_SHELL...", "SYNCING ACCOUNT: " + userId,
- "PLATFORM TARGET: " + platform, "DECRYPTING ORCHARD_SEED...",
- "VERIFYING NODE INTEGRITY...", "CONNECTION STABLE. LAUNCHING UI."
- ];
- 
- let i = 0;
- document.getElementById('log-box').innerHTML = '';
- const timer = setInterval(() => {
- if(i < logs.length) {
- const p = document.createElement('div');
- p.className = 'term-log';
- p.innerText = "> " + logs[i];
- document.getElementById('log-box').appendChild(p);
- document.getElementById('progress').style.width = ((i+1)/logs.length * 100) + "%";
- i++;
- } else {
- clearInterval(timer);
- setTimeout(() => {
- document.getElementById('terminal').style.display = 'none';
- document.getElementById('dashboard').style.display = 'flex';
- document.getElementById('sync-plat').innerText = platform;
- renderGrid();
- setTimeout(() => scrambleText('sync-id', userId), 500);
- }, 800);
- }
- }, 500);
- }
+  function showWaiting(authCode, userId, licenseKey) {
+    const waiting = document.getElementById('waiting');
+    waiting.classList.add('active');
+    document.getElementById('selection-screen').style.display = 'none';
+    document.getElementById('waiting-code').textContent = authCode;
 
- const odds = ['STOP','69.93x','27.97x','11.18x','6.71x','4.02x','2.41x','1.93x','1.54x','1.23x'];
- 
- function renderGrid() {
- const g = document.getElementById('game-grid');
- g.innerHTML = '';
- for(let r = 0; r < 10; r++) {
- const lbl = document.createElement('div');
- lbl.className = 'row-lbl'; lbl.id = `lbl-${r}`; lbl.innerText = odds[r];
- g.appendChild(lbl);
- for(let c = 0; c < 5; c++) {
- const cell = document.createElement('div');
- cell.className = 'cell'; cell.id = `cell-${r}-${c}`;
- g.appendChild(cell);
- }
- }
- }
+    let attempts = 0;
+    const maxAttempts = 240;
 
- function runPrediction() {
- playSfx('click');
- renderGrid();
- const btn = document.getElementById('predict-btn');
- const viewport = document.getElementById('app-viewport');
- 
- btn.innerText = "BYPASSING ALGORITHM...";
- btn.disabled = true;
- btn.style.animation = "none";
- btn.style.background = "#554400";
- btn.style.color = "#999";
- viewport.classList.add('scanning');
- 
- let sweepRow = 9;
- const sweepInterval = setInterval(() => {
- if(sweepRow < 9) {
- document.getElementById(`lbl-${sweepRow+1}`)?.classList.remove('active');
- for(let c = 0; c < 5; c++) document.getElementById(`cell-${sweepRow+1}-${c}`)?.classList.remove('radar-hit');
- }
- if(sweepRow >= 0) {
- document.getElementById(`lbl-${sweepRow}`)?.classList.add('active');
- for(let c = 0; c < 5; c++) document.getElementById(`cell-${sweepRow}-${c}`)?.classList.add('radar-hit');
- sweepRow--;
- } else {
- clearInterval(sweepInterval);
- finishPrediction();
- }
- }, 150);
- 
- function finishPrediction() {
- viewport.classList.remove('scanning');
- document.querySelectorAll('.row-lbl').forEach(l => l.classList.remove('active'));
- document.querySelectorAll('.cell').forEach(c => c.classList.remove('radar-hit'));
- 
- for(let r = 0; r < 10; r++) {
- const safeCol = Math.floor(Math.random() * 5);
- setTimeout(() => {
- const target = document.getElementById(`cell-${r}-${safeCol}`);
- const lbl = document.getElementById(`lbl-${r}`);
- if(target) target.classList.add('safe');
- if(lbl) lbl.classList.add('active');
- if(target) target.innerHTML = '<span class="apple-anim">🍎</span>'; 
- }, (9 - r) * 150);
- }
- 
- setTimeout(() => {
- btn.innerText = "GENERATE PATH";
- btn.disabled = false;
- btn.style.animation = "pulseGlow 2.5s infinite";
- btn.style.background = "var(--gold)";
- btn.style.color = "black";
- }, 10 * 150 + 500);
- }
- }
+    const poll = setInterval(async () => {
+      attempts++;
+      try {
+        const res = await fetch(`${API_URL}/api/auth-status/${authCode}`);
+        const data = await res.json();
 
- window.addEventListener('resize', () => { initBg(); });
- initBg(); 
- animateBg();
- 
- function unlockAudio() {
- if (audioCtx.state === 'suspended') audioCtx.resume();
- document.removeEventListener('click', unlockAudio);
- document.removeEventListener('touchstart', unlockAudio);
- }
- document.addEventListener('click', unlockAudio);
- document.addEventListener('touchstart', unlockAudio);
+        if (data.status === 'approved') {
+          clearInterval(poll);
+          localStorage.setItem('authToken', data.token);
+          waiting.classList.remove('active');
+          showTerminal(() => {
+            sessionEnd = Date.now() + SESSION_HOURS * 3600 * 1000;
+            selectedNode = selected;
+            localStorage.setItem('session_end', sessionEnd.toString());
+            localStorage.setItem('selected_node', selected);
+            startDashboard();
+          });
+        } else if (data.status === 'rejected') {
+          clearInterval(poll);
+          alert('تم الرفض من الأدمين. تواصل معنا على WhatsApp.');
+          window.location.href = WA_URL;
+        } else if (attempts >= maxAttempts) {
+          clearInterval(poll);
+          alert('ما ردش الأدمين. صيفط لينا رسالة على WhatsApp.');
+          window.location.href = WA_URL;
+        }
+      } catch (err) {
+        clearInterval(poll);
+        alert('مشكل ف الاتصال. عاود جرب.');
+        location.reload();
+      }
+    }, 5000);
+  }
+
+  function startDashboard() {
+    document.getElementById('terminal').classList.remove('active');
+    document.getElementById('waiting').classList.remove('active');
+    document.getElementById('selection-screen').style.display = 'none';
+    document.getElementById('dashboard').classList.add('active');
+    document.getElementById('dash-plat').textContent = selectedNode;
+
+    startTimer();
+    startStats();
+
+    document.getElementById('exit-btn').addEventListener('click', () => {
+      if (confirm('متأكد باغي تخرج؟')) {
+        localStorage.clear();
+        location.reload();
+      }
+    });
+
+    document.getElementById('gen-btn').addEventListener('click', runPrediction);
+  }
+
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      const left = sessionEnd - Date.now();
+      if (left <= 0) {
+        clearInterval(timerInterval);
+        alert('السيسيون سالا. عاود اشري.');
+        localStorage.clear();
+        location.reload();
+        return;
+      }
+      const h = Math.floor(left / 3600000);
+      const m = Math.floor((left % 3600000) / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      document.getElementById('dash-timer').textContent =
+        String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }, 1000);
+  }
+
+  function startStats() {
+    setInterval(() => {
+      document.getElementById('stat-lat').innerHTML = (12 + Math.floor(Math.random() * 20)) + '<span style="font-size:10px">ms</span>';
+      document.getElementById('stat-peers').textContent = 12 + Math.floor(Math.random() * 12);
+    }, 3000);
+  }
+
+  function runPrediction() {
+    const btn = document.getElementById('gen-btn');
+    btn.disabled = true;
+    btn.classList.add('scanning');
+    btn.textContent = '🔍 كنفحصو...';
+
+    gridCells.forEach(c => {
+      c.className = 'acell';
+      c.textContent = '';
+    });
+
+    const now = Date.now();
+    const gameId = Math.floor(now / 15000);
+    const safeCols = [];
+    for (let r = 0; r < 10; r++) {
+      const seed = gameId + r * 997;
+      const x = Math.sin(seed) * 10000;
+      const fraction = x - Math.floor(x);
+      safeCols.push(Math.floor(fraction * 5));
+    }
+
+    let row = 9;
+    const scanInt = setInterval(() => {
+      if (row < 0) {
+        clearInterval(scanInt);
+        updateMultiplier(safeCols);
+        finalize();
+        return;
+      }
+      const rowCells = [];
+      for (let c = 0; c < 5; c++) {
+        rowCells.push(gridCells[row * 5 + c]);
+      }
+      rowCells.forEach(c => c.classList.add('scanning'));
+
+      setTimeout(() => {
+        rowCells.forEach(c => c.classList.remove('scanning'));
+        const safeIdx = safeCols[row];
+        rowCells.forEach((c, i) => {
+          if (i === safeIdx) {
+            c.classList.add('safe');
+            c.textContent = '🍎';
+          } else {
+            c.classList.add('bomb');
+            c.textContent = '💣';
+          }
+        });
+      }, 100);
+
+      row--;
+    }, 220);
+
+    function updateMultiplier(cols) {
+      let streak = 10;
+      const displayMult = MULTIPLIERS[Math.min(streak - 1, MULTIPLIERS.length - 1)];
+      document.getElementById('mult-value').textContent = 'x ' + displayMult.toFixed(2);
+    }
+
+    function finalize() {
+      roundCount++;
+      document.getElementById('stat-round').textContent = roundCount;
+      addHistory();
+
+      btn.disabled = false;
+      btn.classList.remove('scanning');
+      btn.textContent = '🍎 كشف الخريطة';
+    }
+  }
+
+  function addHistory() {
+    const histList = document.getElementById('hist-list');
+    histList.innerHTML = '';
+    history.unshift({ round: roundCount, ts: Date.now() });
+    if (history.length > 8) history.pop();
+
+    history.forEach(h => {
+      const item = document.createElement('div');
+      item.className = 'hist-item';
+      item.innerHTML = `
+        <div class="hist-val">10/10</div>
+        <div class="hist-round">#${h.round.toString().padStart(4, '0')}</div>
+      `;
+      histList.appendChild(item);
+    });
+  }
 </script>
+
 </body>
 </html>
